@@ -23,7 +23,7 @@ public class User implements UserDetails {
     @Column(name = "id_usuario", nullable = false)
     private Long id;
 
-    @Column(name="email", nullable = false)
+    @Column(name="email", nullable = false, unique = true)
     @NotBlank(message = "El email no puede estar vacio")
     @Email(message = "El email debe ser valido")
     private String email;
@@ -35,7 +35,7 @@ public class User implements UserDetails {
             message = "La contraseña debe contener al menos una letra minúscula, una letra mayúscula y un número") // Validación de que la contraseña tenga al menos una letra minúscula, una letra mayúscula y un número al registrar un usuario
     private String password;
 
-    @Column(name = "nombre", unique = true)
+    @Column(name = "nombre")
     @NotBlank(message = "El nombre no puede estar vacío") // Validación de que el nombre no esté vacío al registrar un usuario
     private String nombre;
 
