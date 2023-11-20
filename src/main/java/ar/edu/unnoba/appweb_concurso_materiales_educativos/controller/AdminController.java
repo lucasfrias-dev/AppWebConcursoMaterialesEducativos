@@ -21,15 +21,15 @@ public class AdminController {
     @Autowired
     private MaterialService materialService;
 
-        @GetMapping("/")
-        public String panelAdministrador(Model model) {
-            model.addAttribute("user", new User());
-            return "administrador/panel-administrador";
-        }
+    @GetMapping("/")
+    public String panelAdministrador(Model model) {
+        model.addAttribute("user", new User());
+        return "administrador/panel-administrador";
+    }
 
     //Esta es la pantalla de inicio o index//
     @GetMapping("admin/index")
-    @PreAuthorize("#authentication.principal.tipo == 'Administrador'")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
     public String userInSession(Authentication authentication, Model model) {
         User usuario= (User) authentication.getPrincipal();
         model.addAttribute("usuario", usuario);
@@ -37,13 +37,13 @@ public class AdminController {
     }
 
     /*mostrar materiales en revision*/
-    @PreAuthorize("#authentication.principal.isAdministrador()")
+    @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
     @GetMapping("admin/administrarmaterial")
     public String Materiales(Authentication authentication, Model model) {
         model.addAttribute("materiales", materialService.materialesEducativosEnRevision());
         return "admin/administrarmaterial";
     }
-    @PreAuthorize("#authentication.principal.isAdministrador()")  /*solo los administradores pueden aprovar materiales*/
+    @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")  /*solo los administradores pueden aprovar materiales*/
     @GetMapping("/{id}/material")
     public String viewMaterial(@PathVariable("id") Long id, Model model) {
         model.addAttribute("material", materialService.getMaterialEducativoRepository().getById(id));
@@ -51,7 +51,7 @@ public class AdminController {
     }
 
     /*aprobar Material*/
-    @PreAuthorize("#authentication.principal.isAdministrador()")  /*solo los administradores pueden aprovar materiales*/
+    @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")  /*solo los administradores pueden aprovar materiales*/
     @GetMapping("/{id}/aprobar")
     public String aprobarMaterial(@PathVariable("id") Long id) {
         materialService.updateAprobado(id);
@@ -59,7 +59,7 @@ public class AdminController {
     }
 
     /*aprobar Material*/
-    @PreAuthorize("#authentication.principal.isAdministrador()")  /*solo los administradores pueden aprovar materiales*/
+    @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")  /*solo los administradores pueden aprovar materiales*/
     @GetMapping("/{id}/rechazar")
     public String rechazarMaterial(@PathVariable("id") Long id) {
         materialService.updateRechazado(id);

@@ -55,7 +55,7 @@ public class ConcursanteController {
         return "redirect:/login?logout";
     }
     /*crear Nuevo Material*/
-    @PreAuthorize("#authentication.principal.isParticipante()")  /*solo los participante pueden cargar material*/
+    @PreAuthorize("hasRole('ROLE_CONCURSANTE')")  /*solo los participante pueden cargar material*/
     @GetMapping("/material")
     public String newMaterial(Model model, Authentication authentication) {
         User usuario= (User) authentication.getPrincipal();
@@ -69,7 +69,7 @@ public class ConcursanteController {
             return "users/materialcargado";
         }
     }
-    @PreAuthorize("#authentication.principal.isParticipante()")
+    @PreAuthorize("#hasRole('ROLE_CONCURSANTE')")
     @PostMapping
     public String createMaterial(@ModelAttribute Material material, Authentication authentication){
         User usuario= (User) authentication.getPrincipal();
@@ -82,7 +82,7 @@ public class ConcursanteController {
 
     }
     /*Ver materiar del usuario en sesion*/
-    @PreAuthorize("#authentication.principal.isParticipante()")  /*Solo los administradores pueden acceder*/
+    @PreAuthorize("#hasRole('ROLE_CONCURSANTE')")  /*Solo los administradores pueden acceder*/
     @GetMapping("/materialview")
     public String publicarMaterial(Model model, Authentication authentication) {
         User usuario= (User) authentication.getPrincipal();
