@@ -47,8 +47,6 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
-    private String tipo; //Esta variable se refiere a la variable del tipo de rol que use yo para sabaer el rol del usuario//
-
     @OneToMany(mappedBy = "concursante")
     private List<Material> materialesPostulados = new ArrayList<>();
 
@@ -107,13 +105,13 @@ public class User implements UserDetails {
     }
 // Estas funciones me permite saber el rol del usuario//
     public boolean isParticipante(){
-        return this.getTipo().equals("Participante");
+        return this.getRol().toString().equals("CONCURSANTE");
     }
     public boolean isEvaluador(){
-        return this.getTipo().equals("Evaluador");
+        return this.getTipo().toString().equals("EVALUADOR");
     }
     public boolean isAdministrador(){
-        return this.getTipo().equals("Administrador");
+        return this.getRol().toString().equals("ADMINISTRADOR");
     }
    public Material getMaterialEducativo(){
         //aqui tendria que devolver el material de concursarte si existe sino retorna null//
