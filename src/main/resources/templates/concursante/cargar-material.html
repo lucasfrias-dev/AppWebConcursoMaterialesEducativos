@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Cargar Material</title>
+
+</head>
+<body>
+<h1>Cargar Material</h1>
+<form th:action="@{concursante/cargar-material}" th:object="${material}" method="post" enctype="multipart/form-data">
+    <label for="titulo">Titulo:</label><br>
+    <input type="text" th:field="*{titulo}" id="titulo" name="titulo"><br>
+    <label for="descripcion">Descripción:</label><br>
+    <input type="text" th:field="*{descripcion}" id="descripcion" name="descripcion"><br>
+    <label for="tipoMaterial">Tipo de Material:</label><br>
+    <input type="text" th:field="*{tipoMaterial}" id="tipoMaterial" name="tipoMaterial"><br>
+    <label for="disciplina">Disciplina:</label><br>
+    <input type="text" th:field="*{disciplina}" id="disciplina" name="disciplina"><br>
+    <label for="autores">Autores:</label><br>
+    <input type="text" th:field="*{autores}" id="autores" name="autores"><br>
+    <input type="submit" value="Cargar Material">
+</form>
+</body>
+</html>

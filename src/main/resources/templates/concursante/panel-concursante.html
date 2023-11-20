@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del concursante</title>
+</head>
+<body>
+<h1>Bienvenido al panel del concursante</h1>
+
+<ul>
+    <li><a th:href="@{/concursante/cargar-material}">Postular un material</a></li>
+    <li><a th:href="@{/materiales-participantes}">Ver materiales participantes</a></li>
+    <li><a th:href="@{/concursante/mis-materiales}">Ver mis materiales postulados</a></li>
+    <li><a th:href="@{/concursante/profile/{id}(id=${user.id})}">Ver mi perfil</a></li>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Cerrar sesión">
+    </form>
+</ul>
+</body>
+</html>
