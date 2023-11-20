@@ -42,7 +42,7 @@ public class Material implements Serializable {
     private Boolean aprobado;
 
     @Column(name = "evaluado")
-    private Boolean evaluado;
+    private Boolean evaluado = false;
 
     @Column(name = "likes")
     private int likes = 0;
@@ -55,5 +55,5 @@ public class Material implements Serializable {
     private Set<User> evaluadores = new HashSet<>();
 
     @OneToMany(mappedBy = "material")
-    private Set<Evaluacion> evaluaciones = new HashSet<>();;
+    private Set<Evaluacion> evaluaciones = new HashSet<>();
 }
