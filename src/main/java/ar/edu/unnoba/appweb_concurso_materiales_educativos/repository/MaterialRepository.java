@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 
 public interface MaterialRepository extends JpaRepository<Material, Long> {
+    List<Material> findAll();
+    Material getById(Long id);
     List<Material> findByAprobadoTrue();
 
     List<Material> findByConcursante(User user);

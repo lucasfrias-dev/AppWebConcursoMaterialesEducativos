@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -15,6 +16,9 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepository userRepository;
+    public  UserRepository getUsuarioRepository(){
+        return userRepository;
+    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
@@ -76,5 +80,27 @@ public class UserServiceImpl implements UserService{
         }
         // Si el usuario no existe, devuelve false
         return false;
+    }
+    //Da todos los usuarios evaluadores//
+    @Override
+    public List<User> getEvaluador() {
+        List<User> usuario=new ArrayList<User>();
+        for (User User : this.userRepository.findAll()){
+            if(User.getTipo().equals("Evaluador")){
+                usuario.add(User);
+            }
+        }
+        return usuario;
+    }
+//Da todos los usuarios administradores//
+    @Override
+    public List<User> getAdministrador() {
+        List<User> usuario=new ArrayList<User>();
+        for (User User : this.userRepository.findAll()){
+            if(User.getTipo().equals("Administrador")){
+                usuario.add(User);
+            }
+        }
+        return usuario;
     }
 }

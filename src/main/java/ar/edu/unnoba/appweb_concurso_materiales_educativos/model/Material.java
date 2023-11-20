@@ -41,6 +41,8 @@ public class Material implements Serializable {
     @Column(name = "aprobado")
     private Boolean aprobado;
 
+    private String estado; //Coloque esta variable para saver el estado actual de material de manera mas simple//
+
     @Column(name = "evaluado")
     private Boolean evaluado;
 
@@ -55,5 +57,17 @@ public class Material implements Serializable {
     private Set<User> evaluadores = new HashSet<>();
 
     @OneToMany(mappedBy = "material")
-    private Set<Evaluacion> evaluaciones = new HashSet<>();;
+    private Set<Evaluacion> evaluaciones = new HashSet<>();
+
+
+    public void setEnRevision(){
+        this.setEstado("Revision");
+    }
+    public void setAprobado(){
+        this.setEstado("Aprobado");
+    }
+    public void setRechazado(){
+        this.setEstado("Rechazado");
+    }
+
 }
