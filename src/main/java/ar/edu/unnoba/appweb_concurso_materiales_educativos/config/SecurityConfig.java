@@ -1,6 +1,5 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.config;
 
-import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class SecurityConfig {
 
     @Autowired
-    UserService userService;
+    UserDetailsService userService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
