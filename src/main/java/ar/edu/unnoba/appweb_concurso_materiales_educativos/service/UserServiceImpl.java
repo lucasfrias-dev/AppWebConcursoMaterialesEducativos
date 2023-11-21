@@ -60,18 +60,17 @@ public class UserServiceImpl implements UserService{
         // Si el usuario no existe, devuelve false
         return false;
     }
-    /*//Da todos los usuarios evaluadores//
-    @Override
+    //Da todos los usuarios evaluadores//
     public List<User> getEvaluador() {
         List<User> usuario=new ArrayList<User>();
         for (User User : this.userRepository.findAll()){
-            if(User.getTipo().equals("Evaluador")){
+            if(User.getRol().toString().equals("EVALUADOR")){
                 usuario.add(User);
             }
         }
         return usuario;
     }
-//Da todos los usuarios administradores//
+/*//Da todos los usuarios administradores//
     @Override
     public List<User> getAdministrador() {
         List<User> usuario=new ArrayList<User>();

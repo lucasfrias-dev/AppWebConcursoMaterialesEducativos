@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Evaluadores Registrados</title>
+</head>
+<body>
+<h1>Evaluadores Registrados</h1>
+<table>
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Apellido</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="evaluador : ${evaluadores}">
+        <td th:text="${evaluador.nombre}"></td>
+        <td th:text="${evaluador.apellido}"></td>
+        <td>
+            <form th:action="@{'/' + ${evaludor.id} + '/ver'}" method="post">
+                <input type="submit" value="Ver Descripcion">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>

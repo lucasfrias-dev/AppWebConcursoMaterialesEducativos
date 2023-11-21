@@ -5,6 +5,7 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialServi
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -12,10 +13,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/administrador")
@@ -74,4 +74,29 @@ public class AdminController {
         materialService.updateRechazado(id);
         return "redirect:administrador/materiales-pendientes";
     }
+    //Cargar los Usuario de tipo Evaluador//
+    @GetMapping("/evaluador")
+    public String evaludor(Model model) {
+        model.addAttribute("evaluador", new User());
+        return "redirect:administrador/evaluador";
+    }
+    @PostMapping("/evaluador")
+    public String createEvaluador(@Valid @ModelAttribute("user") User user) throws Exception {
+        userService.createUser(user, User.Rol.EVALUADOR);
+        return "/administrador/evaluador";
+    }
+    @GetMapping("/evaluadores-registrados")
+    public String evaludorDisponibles(Model model) {
+        model.addAttribute("evaluadores", userService.getEvaluador());
+        return "redirect:administrador/evaluadores-registrados";
+    }
+    //Ver descricio de los evaluadores//
+    @GetMapping("/{id}/ver-evaludor")
+    public String evaludorVer(@PathVariable("id") Long id, Model model) {
+        model.addAttribute("evaluador", userService.findById(id));
+        return "redirect:administrador/ver-evaludor";
+    }
+
+
+
 }

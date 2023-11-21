@@ -7,8 +7,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.List;
 
 public interface UserService extends UserDetailsService{
-    /*List<User> getEvaluador();
-    List<User> getAdministrador();*/
+    List<User> getEvaluador();
+    /*List<User> getAdministrador();*/
 
     User createUser(User user, User.Rol rol) throws Exception;
 
