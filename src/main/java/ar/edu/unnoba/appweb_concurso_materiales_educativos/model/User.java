@@ -104,7 +104,7 @@ public class User implements UserDetails {
         CONCURSANTE
     }
 // Estas funciones me permite saber el rol del usuario//
-    public boolean isParticipante(){
+    /*public boolean isParticipante(){
         return this.getRol().toString().equals("CONCURSANTE");
     }
     public boolean isEvaluador(){
@@ -118,7 +118,7 @@ public class User implements UserDetails {
    }
     public void setMaterialEducativo(Material nuevoMaterial) {
         //aqui tendria que setear el material de concursarte//
-    }
+    }*/
 
 }
 
