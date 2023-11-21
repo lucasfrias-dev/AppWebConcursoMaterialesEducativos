@@ -15,11 +15,10 @@ public class MaterialServiceImpl implements MaterialService {
     @Autowired
     private MaterialRepository materialRepository;
     @Override
-    public MaterialRepository getMaterialEducativoRepository(){
-        return materialRepository;
-    }
-    @Override
-    public void createMaterial(Material material) {
+    public void createMaterial(Material material, User user) {
+        /*material.setEnRevision();*/
+        material.setConcursante(user);
+        user.getMaterialesPostulados().add(material);
         materialRepository.save(material);
     }
 
@@ -28,33 +27,38 @@ public class MaterialServiceImpl implements MaterialService {
         return materialRepository.findByConcursante(user);
     }
 
-    public List<Material> materialesEducativos(){
+    @Override
+    public List<Material> getMateriales(){
         return materialRepository.findAll();
     }
 
     @Override
     public List<Material> getMaterialesParticipantes() {
-        return materialRepository.findByAprobadoTrue();
+        return materialRepository.findMaterialsByAprobadoIsTrue();
     }
 
-    public List<Material> materialesEducativosEnRevision(){
-        List<Material> matED = new ArrayList<Material>();
-        for(Material me : materialRepository.findAll()){
-            if (me.getEstado().equals("Revision")){
-                matED.add(me);
-            }
-        }
-        return matED;
+    @Override
+    public List<Material> getMaterialesPendientes(){
+       return materialRepository.findMaterialsByAprobadoIsNull();
     }
+
+    @Override
+    public Material getMaterial(Long id) {
+        return materialRepository.findMaterialById(id);
+    }
+
+    @Override
     public void updateAprobado(Long id){
-        Material materialEducativo1=getMaterialEducativoRepository().getById(id);
-        materialEducativo1.setAprobado();
-        getMaterialEducativoRepository().save(materialEducativo1);
+        Material material = materialRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Material educativo no encontrado con id: " + id));
+        material.setAprobado(true);
+        materialRepository.save(material);
     }
+
+    @Override
     public void updateRechazado(Long id){
-        Material materialEducativo1=getMaterialEducativoRepository().getById(id);
-        materialEducativo1.setRechazado();
-        getMaterialEducativoRepository().save(materialEducativo1);
+        Material material = materialRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Material educativo no encontrado con id: " + id));
+        material.setAprobado(false);
+        materialRepository.save(material);
     }
 
 }
