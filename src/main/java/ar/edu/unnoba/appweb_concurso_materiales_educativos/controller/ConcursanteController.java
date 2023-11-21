@@ -18,7 +18,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -54,62 +53,38 @@ public class ConcursanteController {
         }
         return "redirect:/login?logout";
     }
+
     /*crear Nuevo Material*/
     @PreAuthorize("hasRole('ROLE_CONCURSANTE')")  /*solo los participante pueden cargar material*/
-    @GetMapping("/material")
-    public String newMaterial(Model model, Authentication authentication) {
-        User usuario= (User) authentication.getPrincipal();
-        String name= usuario.getUsername();
-        if(userService.loadUserByUsername(name).getMaterialEducativo() == null) {
-            model.addAttribute("material", new Material());
-            return "users/material";
-        }
-        else{
-            model.addAttribute("material", usuario.getMaterialEducativo());
-            return "users/materialcargado";
-        }
+    @GetMapping("/postular-material")
+    public String showPostularMaterial(Model model) {
+        model.addAttribute("material", new Material());
+        return "concursante/postular-material";
     }
-    @PreAuthorize("#hasRole('ROLE_CONCURSANTE')")
-    @PostMapping
-    public String createMaterial(@ModelAttribute Material material, Authentication authentication){
-        User usuario= (User) authentication.getPrincipal();
-        material.setEnRevision();
-        Material nuevoMaterial = materialService.getMaterialEducativoRepository().save(material);
-        User u2= userService.getUsuarioRepository().findOneByUsername(usuario.getUsername());
-        u2.setMaterialEducativo(nuevoMaterial);
-        userService.getUsuarioRepository().save(u2);
-        return "redirect:/material";
 
+    @PreAuthorize("hasRole('ROLE_CONCURSANTE')")
+    @PostMapping("/postular-material")
+    public String createMaterial(@ModelAttribute("material") Material material, BindingResult result, Model model, Authentication authentication){
+        if (result.hasErrors()) {
+            return "concursante/cargar-material";
+        }
+
+        User sessionUser = (User) authentication.getPrincipal();
+
+        materialService.createMaterial(material, sessionUser);
+        model.addAttribute("message", "Material cargado correctamente.");
+        return "concursante/confirmacion-carga";
     }
-    /*Ver materiar del usuario en sesion*/
-    @PreAuthorize("#hasRole('ROLE_CONCURSANTE')")  /*Solo los administradores pueden acceder*/
+
+    /*Ver materiar del usuario en sesion*//*
+    @PreAuthorize("#hasRole('ROLE_CONCURSANTE')")  *//*Solo los administradores pueden acceder*//*
     @GetMapping("/materialview")
     public String publicarMaterial(Model model, Authentication authentication) {
         User usuario= (User) authentication.getPrincipal();
         Material materialEducativo= usuario.getMaterialEducativo();
         model.addAttribute("material", materialEducativo);
         return "/users/materialview";
-    }
-
-    @GetMapping("/cargar-material")
-    public String showCargarMaterialForm(Model model) {
-        model.addAttribute("material", new Material());
-        return "concursante/cargar-material";
-    }
-
-    @PostMapping("/cargar-material")
-    public String cargarMaterial(@Valid @ModelAttribute("material") Material material, BindingResult result, Model model, Authentication authentication) {
-        if (result.hasErrors()) {
-            return "concursante/cargar-material";
-        }
-
-        User sessionUser = (User) authentication.getPrincipal();
-        material.setConcursante(sessionUser);
-
-        materialService.createMaterial(material);
-        model.addAttribute("message", "Material cargado correctamente.");
-        return "concursante/confirmacion-carga";
-    }
+    }*/
 
     /*@GetMapping("/mis-materiales")
     public String getMisMateriales(Model model, Authentication authentication) {
@@ -131,9 +106,8 @@ public class ConcursanteController {
     @GetMapping("/mis-materiales")
     public ModelAndView getMyMaterials(Authentication authentication) {
         User sessionUser = (User) authentication.getPrincipal();
-        List<Material> materiales = materialService.getMaterialesByConcursante(sessionUser);
         ModelAndView modelAndView = new ModelAndView("concursante/mis-materiales");
-        modelAndView.addObject("materiales", materiales);
+        modelAndView.addObject("materiales", materialService.getMaterialesByConcursante(sessionUser));
         return modelAndView;
     }
 
