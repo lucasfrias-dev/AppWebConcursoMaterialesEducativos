@@ -35,7 +35,7 @@ public class SecurityConfig {
                         // Configura los parámetros de nombre de usuario y contraseña
                         .usernameParameter("email").passwordParameter("password")
                         // apunta a la funcion login despues del inicio de secion//
-                        .defaultSuccessUrl("/redirect"))
+                        .defaultSuccessUrl("/default"))
 
                 .logout((logout) -> logout // Configura el cierre de sesión
                         .permitAll() // Permite el acceso a la página de cierre de sesión sin autenticación
