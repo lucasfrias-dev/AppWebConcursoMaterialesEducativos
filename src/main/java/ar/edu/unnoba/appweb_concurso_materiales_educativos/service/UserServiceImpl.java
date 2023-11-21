@@ -16,9 +16,6 @@ public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepository userRepository;
-    public  UserRepository getUsuarioRepository(){
-        return userRepository;
-    }
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
@@ -51,25 +48,12 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User authenticate(String email, String password) throws Exception {
-        User user = userRepository.findByEmail(email);
-        if (user == null) {
-            throw new Exception("Usuario no encontrado");
-        }
-        if (!new BCryptPasswordEncoder().matches(password, user.getPassword())) {
-            throw new Exception("Contraseña incorrecta");
-        }
-        return user;
-    }
-
-    @Override
     public void updateUser(User user, Long id) {
         User userDB = userRepository.findById(id).get();
         userDB.setNombre(user.getUsername());
         userDB.setApellido(user.getUsername());
         userDB.setEmail(user.getEmail());
-            // Actualiza cualquier otro campo necesario aquí
-            userRepository.save(userDB);
+        userRepository.save(userDB);
     }
 
     private boolean emailExists(String email) throws Exception {
@@ -81,7 +65,7 @@ public class UserServiceImpl implements UserService{
         // Si el usuario no existe, devuelve false
         return false;
     }
-    //Da todos los usuarios evaluadores//
+    /*//Da todos los usuarios evaluadores//
     @Override
     public List<User> getEvaluador() {
         List<User> usuario=new ArrayList<User>();
@@ -102,5 +86,5 @@ public class UserServiceImpl implements UserService{
             }
         }
         return usuario;
-    }
+    }*/
 }
