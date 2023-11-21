@@ -10,10 +10,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @RequestMapping("/")
 public class LoginController {
+
     @GetMapping("/redirect")
     public String login(Authentication authentication) {
         User user = (User) authentication.getPrincipal();
-        if (user.isParticipante()) {
+
+        return switch (user.getRol()) {
+            case ADMINISTRADOR -> "redirect:/administrador/";
+            case CONCURSANTE -> "redirect:/concursante/";
+            default -> "redirect:/login?error";
+        };
+
+        /*if (user.isParticipante()) {
             return "redirect:/users/index";
         }
         if (user.isAdministrador()) {
@@ -21,6 +29,6 @@ public class LoginController {
         }
         else {
             return "redirect:/login?error";
-        }
+        }*/
     }
 }
