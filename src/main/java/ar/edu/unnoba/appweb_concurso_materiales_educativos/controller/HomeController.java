@@ -4,12 +4,13 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
-import org.springframework.security.core.Authentication;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -25,7 +26,7 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
-    @GetMapping
+    @GetMapping("/")
     public String home() {
         return "index";
     }
@@ -42,20 +43,14 @@ public class HomeController {
         return "login"; // Retorna la vista "login"
     }
 
-    @PostMapping("/login")
-    public String loginUser(@ModelAttribute("user") User user, Model model, Authentication authentication) {
-        // Intenta autenticar al usuario
-        try {
-            User userSession = (User) authentication.getPrincipal();
-            // Redirige al usuario a una vista diferente según su rol
-            return switch (userSession.getRol()) {
-                case ADMINISTRADOR -> "redirect:/administrador/";
-                case CONCURSANTE -> "redirect:/concursante/";
-                default -> throw new Exception("Rol desconocido");
-            };
-        } catch (Exception e) {
-            model.addAttribute("loginError", e.getMessage());
-            return "login";
+    @GetMapping("/default")
+    public String defaultAfterLogin(HttpServletRequest request) {
+        if (request.isUserInRole("ADMINISTRADOR")) {
+            return "redirect:/administrador/";
+        } else if (request.isUserInRole("CONCURSANTE")) {
+            return "redirect:/concursante/";
+        } else {
+            throw new IllegalStateException("Rol desconocido");
         }
     }
 
@@ -73,15 +68,16 @@ public class HomeController {
     }
 
     @PostMapping("/participar")
-    public String createConcursante(@Valid @ModelAttribute("user")User user, BindingResult result, ModelMap model, @RequestParam("passwordConfirm") String passwordConfirm) {
+    public String createConcursante(@Valid @ModelAttribute("user") User user, BindingResult result, ModelMap model, @RequestParam("passwordConfirm") String passwordConfirm) {
         // Verifica si las contraseñas coinciden y si hay errores en el formulario de registro
         if (!user.getPassword().equals(passwordConfirm)) {
             result.rejectValue("password", "error.password", "Las contraseñas no coinciden");
         }
         if (result.hasErrors()) {
             model.addAttribute("user", user);
-            return "participar";
+            return "/participar";
         }
+
 
         // Intenta crear el usuario
         try {
@@ -89,7 +85,7 @@ public class HomeController {
         } catch (Exception e) {  // Si ocurre un error, añade el mensaje de error al modelo y retorna la vista "register"
             model.addAttribute("formError", e.getMessage());
             model.addAttribute("user", user);
-            return "participar";
+            return "/participar";
         }
         // Si la creación del usuario fue exitosa, redirige a la ruta "/login"
         return "redirect:/login";
