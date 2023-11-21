@@ -12,8 +12,6 @@ public interface UserService extends UserDetailsService{
 
     User createUser(User user, User.Rol rol) throws Exception;
 
-    public List<User> getAllUsers();
-
     User findById(Long id);
 
     void updateUser(User user, Long id);
