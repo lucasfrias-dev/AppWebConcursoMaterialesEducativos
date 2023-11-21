@@ -4,6 +4,7 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -42,12 +43,12 @@ public class HomeController {
     }
 
     @PostMapping("/login")
-    public String loginUser(@ModelAttribute("user") User user, Model model) {
+    public String loginUser(@ModelAttribute("user") User user, Model model, Authentication authentication) {
         // Intenta autenticar al usuario
         try {
-            User authenticatedUser = userService.authenticate(user.getEmail(), user.getPassword());
+            User userSession = (User) authentication.getPrincipal();
             // Redirige al usuario a una vista diferente según su rol
-            return switch (authenticatedUser.getRol()) {
+            return switch (userSession.getRol()) {
                 case ADMINISTRADOR -> "redirect:/administrador/";
                 case CONCURSANTE -> "redirect:/concursante/";
                 default -> throw new Exception("Rol desconocido");
