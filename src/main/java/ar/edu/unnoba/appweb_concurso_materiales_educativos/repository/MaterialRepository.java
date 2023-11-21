@@ -8,8 +8,11 @@ import java.util.List;
 
 public interface MaterialRepository extends JpaRepository<Material, Long> {
     List<Material> findAll();
-    Material getById(Long id);
-    List<Material> findByAprobadoTrue();
+    Material findMaterialById(Long id);
+    List<Material> findMaterialsByAprobadoIsTrue();
 
     List<Material> findByConcursante(User user);
+
+    List<Material> findMaterialsByAprobadoIsNull();
+
 }
