@@ -15,11 +15,11 @@ public class MaterialServiceImpl implements MaterialService {
     @Autowired
     private MaterialRepository materialRepository;
     @Override
-    public void createMaterial(Material material, User user) {
+    public Material createMaterial(Material material, User user) {
         /*material.setEnRevision();*/
         material.setConcursante(user);
         user.getMaterialesPostulados().add(material);
-        materialRepository.save(material);
+        return material = materialRepository.save(material);
     }
 
     @Override

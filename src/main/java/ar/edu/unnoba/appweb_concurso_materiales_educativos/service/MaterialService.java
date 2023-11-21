@@ -8,13 +8,16 @@ import java.util.List;
 
 public interface MaterialService {
 
-    void createMaterial(Material material, User user);
+    Material createMaterial(Material material, User user);
 
     List<Material> getMaterialesByConcursante(User user);
+
     void updateRechazado(Long id);
+
     void updateAprobado(Long id);
 
     List<Material> getMateriales();
+
     List<Material> getMaterialesParticipantes();
 
     List<Material> getMaterialesPendientes();
