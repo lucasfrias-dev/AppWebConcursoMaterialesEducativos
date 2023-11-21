@@ -87,7 +87,7 @@ public class AdminController {
     }
     @GetMapping("/evaluadores-registrados")
     public String evaludorDisponibles(Model model) {
-        model.addAttribute("evaluadores", userService.getEvaluador());
+        model.addAttribute("evaluadores", userService.allEvaluador());
         return "redirect:administrador/evaluadores-registrados";
     }
     //Ver descricio de los evaluadores//
