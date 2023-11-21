@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
 public class AdminController {
     @Autowired
-    private UserService usuarioService;
+    private UserService userService;
     @Autowired
     private MaterialService materialService;
 
@@ -28,7 +28,7 @@ public class AdminController {
     }
 
     //Esta es la pantalla de inicio o index//
-    @GetMapping("admin/index")
+    @GetMapping("/index")
     @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
     public String userInSession(Authentication authentication, Model model) {
         User usuario= (User) authentication.getPrincipal();
@@ -38,15 +38,16 @@ public class AdminController {
 
     /*mostrar materiales en revision*/
     @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")
-    @GetMapping("admin/administrarmaterial")
-    public String Materiales(Authentication authentication, Model model) {
-        model.addAttribute("materiales", materialService.materialesEducativosEnRevision());
-        return "admin/administrarmaterial";
+    @GetMapping("/materiales/pendientes")
+    public String showMaterialesPendientes(Model model) {
+        model.addAttribute("materiales", materialService.getMaterialesPendientes());
+        return "admin/administrar-material";
     }
+
     @PreAuthorize("hasRole('ROLE_ADMINISTRADOR')")  /*solo los administradores pueden aprovar materiales*/
     @GetMapping("/{id}/material")
     public String viewMaterial(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("material", materialService.getMaterialEducativoRepository().getById(id));
+        model.addAttribute("material", materialService.getMaterial(id));
         return "admin/material";
     }
 
