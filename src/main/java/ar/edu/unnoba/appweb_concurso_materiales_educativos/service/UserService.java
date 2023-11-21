@@ -7,17 +7,14 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import java.util.List;
 
 public interface UserService extends UserDetailsService{
-    List<User> getEvaluador();
-    List<User> getAdministrador();
-    public UserRepository getUsuarioRepository();
+    /*List<User> getEvaluador();
+    List<User> getAdministrador();*/
 
     User createUser(User user, User.Rol rol) throws Exception;
 
     public List<User> getAllUsers();
 
     User findById(Long id);
-
-    User authenticate(String email, String password) throws Exception;
 
     void updateUser(User user, Long id);
 }

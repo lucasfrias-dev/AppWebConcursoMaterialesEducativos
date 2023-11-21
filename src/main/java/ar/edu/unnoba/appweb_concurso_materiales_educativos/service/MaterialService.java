@@ -7,15 +7,17 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.MaterialRe
 import java.util.List;
 
 public interface MaterialService {
-    void createMaterial(Material material);
+
+    void createMaterial(Material material, User user);
 
     List<Material> getMaterialesByConcursante(User user);
-    MaterialRepository getMaterialEducativoRepository();
     void updateRechazado(Long id);
     void updateAprobado(Long id);
-    List<Material> materialesEducativosEnRevision();
-    List<Material> materialesEducativos();
+
+    List<Material> getMateriales();
     List<Material> getMaterialesParticipantes();
 
+    List<Material> getMaterialesPendientes();
 
-    }
+    Material getMaterial(Long id);
+}
