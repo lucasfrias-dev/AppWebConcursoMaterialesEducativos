@@ -31,17 +31,18 @@ public class ConcursanteController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
+    /*@GetMapping("/")
     public String panelConcursante(Model model) {
         model.addAttribute("user", new User());
         return "concursante/panel-concursante";
-    }
+    }*/
+
     //Esta es la pantalla de inicio o index//
     @GetMapping("/")
     public String userInSession(Authentication authentication, Model model) {
         User usuario= (User) authentication.getPrincipal();
         model.addAttribute("usuario", usuario);
-        return "users/index";
+        return "concursante/panel-concursante";
     }
 
     /*Cerrar sesion*/
