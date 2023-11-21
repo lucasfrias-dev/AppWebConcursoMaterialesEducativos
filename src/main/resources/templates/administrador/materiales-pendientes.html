@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>Materiales Pendientes</title>
+</head>
+<body>
+<h1>Materiales Pendientes</h1>
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Disciplina</th>
+        <th>Tipo de Material</th>
+        <th>Concursante que postula</th>
+        <th>Autores</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="material : ${materiales}">
+        <td th:text="${material.id}"></td>
+        <td th:text="${material.titulo}"></td>
+        <td th:text="${material.descripcion}"></td>
+        <td th:text="${material.disciplina}"></td>
+        <td th:text="${material.tipoMaterial}"></td>
+        <td th:text="${material.concursante}"></td>
+        <td th:text="${material.autores}"></td>
+        <td>
+            <form th:action="@{'/' + ${material.id} + '/aprobar'}" method="post">
+                <input type="submit" value="Aprobar">
+            </form>
+        </td>
+        <td>
+            <form th:action="@{'/' + ${material.id} + '/rechazar'}" method="post">
+                <input type="submit" value="Rechazar">
+            </form>
+        </td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
