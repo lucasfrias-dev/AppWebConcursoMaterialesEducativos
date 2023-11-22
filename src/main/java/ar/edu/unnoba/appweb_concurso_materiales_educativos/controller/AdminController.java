@@ -1,5 +1,6 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.controller;
 
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
@@ -90,12 +91,25 @@ public class AdminController {
         model.addAttribute("evaluadores", userService.allEvaluador());
         return "redirect:administrador/evaluadores-registrados";
     }
-    //Ver descricio de los evaluadores//
+    //Ver descripcion de los evaluadores//
     @GetMapping("/{id}/ver-evaludor")
     public String evaludorVer(@PathVariable("id") Long id, Model model) {
         model.addAttribute("evaluador", userService.findById(id));
         return "redirect:administrador/ver-evaludor";
     }
+    //funcion para asignar los materiales a los evaluadores//
+    //falta crear vistas//
+    @GetMapping("/{id}/{id2}/asignar-evaludor")
+    public String asignarMaterial(@PathVariable("id") Long id, @PathVariable("id2") Long id2) {
+        Material material=materialService.getMaterial(id2);
+        User user=userService.findById(id);
+        user.getMaterialesAEvaluar().add(material);
+        userService.save(user);
+        return "redirect:administrador/asignar-evaludor";
+    }
+
+
+
 
 
 

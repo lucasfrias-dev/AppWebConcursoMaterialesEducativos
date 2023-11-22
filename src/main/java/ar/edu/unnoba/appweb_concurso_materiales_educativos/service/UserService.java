@@ -12,6 +12,8 @@ public interface UserService extends UserDetailsService{
     List<User> allEvaluador();
 
     /*List<User> getAdministrador();*/
+//Guardar usuario modificado
+    void save(User user);
 
     User createUser(User user, User.Rol rol) throws Exception;
 

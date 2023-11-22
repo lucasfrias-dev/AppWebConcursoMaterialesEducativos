@@ -64,6 +64,10 @@ public class UserServiceImpl implements UserService{
     public List<User> allEvaluador(){
         return userRepository.findAllEvaluador();
     }
+
+    public void save(User user) {
+        userRepository.save(user);
+    }
     //Da todos los usuarios evaluadores//
    /* public List<User> getEvaluador() {
         List<User> usuario=new ArrayList<User>();
