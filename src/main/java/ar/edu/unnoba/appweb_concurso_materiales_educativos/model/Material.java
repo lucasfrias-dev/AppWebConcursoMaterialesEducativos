@@ -22,7 +22,7 @@ public class Material implements Serializable {
     @NotBlank(message = "El titulo es obligatorio")
     private String titulo;
 
-    @NotBlank(message = "La descripcion es obligatoria")
+    @NotBlank(message = "La descripción es obligatoria")
     @Column(name = "descripcion")
     private String descripcion;
 
@@ -34,7 +34,7 @@ public class Material implements Serializable {
     @Column(name = "disciplina")
     private String disciplina;
 
-    @NotBlank(message = "El link es obligatorio")
+    @NotBlank(message = "Los autores son obligatorios")
     @Column(name = "autores")
     private String autores;
 
@@ -44,7 +44,7 @@ public class Material implements Serializable {
     /*private String estado;*/ //Coloque esta variable para saver el estado actual de material de manera mas simple//
 
     @Column(name = "evaluado")
-    private Boolean evaluado;
+    private Boolean evaluado = false;
 
     @Column(name = "likes")
     private int likes = 0;
