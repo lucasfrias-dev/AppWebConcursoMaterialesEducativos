@@ -1,6 +1,5 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.controller;
 
-import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
@@ -8,14 +7,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -64,53 +62,57 @@ public class AdminController {
         return "admin/material";
     }*/
 
-    @PostMapping("/{id}/aprobar")
+    @PostMapping("materiales/{id}/aprobar")
     public String aprobarMaterial(@PathVariable("id") Long id) {
         materialService.updateAprobado(id);
         return "redirect:/administrador/materiales-pendientes";
     }
 
-    @GetMapping("/{id}/rechazar")
+    @GetMapping("materiales/{id}/rechazar")
     public String rechazarMaterial(@PathVariable("id") Long id) {
         materialService.updateRechazado(id);
         return "redirect:administrador/materiales-pendientes";
     }
     //Cargar los Usuario de tipo Evaluador//
-    @GetMapping("/evaluador")
-    public String evaludor(Model model) {
+    @GetMapping("/register-evaluador")
+    public String registerEvaludor(Model model) {
         model.addAttribute("evaluador", new User());
-        return "redirect:administrador/evaluador";
+        return "redirect:administrador/register-evaluador";
     }
-    @PostMapping("/evaluador")
+
+    @PostMapping("/register-evaluador")
     public String createEvaluador(@Valid @ModelAttribute("user") User user) throws Exception {
         userService.createUser(user, User.Rol.EVALUADOR);
-        return "/administrador/evaluador";
+        return "administrador/register-evaluador";
     }
+
     @GetMapping("/evaluadores-registrados")
-    public String evaludorDisponibles(Model model) {
-        model.addAttribute("evaluadores", userService.allEvaluador());
+    public String evaludoresDisponibles(Model model) {
+        model.addAttribute("evaluadores", userService.getAllEvaluadores());
         return "redirect:administrador/evaluadores-registrados";
     }
     //Ver descripcion de los evaluadores//
     @GetMapping("/{id}/ver-evaludor")
-    public String evaludorVer(@PathVariable("id") Long id, Model model) {
+    public String verEvaluador(@PathVariable("id") Long id, Model model) {
         model.addAttribute("evaluador", userService.findById(id));
         return "redirect:administrador/ver-evaludor";
     }
     //funcion para asignar los materiales a los evaluadores//
-    //falta crear vistas//
-    @GetMapping("/{id}/{id2}/asignar-evaludor")
-    public String asignarMaterial(@PathVariable("id") Long id, @PathVariable("id2") Long id2) {
-        Material material=materialService.getMaterial(id2);
-        User user=userService.findById(id);
-        user.getMaterialesAEvaluar().add(material);
-        userService.save(user);
-        return "redirect:administrador/asignar-evaludor";
+
+    @GetMapping("/materiales/asignar-material-evaluador")
+    public String showAssignMaterialForm(Model model) {
+        model.addAttribute("materiales", materialService.getMateriales());
+        model.addAttribute("evaluadores", userService.getAllEvaluadores());
+        return "administrador/asignar-material-evaluador";
     }
 
-
-
-
-
-
+    @PostMapping("/materiales/asignar-material-evaluador")
+    public ResponseEntity<String> asignarMaterial(@RequestParam Long materialId, @RequestParam Long evaluadorId) {
+        /*Material material=materialService.getMaterial(id2);
+        User user=userService.findById(id);
+        user.getMaterialesAEvaluar().add(material);
+        userService.save(user);*/ //Esto va en la parte de servicio
+        userService.asignarMaterialAEvaluador(materialId, evaluadorId);
+        return ResponseEntity.ok("Material asignado al evaluador exitosamente");
+    }
 }
