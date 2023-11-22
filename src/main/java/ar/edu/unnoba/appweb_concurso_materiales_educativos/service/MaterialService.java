@@ -23,4 +23,6 @@ public interface MaterialService {
     List<Material> getMaterialesPendientes();
 
     Material getMaterial(Long id);
+
+    List<Material> getMaterialesAsignados(User user);
 }
