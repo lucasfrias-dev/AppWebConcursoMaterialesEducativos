@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel del evaluador</title>
+</head>
+<body>
+<h1>Bienvenido al panel del evaluador</h1>
+
+<ul>
+    <li><a th:href="@{/evaluador/ver-materiales-asignados}">Ver materiales asignados a evaluar</a></li>
+    <li><a th:href="@{/materiales-participantes}">Ver materiales participantes</a></li>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Cerrar sesión">
+    </form>
+</ul>
+</body>
+</html>
