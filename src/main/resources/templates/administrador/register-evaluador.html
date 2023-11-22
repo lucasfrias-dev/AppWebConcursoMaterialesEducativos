@@ -6,7 +6,7 @@
     <link rel="stylesheet" th:href="@{/css/form.css}">
 </head>
 <body>
-<h1>Registro E devaluador</h1>
+<h1>Registro de Evaluador</h1>
 
 <!-- Formulario de Registro -->
 <form th:action="@{/participar}" th:object="${user}" method="post">
@@ -52,12 +52,12 @@
         </table>
     </fieldset>
     <td>
-        <form th:action="@{/administrador/panel-administrador.html}" method="post">
+        <form th:action="@{/administrador/panel-administrador}" method="post">
             <input type="submit" value="Volver al Panel">
         </form>
     </td>
     <td>
-        <form th:action="@{/administrador/evaluadores-registrados.html}" method="post">
+        <form th:action="@{/administrador/evaluadores-registrados}" method="post">
             <input type="submit" value="Ver Evaluadores Registrados">
         </form>
     </td>
