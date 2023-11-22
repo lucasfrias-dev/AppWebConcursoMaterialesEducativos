@@ -1,6 +1,8 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.service;
 
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.MaterialRepository;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -8,14 +10,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 public class UserServiceImpl implements UserService{
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private MaterialRepository materialRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(username);
@@ -50,6 +55,17 @@ public class UserServiceImpl implements UserService{
         userDB.setEmail(user.getEmail());
         userRepository.save(userDB);
     }
+    @Override
+    public void asignarMaterialAEvaluador(Long materialId, Long evaluadorId) {
+        Material material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new NoSuchElementException("No material found with id " + materialId));
+        User evaluador = userRepository.findById(evaluadorId)
+                .orElseThrow(() -> new NoSuchElementException("No evaluator found with id " + evaluadorId));
+        material.getEvaluadores().add(evaluador);
+        evaluador.getMaterialesAEvaluar().add(material);
+        materialRepository.save(material);
+        userRepository.save(evaluador);
+    }
 
     private boolean emailExists(String email) throws Exception {
         User user = userRepository.findByEmail(email);
@@ -61,8 +77,8 @@ public class UserServiceImpl implements UserService{
         return false;
     }
 
-    public List<User> allEvaluador(){
-        return userRepository.findAllEvaluador();
+    public List<User> getAllEvaluadores(){
+        return userRepository.findAllEvaluadores();
     }
 
     public void save(User user) {

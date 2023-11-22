@@ -1,5 +1,6 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.service;
 
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.UserRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +10,8 @@ import java.util.List;
 
 public interface UserService extends UserDetailsService{
 
-    List<User> allEvaluador();
+
+    List<User> getAllEvaluadores();
 
     /*List<User> getAdministrador();*/
 //Guardar usuario modificado
@@ -20,4 +22,7 @@ public interface UserService extends UserDetailsService{
     User findById(Long id);
 
     void updateUser(User user, Long id);
+
+    void asignarMaterialAEvaluador(Long materialId, Long evaluadorId);
+
 }
