@@ -11,6 +11,7 @@
             <h4>Apelido:</h4> <td th:text="${usuario.getApellido()}"></td>
             <h4>Email:</h4> <td th:text="${usuario.getEmail()}"></td>
             <h4>Rol:</h4> <td th:text="${usuario.getRol().toString()}"></td>
+        </div>
     </tr>
     <td>
         <form th:action="@{/administrador/panel-administrador.html}" method="post">
