@@ -22,7 +22,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/concursante")
-@PreAuthorize("hasRole('ROLE_CONCURSANTE')")
+@PreAuthorize("hasRole('CONCURSANTE')")
 public class ConcursanteController {
 
     @Autowired
@@ -38,7 +38,7 @@ public class ConcursanteController {
     }*/
 
     //Esta es la pantalla de inicio o index//
-    @GetMapping("/")
+    @GetMapping("/index")
     public String userInSession(Authentication authentication, Model model) {
         User usuario= (User) authentication.getPrincipal();
         model.addAttribute("usuario", usuario);

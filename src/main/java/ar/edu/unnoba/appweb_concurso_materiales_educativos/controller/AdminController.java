@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/administrador")
-@PreAuthorize("hasRole('ROLE_ADMINISTRADOR')") /*solo los administradores acceden a este controlador*/
+@PreAuthorize("hasRole('ADMINISTRADOR')") /*solo los administradores acceden a este controlador*/
 public class AdminController {
     @Autowired
     private UserService userService;
@@ -32,7 +32,7 @@ public class AdminController {
     }*/
 
     //Esta es la pantalla de inicio o index//
-    @GetMapping("/")
+    @GetMapping("/index")
     public String userInSession(Authentication authentication, Model model) {
         User usuario = (User) authentication.getPrincipal();
         model.addAttribute("usuario", usuario);
@@ -50,7 +50,7 @@ public class AdminController {
     }
 
     /*mostrar materiales en revision*/
-    @GetMapping("/materiales/pendientes")
+    @GetMapping("/materiales-pendientes")
     public String showMaterialesPendientes(Model model) {
         model.addAttribute("materiales", materialService.getMaterialesPendientes());
         return "administrador/materiales-pendientes";
@@ -77,11 +77,11 @@ public class AdminController {
     @GetMapping("/register-evaluador")
     public String registerEvaludor(Model model) {
         model.addAttribute("evaluador", new User());
-        return "redirect:administrador/register-evaluador";
+        return "administrador/register-evaluador";
     }
 
     @PostMapping("/register-evaluador")
-    public String createEvaluador(@Valid @ModelAttribute("user") User user) throws Exception {
+    public String createEvaluador(@Valid @ModelAttribute("evaluador") User user) throws Exception {
         userService.createUser(user, User.Rol.EVALUADOR);
         return "administrador/register-evaluador";
     }
@@ -99,14 +99,14 @@ public class AdminController {
     }
     //funcion para asignar los materiales a los evaluadores//
 
-    @GetMapping("/materiales/asignar-material-evaluador")
+    @GetMapping("/asignar-material-evaluador")
     public String showAssignMaterialForm(Model model) {
         model.addAttribute("materiales", materialService.getMateriales());
         model.addAttribute("evaluadores", userService.getAllEvaluadores());
         return "administrador/asignar-material-evaluador";
     }
 
-    @PostMapping("/materiales/asignar-material-evaluador")
+    @PostMapping("/asignar-material-evaluador")
     public ResponseEntity<String> asignarMaterial(@RequestParam Long materialId, @RequestParam Long evaluadorId) {
         /*Material material=materialService.getMaterial(id2);
         User user=userService.findById(id);

@@ -46,9 +46,9 @@ public class HomeController {
     @GetMapping("/default")
     public String defaultAfterLogin(HttpServletRequest request) {
         if (request.isUserInRole("ADMINISTRADOR")) {
-            return "redirect:/administrador/";
+            return "redirect:/administrador/index";
         } else if (request.isUserInRole("CONCURSANTE")) {
-            return "redirect:/concursante/";
+            return "redirect:/concursante/index";
         } else {
             throw new IllegalStateException("Rol desconocido");
         }

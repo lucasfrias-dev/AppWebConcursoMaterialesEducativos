@@ -47,7 +47,9 @@
                 <li><a class="nav-link  scrollto" href="../Folio/materialesPresentados.html">Ver Materiales
                         Presentados</a></li>
                 <li><a class="nav-link scrollto" href="#contact">Contacto</a></li>
-                <li><a class="btn btn-sesion" href="/logout">Cerrar Sesión</a></li>
+                <form th:action="@{/logout}" method="post">
+                    <input type="submit" value="Cerrar sesión">
+                </form>
             </ul>
             <i class="bi bi-list mobile-nav-toggle"></i>
         </nav><!-- .navbar -->
@@ -60,12 +62,9 @@
                 <a href="#" class="list-group-item list-group-item-action py-2 ripple active" aria-current="true">
                     <i class=" me-3"></i><span>Menú de Acciones</span>
                 </a>
-                <a href="asignar-material-evaluador" class="list-group-item list-group-item-action py-2 ripple"><i
-                    class=" me-3"></i><span>Asignar Material a un Evaluador</span></a>
-                <a href="materiales-pendientes" class="list-group-item list-group-item-action py-2 ripple ">
-                    <i class=" me-3"></i><span>Listado de Materiales Pendientes de Evaluación</span></a>
-                <a href="register-evaluador.html" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class=" me-3"></i><span>Registrar Evaluador</span></a>
+                <a th:href="@{/administrador/asignar-material-evaluador}">Asignar material a Evaluador</a>
+                <a th:href="@{/administrador/materiales-pendientes}">Listado de Materiales Pendientes de Evaluación</a>
+                <a th:href="@{/administrador/register-evaluador}">Registrar Evaluador</a>
 
                 <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
                         class=" me-3"></i><span>Materiales ya Evaluados</span></a>
