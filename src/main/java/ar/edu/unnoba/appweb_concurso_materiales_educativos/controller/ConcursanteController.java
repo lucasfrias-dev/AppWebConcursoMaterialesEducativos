@@ -55,26 +55,22 @@ public class ConcursanteController {
         return "redirect:/login?logout";
     }
 
-    /*crear Nuevo Material*/
-    @PreAuthorize("hasRole('ROLE_CONCURSANTE')")  /*solo los participante pueden cargar material*/
     @GetMapping("/postular-material")
     public String showPostularMaterial(Model model) {
         model.addAttribute("material", new Material());
-        return "concursante/postular-material";
+        return "/concursante/postular-material";
     }
 
-    @PreAuthorize("hasRole('ROLE_CONCURSANTE')")
     @PostMapping("/postular-material")
-    public String createMaterial(@ModelAttribute("material") Material material, BindingResult result, Model model, Authentication authentication){
+    public String createMaterial(@Valid @ModelAttribute("material") Material material, BindingResult result, Model model, Authentication authentication){
         if (result.hasErrors()) {
-            return "concursante/cargar-material";
+            model.addAttribute("material", material);
+            return "concursante/postular-material";
         }
 
         User sessionUser = (User) authentication.getPrincipal();
-
         materialService.createMaterial(material, sessionUser);
-        model.addAttribute("message", "Material cargado correctamente.");
-        return "concursante/confirmacion-carga";
+        return "redirect:/concursante/mis-materiales";
     }
 
     /*Ver materiar del usuario en sesion*//*
@@ -112,10 +108,10 @@ public class ConcursanteController {
         return modelAndView;
     }
 
-    @GetMapping("/profile/{id}")
-    public String showProfile(Model model, @PathVariable("id") Long id) {
-        User user = userService.findById(id);
-        model.addAttribute("user", user);
+    @GetMapping("/profile")
+    public String showProfile(Model model, Authentication authentication) {
+        User sessionUser = (User) authentication.getPrincipal();
+        model.addAttribute("user", sessionUser);
         return "concursante/profile";
     }
 
