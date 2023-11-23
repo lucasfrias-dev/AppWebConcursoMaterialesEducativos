@@ -83,7 +83,7 @@ public class HomeController {
         try {
             userService.createUser(user, User.Rol.CONCURSANTE);
         } catch (Exception e) {  // Si ocurre un error, añade el mensaje de error al modelo y retorna la vista "register"
-            model.addAttribute("formError", e.getMessage());
+            result.rejectValue("email", "error.email", e.getMessage());
             model.addAttribute("user", user);
             return "/participar";
         }
