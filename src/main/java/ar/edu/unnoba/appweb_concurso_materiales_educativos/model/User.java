@@ -43,7 +43,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
-    @OneToMany(mappedBy = "concursante")
+    @OneToMany(mappedBy = "concursante", fetch = FetchType.EAGER)
     private List<Material> materialesPostulados = new ArrayList<>();
 
     @ManyToMany
