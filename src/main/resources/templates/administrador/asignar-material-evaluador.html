@@ -14,7 +14,7 @@
     <select id="evaluatorId" name="evaluatorId" th:required="true">
         <option th:each="user : ${evaluadores}" th:value="${user.id}" th:text="${user.nombre + user.apellido}"></option>
     </select>
-    <button type="submit">Assign</button>
+    <button type="submit">Asignar</button>
 </form>
 </body>
 </html>
