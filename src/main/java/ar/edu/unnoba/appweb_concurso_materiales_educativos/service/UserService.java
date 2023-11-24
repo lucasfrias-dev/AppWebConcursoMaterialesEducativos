@@ -21,7 +21,7 @@ public interface UserService extends UserDetailsService{
 
     User findById(Long id);
 
-    void updateUser(User user, Long id);
+    void updateUser(User user, Long id) throws Exception;
 
     void asignarMaterialAEvaluador(Long materialId, Long evaluadorId);
 
