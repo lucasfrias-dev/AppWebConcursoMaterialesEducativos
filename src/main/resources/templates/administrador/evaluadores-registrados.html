@@ -14,11 +14,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="evaluador : ${evaluadores}">
+    <tr th:each="evaluador : ${ev}">
         <td th:text="${evaluador.nombre}"></td>
         <td th:text="${evaluador.apellido}"></td>
         <td>
-            <form th:action="@{'/' + ${evaludor.id} + '/ver'}" method="post">
+            <form th:action="@{'/' + ${evaluador.id} + '/ver'}" method="post">
                 <input type="submit" value="Ver Descripcion">
             </form>
         </td>

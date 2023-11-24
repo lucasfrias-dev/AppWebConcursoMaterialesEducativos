@@ -83,13 +83,13 @@ public class AdminController {
     @PostMapping("/register-evaluador")
     public String createEvaluador(@Valid @ModelAttribute("evaluador") User user) throws Exception {
         userService.createUser(user, User.Rol.EVALUADOR);
-        return "administrador/register-evaluador";
+        return "redirect:administrador/evaluadores-registrados";
     }
 
     @GetMapping("/evaluadores-registrados")
     public String evaludoresDisponibles(Model model) {
-        model.addAttribute("evaluadores", userService.getAllEvaluadores());
-        return "redirect:administrador/evaluadores-registrados";
+        model.addAttribute("ev", userService.getAllEvaluadores());
+        return "administrador/evaluadores-registrados";
     }
     //Ver descripcion de los evaluadores//
     @GetMapping("/{id}/ver-evaludor")
