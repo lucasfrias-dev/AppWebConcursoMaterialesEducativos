@@ -92,10 +92,10 @@ public class AdminController {
         return "administrador/evaluadores-registrados";
     }
     //Ver descripcion de los evaluadores//
-    @GetMapping("/{id}/ver-evaludor")
+    @GetMapping("/{id}/ver-evaluador")
     public String verEvaluador(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("evaluador", userService.findById(id));
-        return "redirect:administrador/ver-evaludor";
+        model.addAttribute("ev", userService.findById(id));
+        return "administrador/ver-evaluador";
     }
     //funcion para asignar los materiales a los evaluadores//
 

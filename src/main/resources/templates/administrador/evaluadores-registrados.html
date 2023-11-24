@@ -18,7 +18,7 @@
         <td th:text="${evaluador.nombre}"></td>
         <td th:text="${evaluador.apellido}"></td>
         <td>
-            <form th:action="@{'/' + ${evaluador.id} + '/ver'}" method="post">
+            <form th:action="@{'/' + ${evaluador.id} + '/ver-evaluador'}" method="post">
                 <input type="submit" value="Ver Descripcion">
             </form>
         </td>
