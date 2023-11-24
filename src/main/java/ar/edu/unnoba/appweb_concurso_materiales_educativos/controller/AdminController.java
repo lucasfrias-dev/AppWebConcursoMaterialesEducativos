@@ -68,10 +68,10 @@ public class AdminController {
         return "redirect:/administrador/materiales-pendientes";
     }
 
-    @GetMapping("materiales/{id}/rechazar")
+    @PostMapping("materiales/{id}/rechazar")
     public String rechazarMaterial(@PathVariable("id") Long id) {
         materialService.updateRechazado(id);
-        return "redirect:administrador/materiales-pendientes";
+        return "redirect:/administrador/materiales-pendientes";
     }
     //Cargar los Usuario de tipo Evaluador//
     @GetMapping("/register-evaluador")
@@ -83,7 +83,7 @@ public class AdminController {
     @PostMapping("/register-evaluador")
     public String createEvaluador(@Valid @ModelAttribute("evaluador") User user) throws Exception {
         userService.createUser(user, User.Rol.EVALUADOR);
-        return "redirect:administrador/evaluadores-registrados";
+        return "redirect:/administrador/evaluadores-registrados";
     }
 
     @GetMapping("/evaluadores-registrados")

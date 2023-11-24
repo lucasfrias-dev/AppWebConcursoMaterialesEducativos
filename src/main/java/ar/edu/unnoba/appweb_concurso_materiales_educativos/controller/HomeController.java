@@ -64,7 +64,7 @@ public class HomeController {
     @GetMapping("/participar")
     public String registerConcursante(Model model) {
         model.addAttribute("user", new User());
-        return "participar";
+        return "/participar";
     }
 
     @PostMapping("/participar")

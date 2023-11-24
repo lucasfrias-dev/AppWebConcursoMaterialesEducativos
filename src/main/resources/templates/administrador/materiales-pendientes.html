@@ -28,12 +28,12 @@
         <td th:text="${material.concursante}"></td>
         <td th:text="${material.autores}"></td>
         <td>
-            <form th:action="@{'/' + ${material.id} + '/aprobar'}" method="post">
+            <form th:action="@{'/materiales/' + ${material.id} + '/aprobar'}" method="post">
                 <input type="submit" value="Aprobar">
             </form>
         </td>
         <td>
-            <form th:action="@{'/' + ${material.id} + '/rechazar'}" method="post">
+            <form th:action="@{'/materiales/' + ${material.id} + '/rechazar'}" method="post">
                 <input type="submit" value="Rechazar">
             </form>
         </td>

@@ -9,7 +9,7 @@
 <h1>Registro de Evaluador</h1>
 
 <!-- Formulario de Registro -->
-<form th:action="@{/register-evaluador}" th:object="${evaluador}" method="post">
+<form th:action="@{/administrador/register-evaluador}" th:object="${evaluador}" method="post">
     <fieldset>
         <legend>Datos del usuario</legend>
         <table>
@@ -37,14 +37,7 @@
                     <input type="password" th:field="*{password}"/>
                 </label></td>
             </tr>
-            <tr>
-            <tr>
-                <td><label>Repetir contraseña: </label></td>
-                <td><label>
-                    <input type="password" name="passwordConfirm"/>
-                </label></td>
-            </tr>
-            <tr>
+
                 <td>
                     <button type="submit">Registrarse</button>
                 </td>
