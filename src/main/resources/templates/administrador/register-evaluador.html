@@ -44,17 +44,18 @@
             </tr>
         </table>
     </fieldset>
-    <td>
-        <form th:action="@{/administrador/index}" method="get">
-            <input type="submit" value="Volver al Panel">
-        </form>
-    </td>
-    <td>
-        <form th:action="@{/administrador/evaluadores-registrados}" method="post">
-            <input type="submit" value="Ver Evaluadores Registrados">
-        </form>
-    </td>
 </form>
+    <td>
+        <a th:href="@{/administrador/index}" method="post">
+        <input type="submit" value="Cerrar sesión">
+        </a>
+    </td>
+    <td>
+        <a th:href="@{/administrador/evaluadores-registrados}" method="post">
+            <input type="submit" value="Ver Evaluadores Registrados">
+        </a>
+    </td>
+
 
 </body>
 </html>
