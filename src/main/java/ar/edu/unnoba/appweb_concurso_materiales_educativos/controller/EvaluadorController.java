@@ -20,7 +20,7 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/evaluador")
-@PreAuthorize("hasRole('ROLE_EVALUADOR')")
+@PreAuthorize("hasRole('EVALUADOR')")
 public class EvaluadorController {
 
     @Autowired
