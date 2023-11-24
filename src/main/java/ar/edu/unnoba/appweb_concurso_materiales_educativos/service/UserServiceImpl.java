@@ -49,19 +49,23 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public void updateUser(User user, Long id) {
+    public void updateUser(User updateUser, Long id) throws Exception{
         User userDB = userRepository.findById(id).get();
-        userDB.setNombre(user.getUsername());
-        userDB.setApellido(user.getUsername());
-        userDB.setEmail(user.getEmail());
+
+        if(!emailExists(updateUser.getEmail())){
+            userDB.setEmail(updateUser.getEmail());
+        }
+
+        userDB.setNombre(updateUser.getNombre());
+        userDB.setApellido(updateUser.getApellido());
         userRepository.save(userDB);
     }
     @Override
     public void asignarMaterialAEvaluador(Long materialId, Long evaluadorId) {
         Material material = materialRepository.findById(materialId)
-                .orElseThrow(() -> new NoSuchElementException("No material found with id " + materialId));
+                .orElseThrow(() -> new NoSuchElementException("No se encontró material con id. " + materialId));
         User evaluador = userRepository.findById(evaluadorId)
-                .orElseThrow(() -> new NoSuchElementException("No evaluator found with id " + evaluadorId));
+                .orElseThrow(() -> new NoSuchElementException("No se encontró evaluador con id. " + evaluadorId));
         material.getEvaluadores().add(evaluador);
         evaluador.getMaterialesAEvaluar().add(material);
         materialRepository.save(material);
