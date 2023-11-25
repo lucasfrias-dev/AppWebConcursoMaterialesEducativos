@@ -3,6 +3,8 @@ package ar.edu.unnoba.appweb_concurso_materiales_educativos.model;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -43,17 +45,20 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "concursante", fetch = FetchType.EAGER)
-    private List<Material> materialesPostulados = new ArrayList<>();
+    private Set<Material> materialesPostulados = new HashSet<>();
 
-    @ManyToMany
+    @EqualsAndHashCode.Exclude
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "evaluador_material",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "material_id"))
     private Set<Material> materialesAEvaluar = new HashSet<>();
 
-    @OneToMany(mappedBy = "evaluador")
+    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "evaluador", fetch = FetchType.EAGER)
     private Set<Evaluacion> evaluacionesRealizadas = new HashSet<>();
 
     // Métodos de la interfaz UserDetails
@@ -92,6 +97,13 @@ public class User implements UserDetails {
         return true;
     }
 
+    @Override
+    public String toString() {
+        return "id=" + id +
+                ", email='" + email + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'';
+    }
 
     // Rol es un enum que define los roles de los usuarios
     public enum Rol {
@@ -99,6 +111,8 @@ public class User implements UserDetails {
         EVALUADOR,
         CONCURSANTE
     }
+
+
 // Estas funciones me permite saber el rol del usuario//
     /*public boolean isParticipante(){
         return this.getRol().toString().equals("CONCURSANTE");

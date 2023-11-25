@@ -7,7 +7,6 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.UserReposi
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -41,9 +40,15 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public List<Material> getMaterialesPendientes(){
+    public List<Material> getMaterialesPendientesAprobacion(){
        return materialRepository.findMaterialsByAprobadoIsNull();
     }
+
+    @Override
+    public List<Material> getMaterialesPendientesEvaluacion() {
+        return materialRepository.findMaterialsByEvaluadoIsFalseAndAprobadoIsTrue();
+    }
+
 
     @Override
     public Material getMaterial(Long id) {
@@ -56,17 +61,23 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     @Override
-    public void updateAprobado(Long id){
+    public void aprobarMaterial(Long id){
         Material material = materialRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Material educativo no encontrado con id: " + id));
         material.setAprobado(true);
         materialRepository.save(material);
     }
 
     @Override
-    public void updateRechazado(Long id){
+    public void rechazarMaterial(Long id){
         Material material = materialRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Material educativo no encontrado con id: " + id));
         material.setAprobado(false);
         materialRepository.save(material);
+    }
+
+    //Un material esta evaluado si tiene tantas evaluaciones como evaluadores
+    @Override
+    public boolean estaEvaluado(Material material){
+        return material.getEvaluaciones().size() == material.getEvaluadores().size();
     }
 
 }

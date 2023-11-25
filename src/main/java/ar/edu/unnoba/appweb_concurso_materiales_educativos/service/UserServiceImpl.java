@@ -1,16 +1,17 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.service;
 
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Evaluacion;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.MaterialRepository;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.UserRepository;
-import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -61,11 +62,16 @@ public class UserServiceImpl implements UserService{
         userRepository.save(userDB);
     }
     @Override
-    public void asignarMaterialAEvaluador(Long materialId, Long evaluadorId) {
+    public void asignarMaterialAEvaluador(Long materialId, Long evaluadorId) throws Exception{
         Material material = materialRepository.findById(materialId)
                 .orElseThrow(() -> new NoSuchElementException("No se encontró material con id. " + materialId));
         User evaluador = userRepository.findById(evaluadorId)
                 .orElseThrow(() -> new NoSuchElementException("No se encontró evaluador con id. " + evaluadorId));
+
+        if (material.getEvaluadores().contains(evaluador)) {
+            throw new IllegalStateException("El material ya está asignado al evaluador");
+        }
+
         material.getEvaluadores().add(evaluador);
         evaluador.getMaterialesAEvaluar().add(material);
         materialRepository.save(material);
@@ -82,10 +88,20 @@ public class UserServiceImpl implements UserService{
         return false;
     }
 
+    @Override
     public List<User> getAllEvaluadores(){
         return userRepository.findAllEvaluadores();
     }
 
+    @Override
+    public List<User> getAllAdministradores() {
+        return userRepository.findAllAdministradores();
+    }
+
+    @Override
+    public List<User> getEvaluadoresPendientes(Material material) {
+        return userRepository.findEvaluadoresPendientes(material);
+    }
     public void save(User user) {
         userRepository.save(user);
     }

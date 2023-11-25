@@ -12,17 +12,22 @@ public interface MaterialService {
 
     List<Material> getMaterialesByConcursante(User user);
 
-    void updateRechazado(Long id);
+    void rechazarMaterial(Long id);
 
-    void updateAprobado(Long id);
+    void aprobarMaterial(Long id);
 
     List<Material> getMateriales();
 
     List<Material> getMaterialesParticipantes();
 
-    List<Material> getMaterialesPendientes();
+    List<Material> getMaterialesPendientesAprobacion();
+
+    List<Material> getMaterialesPendientesEvaluacion();
 
     Material getMaterial(Long id);
 
     List<Material> getMaterialesAsignados(User user);
+
+    //Un material esta evaluado si tiene tantas evaluaciones como evaluadores
+    boolean estaEvaluado(Material material);
 }

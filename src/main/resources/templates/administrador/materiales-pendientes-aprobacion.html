@@ -5,8 +5,8 @@
     <title>Materiales Pendientes</title>
 </head>
 <body>
-<h1>Materiales Pendientes</h1>
-<table>
+<h1>Materiales Postulados Pendientes de Aprobacion</h1>
+<table th:if="${materiales.size() > 0}">
     <thead>
     <tr>
         <th>ID</th>
@@ -16,6 +16,7 @@
         <th>Tipo de Material</th>
         <th>Concursante que postula</th>
         <th>Autores</th>
+        <th>Aprobar/Rechazar</th>
     </tr>
     </thead>
     <tbody>
@@ -28,17 +29,18 @@
         <td th:text="${material.concursante}"></td>
         <td th:text="${material.autores}"></td>
         <td>
-            <form th:action="@{'/materiales/' + ${material.id} + '/aprobar'}" method="post">
+            <form th:action="@{'/administrador' + '/materiales/' + ${material.id} + '/aprobar'}" method="post">
                 <input type="submit" value="Aprobar">
             </form>
         </td>
         <td>
-            <form th:action="@{'/materiales/' + ${material.id} + '/rechazar'}" method="post">
+            <form th:action="@{'/administrador' + '/materiales/' + ${material.id} + '/rechazar'}" method="post">
                 <input type="submit" value="Rechazar">
             </form>
         </td>
     </tr>
     </tbody>
 </table>
+<p th:unless="${materiales.size() > 0}">No hay materiales pendientes de aprobacion</p>
 </body>
 </html>

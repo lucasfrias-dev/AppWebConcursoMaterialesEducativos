@@ -2,19 +2,27 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Asignar material</title>
+    <script>
+        function updateFormAction() {
+            let materialId = document.getElementById('materialId').value;
+            let evaluatorId = document.getElementById('evaluatorId').value;
+            let form = document.getElementById('assignForm');
+            form.action = '/administrador/' + materialId + '/' + evaluatorId + '/asignar-material-evaluador';
+        }
+    </script>
 </head>
 <body>
 <h1>Asignar material a Evaluador</h1>
-<form th:action="@{/administrador/asignar-material-evaluador}" method="post">
+<form id="assignForm" th:action="@{/administrador/evaluadores/asignar-material}" method="post">
     <label for="materialId">Material:</label>
     <select id="materialId" name="materialId" th:required="true">
         <option th:each="material : ${materiales}" th:value="${material.id}" th:text="${material.titulo}"></option>
     </select>
     <label for="evaluatorId">Evaluador:</label>
     <select id="evaluatorId" name="evaluatorId" th:required="true">
-        <option th:each="user : ${evaluadores}" th:value="${user.id}" th:text="${user.nombre + user.apellido}"></option>
+        <option th:each="user : ${evaluadores}" th:value="${user.id}" th:text="${user.nombre + ' ' +  ' ' + user.apellido}"></option>
     </select>
-    <button type="submit">Asignar</button>
+    <button type="submit" onclick="updateFormAction()">Asignar</button>
 </form>
 </body>
 </html>

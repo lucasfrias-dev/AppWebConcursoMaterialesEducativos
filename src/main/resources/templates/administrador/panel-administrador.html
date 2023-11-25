@@ -1,187 +1,23 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <meta content="width=device-width, initial-scale=1.0" name="viewport">
-
-    <title>Ced</title>
-    <meta content="" name="description">
-    <meta content="" name="keywords">
-
-
-    <link href="assets/img/marca_ED completa (1).png" rel="icon">
-
-
-    <!-- Google Fonts -->
-    <link
-        href="https://fonts.googleapis.com/css?family=Poppins:300,300i,400,400i,500,500i,600,600i,700,700i|Playfair+Display:400,400i,500,500i,600,600i,700,700i,900,900i"
-        rel="stylesheet">
-
-
-    <link href="assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
-    <link href="assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
-    <link href="assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
-    <link href="assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
-
-
-    <link href="assets/css/style.css" rel="stylesheet">
-
+    <meta charset="UTF-8">
+    <title>Panel del administrador</title>
 </head>
-
-<!-- ======= Header ======= -->
-<header id="header" class="fixed ">
-
-
-    <div class="container d-flex align-items-center justify-content-between">
-
-        <a href="index.html" class="logo"><img src="assets/img/LOGOS-06.png" alt="" class="img-fluid"></a>
-
-
-        <nav id="navbar" class="navbar">
-            <ul>
-                <li><a class="nav-link scrollto" href="#hero">Acerca del Ced</a></li>
-                <li><a class="nav-link scrollto" href="#">Convocatoria</a></li>
-                <li><a class="nav-link  scrollto" href="#">Participar</a></li>
-                <li><a class="nav-link  scrollto" href="../Folio/materialesPresentados.html">Ver Materiales
-                        Presentados</a></li>
-                <li><a class="nav-link scrollto" href="#contact">Contacto</a></li>
-                <form th:action="@{/logout}" method="post">
-                    <input type="submit" value="Cerrar sesión">
-                </form>
-            </ul>
-            <i class="bi bi-list mobile-nav-toggle"></i>
-        </nav><!-- .navbar -->
-
-    </div>
-    <!-- Sidebar -->
-    <nav id="sidebarMenu" class="collapse d-lg-block sidebar collapse bg-white">
-        <div class="position-sticky">
-            <div class="list-group list-group-flush mx-3 mt-4">
-                <a href="#" class="list-group-item list-group-item-action py-2 ripple active" aria-current="true">
-                    <i class=" me-3"></i><span>Menú de Acciones</span>
-                </a>
-                <a th:href="@{/administrador/asignar-material-evaluador}">Asignar material a Evaluador</a>
-                <a th:href="@{/administrador/materiales-pendientes}">Listado de Materiales Pendientes de Evaluación</a>
-                <a th:href="@{/administrador/register-evaluador}">Registrar Evaluador</a>
-
-                <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class=" me-3"></i><span>Materiales ya Evaluados</span></a>
-                <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class=" me-3"></i><span>Materiales Pendientes de Revisión</span></a>
-                <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class=" me-3"></i><span>Estado de La votación</span></a>                    
-                <a href="#" class="list-group-item list-group-item-action py-2 ripple">
-                    <i class=" me-3"></i><span>Ayuda</span>
-                </a>
-                <a href="#" class="list-group-item list-group-item-action py-2 ripple"><i
-                        class=" me-3"></i><span>etc</span></a>
-
-            </div>
-        </div>
-    </nav>
-    <!-- Sidebar -->
-
-</header><!-- End Header -->
-
 <body>
-    <main id="main">
-    <!-- ======= Section ======= -->
-    <div id="about" class="paddsection">
-        <div class="container">
-            <div class="row justify-content-between">
+<h1>Bienvenido al panel del administrador</h1>
 
-                <div class="col-lg-4 ">
-                    <div class="div-img-bg">
-                        <div class="about-img">
-                            <img src="assets/img/LOGOS-05.jpg" class="img-responsive">
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-lg-7">
-                    <div class="about-descr">
-
-                        <p class="p-heading">Bienvenido! </p>
-                        <p class="separator">
-                            Sección o Dashboard para el usuario ADMINISTRADOR, se podria incoporparar una bienvenida,
-                            con una
-                            serie de intrucciones basicas de su funcion, y utilizacion de la seccion.
-                            Mostrar los materiales que se le asignaron a un evaluador, los materiales que ya fueron
-                            evaluados,durante el proceso de convocatoria se podria mostrar los materiales presentados
-                            pendientes de revision, metricas y porcentajes de la votacion, etc
-                        </p>
-                        <p class="separator">
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit. Illum
-                            accusamus quo, placeat, quis officiis rem blanditiis, similique accusantium numquam
-                            assumenda quibusdam? Accusamus commodi illo magnam voluptas adipisci rem harum
-                            possimus.
-                        </p>
-
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div><!-- End Section -->
-
-
-
-
-
-    <!-- ======= Contact Section ======= -->
-    <div id="contact" class="paddsection">
-        <div class="container">
-            <div class="contact-block1">
-                <div class="row">
-
-                    <div class="col-lg-6">
-                        <div class="contact-contact">
-
-                            <h2 class="mb-30">Contacto</h2>
-
-                            <ul class="contact-details">
-                                <li><span>Educación Digital – UNNOBA</span></li>
-                                <li><span>Sarmiento 1169 (B6002CJI) Junín, Buenos Aires, Argentina</span></li>
-                                <li><span>Teléfono: +54 9 2364 407750/span></li>
-                                <li><span>Mail: wite@unnoba.edu.ar</li>
-                            </ul>
-
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-    </div><!-- End Contact Section -->
-
-    </main><!-- End #main -->
-
-    <!-- ======= Footer ======= -->
-    <div id="footer" class="text-center">
-        <div class="container">
-
-
-            <p>&copy; Copyrights Equipo 3</p>
-
-
-        </div>
-    </div><!-- End Footer -->
-
-    <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
-            class="bi bi-arrow-up-short"></i></a>
-
-
-
-
-    <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    <script src="assets/vendor/glightbox/js/glightbox.min.js"></script>
-    <script src="assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-    <script src="assets/vendor/swiper/swiper-bundle.min.js"></script>
-    <script src="assets/vendor/typed.js/typed.min.js"></script>
-    <script src="assets/js/main.js"></script>
-
+<ul>
+    <li><a th:href="@{/administrador/materiales/all}">Listado de todos los Materiales</a></li>
+    <li><a th:href="@{/administrador/materiales/pendientes-de-aprobacion}">Listado de Materiales Pendientes de Aprobación</a></li>
+    <li><a th:href="@{/administrador/materiales/pendientes-de-evaluacion}">Listado de Materiales Pendientes de Evaluación</a></li>
+    <li><a th:href="@{/administrador/evaluadores/asignar-material}">Asignar Material a Evaluador</a></li>
+    <li><a th:href="@{/administrador/register/evaluador}">Registrar Evaluador</a></li>
+    <li><a th:href="@{/administrador/register/admin}">Registrar Administrador</a></li>
+    <li><a th:href="@{/administrador/profile}">Ver mi perfil</a></li>
+    <form th:action="@{/logout}" method="post">
+        <input type="submit" value="Cerrar sesión">
+    </form>
+</ul>
 </body>
-
 </html>

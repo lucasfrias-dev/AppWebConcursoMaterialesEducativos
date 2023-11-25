@@ -78,7 +78,6 @@ public class HomeController {
             return "/participar";
         }
 
-
         // Intenta crear el usuario
         try {
             userService.createUser(user, User.Rol.CONCURSANTE);

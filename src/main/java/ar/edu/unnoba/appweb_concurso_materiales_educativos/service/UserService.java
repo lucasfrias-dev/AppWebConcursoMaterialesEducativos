@@ -13,6 +13,8 @@ public interface UserService extends UserDetailsService{
 
     List<User> getAllEvaluadores();
 
+    List<User> getAllAdministradores();
+
     /*List<User> getAdministrador();*/
 //Guardar usuario modificado
     void save(User user);
@@ -23,6 +25,9 @@ public interface UserService extends UserDetailsService{
 
     void updateUser(User user, Long id) throws Exception;
 
-    void asignarMaterialAEvaluador(Long materialId, Long evaluadorId);
+    void asignarMaterialAEvaluador(Long materialId, Long evaluadorId) throws Exception;
+
+    public List<User> getEvaluadoresPendientes(Material material);
+
 
 }

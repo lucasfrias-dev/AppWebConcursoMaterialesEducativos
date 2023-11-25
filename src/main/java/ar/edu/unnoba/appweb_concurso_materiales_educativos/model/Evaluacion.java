@@ -1,8 +1,11 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 
+@Data
 @Entity
+@Table(name="evaluaciones")
 public class Evaluacion {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

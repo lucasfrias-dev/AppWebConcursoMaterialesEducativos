@@ -9,7 +9,7 @@
 <h1>Registro de Evaluador</h1>
 
 <!-- Formulario de Registro -->
-<form th:action="@{/administrador/register/evaluador}" th:object="${evaluador}" method="post">
+<form th:action="@{/administrador/register/admin}" th:object="${admin}" method="post">
     <fieldset>
         <legend>Datos del usuario</legend>
         <table>
@@ -59,7 +59,7 @@
     </div>
 </form>
     <td>
-        <a th:href="@{/administrador/evaluadores/registrados}">
+        <a th:href="@{/administrador/admin/registrados}">
             <input type="submit" value="Ver Evaluadores Registrados">
         </a>
     </td>

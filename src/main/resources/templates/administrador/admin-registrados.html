@@ -2,10 +2,10 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>Evaluadores Registrados</title>
+    <title>Administradores Registrados</title>
 </head>
 <body>
-<h1>Evaluadores Registrados</h1>
+<h1>Administradores Registrados</h1>
 <table>
     <thead>
     <tr>
@@ -16,11 +16,11 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="evaluador : ${evaluadores}">
-        <td th:text="${evaluador.id}"></td>
-        <td th:text="${evaluador.nombre}"></td>
-        <td th:text="${evaluador.apellido}"></td>
-        <td th:text="${evaluador.email}"></td>
+    <tr th:each="admin : ${administradores}">
+        <td th:text="${admin.id}"></td>
+        <td th:text="${admin.nombre}"></td>
+        <td th:text="${admin.apellido}"></td>
+        <td th:text="${admin.email}"></td>
     </tr>
     </tbody>
 </table>

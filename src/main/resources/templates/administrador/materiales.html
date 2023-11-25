@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin - Materiales</title>
+</head>
+<body>
+<h1>Materiales</h1>
+<table th:if="${materiales.size() > 0}">
+    <thead>
+    <tr>
+        <th>Título</th>
+        <th>Descripción</th>
+        <th>Tipo de Material</th>
+        <th>Disciplina</th>
+        <th>Autores</th>
+        <th>Aprobado</th>
+        <th>Evaluado</th>
+        <th>Evaluadores Asignados</th>
+        <th>Evaluaciones Entregadas</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="material : ${materiales}">
+        <td th:text="${material.titulo}"></td>
+        <td th:text="${material.descripcion}"></td>
+        <td th:text="${material.tipoMaterial}"></td>
+        <td th:text="${material.disciplina}"></td>
+        <td th:text="${material.autores}"></td>
+        <td th:if="${material.aprobado == null}" th:text="'Pendiente'"></td>
+        <td th:if="${material.aprobado != null}" th:text="${material.aprobado ? 'Sí' : 'No'}"></td>
+        <td th:text="${material.evaluado ? 'Sí' : 'No'}"></td>
+        <td th:if="${#lists.isEmpty(material.evaluadores)}">No hay evaluadores</td>
+        <td th:each="evaluador : ${material.evaluadores}" th:unless="${#lists.isEmpty(material.evaluadores)}" th:text="${evaluador.nombre + ' ' +  ' ' + evaluador.apellido}"></td>
+        <td th:if="${#lists.isEmpty(material.evaluaciones)}">No hay evaluaciones</td>
+        <td th:each="evaluacion : ${material.evaluaciones}" th:unless="${#lists.isEmpty(material.evaluaciones)}">
+            <span th:text="${evaluacion.comentario} + ', '"></span>
+            <span th:text="${evaluacion.nota} + ', '"></span>
+            <span th:text="${evaluacion.evaluador.nombre} + ' ' + evaluacion.evaluador.apellido + ', '"></span>
+        </td>
+        <!--<td th:if="${material.aprobado == null}">
+            <form th:action="@{'/materiales/' + ${material.id} + '/aprobar'}" method="post">
+                <input type="submit" value="Aprobar">
+            </form>
+        </td>
+        <td th:if="${material.aprobado == null}">
+            <form th:action="@{'/materiales/' + ${material.id} + '/rechazar'}" method="post">
+                <input type="submit" value="Rechazar">
+            </form>
+        </td>-->
+    </tr>
+    </tbody>
+</table>
+<p th:unless="${materiales.size() > 0}">No hay materiales para mostrar</p>
+</body>
+</html>
