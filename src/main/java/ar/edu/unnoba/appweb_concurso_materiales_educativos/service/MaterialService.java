@@ -10,6 +10,7 @@ public interface MaterialService {
 
     Material createMaterial(Material material, User user);
 
+
     List<Material> getMaterialesByConcursante(User user);
 
     void rechazarMaterial(Long id);

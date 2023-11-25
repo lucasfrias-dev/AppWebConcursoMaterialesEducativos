@@ -15,6 +15,7 @@ public interface UserService extends UserDetailsService{
 
     List<User> getAllAdministradores();
 
+
     /*List<User> getAdministrador();*/
 //Guardar usuario modificado
     void save(User user);
