@@ -26,7 +26,7 @@
         <td th:text="${material.descripcion}"></td>
         <td th:text="${material.disciplina}"></td>
         <td th:text="${material.tipoMaterial}"></td>
-        <td th:text="${material.concursante}"></td>
+        <td th:text="${material.concursante.getNombre()}"></td>
         <td th:text="${material.autores}"></td>
         <td>
             <form th:action="@{'/administrador' + '/materiales/' + ${material.id} + '/aprobar'}" method="post">
