@@ -189,6 +189,7 @@ public class AdminController {
         }
         return ResponseEntity.ok("Material asignado al evaluador exitosamente");
     }
+
     @GetMapping("/profile")
     public String showProfile(Model model, Authentication authentication) {
         User sessionUser = (User) authentication.getPrincipal();
