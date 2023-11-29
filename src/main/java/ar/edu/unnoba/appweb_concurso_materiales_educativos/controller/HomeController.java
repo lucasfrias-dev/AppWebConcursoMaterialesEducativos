@@ -26,7 +26,7 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/")
+    @GetMapping("/index")
     public String home() {
         return "index";
     }
@@ -34,28 +34,33 @@ public class HomeController {
     // Método para manejar las solicitudes GET a la ruta "/login"
     @GetMapping("/login")
     public String showLogin(@RequestParam(value = "error", required = false) String error, Model model) {
-        // Si hay un error, añade un mensaje de error al modelo
-        if (error != null) {
+        if ("disabled".equals(error)) {
+            model.addAttribute("loginError", "Esta cuenta ha sido desactivada");
+        } else if ("bad_credentials".equals(error)) {
             model.addAttribute("loginError", "Usuario o contraseña incorrectos");
         }
-        // Añade un nuevo usuario al modelo
         model.addAttribute("user", new User());
-        return "login"; // Retorna la vista "login"
+        return "login";
     }
 
     @GetMapping("/default")
     public String defaultAfterLogin(HttpServletRequest request) {
         if (request.isUserInRole("ADMINISTRADOR")) {
             return "redirect:/administrador/index";
+
         } else if (request.isUserInRole("CONCURSANTE")) {
             return "redirect:/concursante/index";
-        } else {
-            throw new IllegalStateException("Rol desconocido");
+
+        } else if (request.isUserInRole("EVALUADOR")) {
+            return "redirect:/evaluador/index";
+        }
+        else {
+            return "redirect:/login";
         }
     }
 
     @GetMapping("/materiales-participantes")
-    public String getMaterialesParticipantes(Model model) {
+    public String showMaterialesParticipantes(Model model) {
         List<Material> materialesParticipantes = materialService.getMaterialesParticipantes();
         model.addAttribute("materialesParticipantes", materialesParticipantes);
         return "materiales-participantes";
