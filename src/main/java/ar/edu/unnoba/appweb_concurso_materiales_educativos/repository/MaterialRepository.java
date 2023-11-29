@@ -12,6 +12,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     List<Material> findAll();
 
     Material findMaterialById(Long id);
+
     List<Material> findMaterialsByAprobadoIsTrue();
 
     List<Material> findMaterialsByEvaluadoIsFalseAndAprobadoIsTrue();
