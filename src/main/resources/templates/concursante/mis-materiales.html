@@ -5,7 +5,8 @@
     <title>Mis materiales postulados</title>
 </head>
 <body>
-<table th:if="${materiales.size() > 0}">
+<h1>Mis materiales postulados</h1>
+<table th:if="${materiales?.size() > 0}">
     <tr>
         <th>Nombre</th>
         <th>Descripción</th>
@@ -25,6 +26,6 @@
         <td th:if="${material.aprobado == false}">No aprobado</td>
     </tr>
 </table>
-<p th:unless="${materiales.size() > 0}">No tienes materiales postulados.</p>
+<p th:unless="${materiales?.size() > 0}">No tienes materiales postulados.</p>
 </body>
 </html>
