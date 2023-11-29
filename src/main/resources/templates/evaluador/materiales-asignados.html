@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Materiales asignados a evaluar</title>
+</head>
+<body>
+<h1>Materiales asignados a evaluar</h1>
+<table th:if="${materiales?.size() > 0}">
+    <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Tipo de Material</th>
+        <th>Disciplina a la que pertenece</th>
+        <th>Autores</th>
+        <th>Evaluado por mi</th>
+    </tr>
+    <tr th:each="material, iterStat : ${materiales}">
+        <td th:text="${material.titulo}"></td>
+        <td th:text="${material.descripcion}"></td>
+        <td th:text="${material.tipoMaterial}"></td>
+        <td th:text="${material.disciplina}"></td>
+        <td th:text="${material.autores}"></td>
+        <td th:text="${hasUserEvaluated[iterStat.index] ? 'Sí' : 'No'}"></td>
+        <td><a th:href="@{/evaluador/materiales/asignados/{id}(id=${material.id})}">Ver Material</a></td>
+    </tr>
+</table>
+<p th:unless="${materiales?.size() > 0}">No tienes materiales asignados.</p>
+</body>
+</html>
