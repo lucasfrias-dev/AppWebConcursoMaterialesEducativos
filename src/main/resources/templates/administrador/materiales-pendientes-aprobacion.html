@@ -6,7 +6,7 @@
 </head>
 <body>
 <h1>Materiales Postulados Pendientes de Aprobacion</h1>
-<table th:if="${materiales.size() > 0}">
+<table th:if="${materiales?.size() > 0}">
     <thead>
     <tr>
         <th>ID</th>
@@ -41,6 +41,6 @@
     </tr>
     </tbody>
 </table>
-<p th:unless="${materiales.size() > 0}">No hay materiales pendientes de aprobacion</p>
+<p th:unless="${materiales?.size() > 0}">No hay materiales pendientes de aprobacion</p>
 </body>
 </html>

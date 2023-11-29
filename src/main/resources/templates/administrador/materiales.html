@@ -5,7 +5,7 @@
 </head>
 <body>
 <h1>Materiales</h1>
-<table th:if="${materiales.size() > 0}">
+<table th:if="${materiales?.size() > 0}">
     <thead>
     <tr>
         <th>Título</th>
@@ -35,7 +35,7 @@
         <td th:each="evaluacion : ${material.evaluaciones}" th:unless="${#lists.isEmpty(material.evaluaciones)}">
             <span th:text="${evaluacion.comentario} + ', '"></span>
             <span th:text="${evaluacion.nota} + ', '"></span>
-            <span th:text="${evaluacion.evaluador.nombre} + ' ' + evaluacion.evaluador.apellido + ', '"></span>
+            <span th:text="${evaluacion.evaluador.nombre} + ' ' + ${evaluacion.evaluador.apellido} + '. '"></span>
         </td>
         <!--<td th:if="${material.aprobado == null}">
             <form th:action="@{'/materiales/' + ${material.id} + '/aprobar'}" method="post">
@@ -50,6 +50,6 @@
     </tr>
     </tbody>
 </table>
-<p th:unless="${materiales.size() > 0}">No hay materiales para mostrar</p>
+<p th:unless="${materiales?.size() > 0}">No hay materiales para mostrar</p>
 </body>
 </html>

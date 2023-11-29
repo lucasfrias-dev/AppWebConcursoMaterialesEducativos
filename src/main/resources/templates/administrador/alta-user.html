@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Dar de alta a usuario</title>
+</head>
+<body>
+<h1>Dar de alta a usuario</h1>
+<form th:action="@{/administrador/usuarios/{id}/altaUsuario(id=${usuario.id})}" method="post">
+    <p>¿Estás seguro de que quieres dar de alta al usuario <span th:text="${usuario.nombre}"></span>?</p>
+    <button type="submit">Dar de alta</button>
+</form>
+</body>
+</html>

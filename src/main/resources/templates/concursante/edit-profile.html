@@ -6,7 +6,7 @@
 <body>
 <h1>Editar perfil</h1>
 
-<form th:action="@{/concursante/edit-profile}" th:object="${user}" method="post">
+<form th:action="@{/concursante/profile/edit}" th:object="${user}" method="post">
   <label for="username">Nombre:</label>
   <input type="text" id="name" th:field="*{nombre}" />
 
@@ -16,10 +16,13 @@
   <label for="email">Correo electrónico:</label>
   <input type="email" id="email" th:field="*{email}" />
 
-  <label for="password">Contraseña:</label>
-  <input type="password" id="password" th:field="*{password}" />
+  <button type="submit" value="Actualizar">Actualizar</button>
 
-  <input type="submit" value="Actualizar" />
+  <div class="error-block" th:if="${#fields.hasErrors('*')}">
+    <ul class="error-messages">
+      <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+    </ul>
+  </div>
 </form>
 </body>
 </html>
