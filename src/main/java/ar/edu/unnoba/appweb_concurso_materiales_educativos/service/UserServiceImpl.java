@@ -1,17 +1,16 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.service;
 
-import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Evaluacion;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.MaterialRepository;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -29,6 +28,11 @@ public class UserServiceImpl implements UserService{
         if(user == null){
             throw new UsernameNotFoundException("El usuario " + username + " no existe");
         }
+
+        if (!user.isActive()) {
+            throw new DisabledException("Esta cuenta ha sido desactivada");
+        }
+
         return  user;
     }
 
@@ -102,28 +106,30 @@ public class UserServiceImpl implements UserService{
     public List<User> getEvaluadoresPendientes(Material material) {
         return userRepository.findEvaluadoresPendientes(material);
     }
-    public void save(User user) {
+
+    //TODO: Verificar si el usuario ya evaluó el material
+    @Override
+    public boolean haEvaluadoMaterial(User usuario, Material material) {
+        return material.getEvaluaciones().stream()
+                .anyMatch(evaluacion -> evaluacion.getEvaluador().equals(usuario));
+    }
+
+    @Override
+    public void bajaUsuario(Long id) {
+        User user = userRepository.findById(id).get();
+        user.setActive(false);
         userRepository.save(user);
     }
-    //Da todos los usuarios evaluadores//
-   /* public List<User> getEvaluador() {
-        List<User> usuario=new ArrayList<User>();
-        for (User User : this.userRepository.findAll()){
-            if(User.getRol().toString().equals("EVALUADOR")){
-                usuario.add(User);
-            }
-        }
-        return usuario;
-    }
-//Da todos los usuarios administradores//
+
     @Override
-    public List<User> getAdministrador() {
-        List<User> usuario=new ArrayList<User>();
-        for (User User : this.userRepository.findAll()){
-            if(User.getTipo().equals("Administrador")){
-                usuario.add(User);
-            }
-        }
-        return usuario;
-    }*/
+    public List<User> findAll() {
+        return userRepository.findAll();
+    }
+
+    @Override
+    public void altaUsuario(Long id) {
+        User user = userRepository.findById(id).get();
+        user.setActive(true);
+        userRepository.save(user);
+    }
 }

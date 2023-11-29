@@ -15,11 +15,6 @@ public interface UserService extends UserDetailsService{
 
     List<User> getAllAdministradores();
 
-
-    /*List<User> getAdministrador();*/
-//Guardar usuario modificado
-    void save(User user);
-
     User createUser(User user, User.Rol rol) throws Exception;
 
     User findById(Long id);
@@ -30,5 +25,12 @@ public interface UserService extends UserDetailsService{
 
     public List<User> getEvaluadoresPendientes(Material material);
 
+    //TODO: Verificar si el usuario ya evaluó el material
+    boolean haEvaluadoMaterial(User usuario, Material material);
 
+    void bajaUsuario(Long id);
+
+    List<User> findAll();
+
+    void altaUsuario(Long id);
 }
