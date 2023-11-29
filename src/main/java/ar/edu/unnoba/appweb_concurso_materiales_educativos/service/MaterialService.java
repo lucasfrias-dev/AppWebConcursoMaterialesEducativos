@@ -5,6 +5,7 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.MaterialRepository;
 
 import java.util.List;
+import java.util.Set;
 
 public interface MaterialService {
 
@@ -27,8 +28,8 @@ public interface MaterialService {
 
     Material getMaterial(Long id);
 
-    List<Material> getMaterialesAsignados(User user);
+    Set<Material> getMaterialesAsignados(User user);
 
     //Un material esta evaluado si tiene tantas evaluaciones como evaluadores
-    boolean estaEvaluado(Material material);
+    void estaEvaluado(Material material);
 }

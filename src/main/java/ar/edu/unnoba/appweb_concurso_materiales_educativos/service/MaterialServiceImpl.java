@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class MaterialServiceImpl implements MaterialService {
@@ -18,10 +19,11 @@ public class MaterialServiceImpl implements MaterialService {
     private UserRepository userRepository;
     @Override
     public Material createMaterial(Material material, User user) {
-        /*material.setEnRevision();*/
         material.setConcursante(user);
         user.getMaterialesPostulados().add(material);
-        return materialRepository.save(material);
+        materialRepository.save(material);
+        userRepository.save(user);
+        return material;
     }
 
     @Override
@@ -49,15 +51,14 @@ public class MaterialServiceImpl implements MaterialService {
         return materialRepository.findMaterialsByEvaluadoIsFalseAndAprobadoIsTrue();
     }
 
-
     @Override
     public Material getMaterial(Long id) {
         return materialRepository.findMaterialById(id);
     }
 
     @Override
-    public List<Material> getMaterialesAsignados(User user) {
-        return (List<Material>) user.getMaterialesAEvaluar();
+    public Set<Material> getMaterialesAsignados(User user) {
+        return user.getMaterialesAEvaluar();
     }
 
     @Override
@@ -76,8 +77,9 @@ public class MaterialServiceImpl implements MaterialService {
 
     //Un material esta evaluado si tiene tantas evaluaciones como evaluadores
     @Override
-    public boolean estaEvaluado(Material material){
-        return material.getEvaluaciones().size() == material.getEvaluadores().size();
+    public void estaEvaluado(Material material){
+        material.setEvaluado(material.getEvaluaciones().size() == material.getEvaluadores().size());
+        materialRepository.save(material);
     }
 
 }
