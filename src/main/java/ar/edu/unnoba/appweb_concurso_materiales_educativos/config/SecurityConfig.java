@@ -3,6 +3,9 @@ package ar.edu.unnoba.appweb_concurso_materiales_educativos.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,17 +28,27 @@ public class SecurityConfig {
                         .requestMatchers("/", "/webjars/**", "/resources/**","/css/**", "/js/**", "/login", "/materiales-participantes", "/participar").permitAll()
                         .requestMatchers("/concursante/**").hasRole("CONCURSANTE")
                         .requestMatchers("/administrador/**").hasRole("ADMINISTRADOR")
+                        .requestMatchers("/evaluador/**").hasRole("EVALUADOR")
                         .anyRequest().authenticated() // Requiere autenticación para cualquier otra solicitud
                 )
                 // Configura el inicio de sesión basado en formularios
                 .formLogin((form) -> form
                         .permitAll() // Permite el acceso a la página de inicio de sesión sin autenticación
                         // Configura la página de inicio de sesión y la página a la que se redirige después de un inicio de sesión exitoso
-                        .loginPage("/login").permitAll().failureUrl("/login?error=true")
+                        .loginPage("/login").permitAll()
                         // Configura los parámetros de nombre de usuario y contraseña
                         .usernameParameter("email").passwordParameter("password")
                         // apunta a la funcion login despues del inicio de secion//
-                        .defaultSuccessUrl("/default"))
+                        .defaultSuccessUrl("/default", true)
+                        .failureHandler((request, response, exception) -> {
+                            String error = null;
+                            if (exception instanceof DisabledException || exception instanceof InternalAuthenticationServiceException) {
+                                error = "disabled";
+                            } else if (exception instanceof BadCredentialsException) {
+                                error = "bad_credentials";
+                            }
+                            response.sendRedirect("/login?error=" + error);
+                        }))
 
                 .logout((logout) -> logout // Configura el cierre de sesión
                         .permitAll() // Permite el acceso a la página de cierre de sesión sin autenticación
