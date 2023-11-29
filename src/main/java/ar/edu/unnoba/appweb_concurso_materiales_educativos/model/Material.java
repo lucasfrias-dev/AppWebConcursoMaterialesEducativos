@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.EqualsAndHashCode;
+
 import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
@@ -41,8 +43,6 @@ public class Material implements Serializable {
     @Column(name = "aprobado")
     private Boolean aprobado;
 
-    /*private String estado;*/ //Coloque esta variable para saver el estado actual de material de manera mas simple//
-
     @Column(name = "evaluado")
     private Boolean evaluado = false;
 
@@ -56,18 +56,8 @@ public class Material implements Serializable {
     @ManyToMany(mappedBy = "materialesAEvaluar", fetch = FetchType.EAGER)
     private Set<User> evaluadores = new HashSet<>();
 
+    @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "material", fetch = FetchType.EAGER)
     private Set<Evaluacion> evaluaciones = new HashSet<>();
-
-
-    /*public void setEnRevision(){
-        this.setEstado("Revision");
-    }
-    public void setAprobado(){
-        this.setEstado("Aprobado");
-    }
-    public void setRechazado(){
-        this.setEstado("Rechazado");
-    }*/
 
 }
