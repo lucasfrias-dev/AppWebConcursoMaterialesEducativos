@@ -5,14 +5,13 @@
   <title>Mis participantes</title>
 </head>
 <body>
-<table th:if="${materiales?.size() > 0}">
+<table th:if="${materialesParticipantes?.size() > 0}">
   <tr>
     <th>Nombre</th>
     <th>Descripción</th>
     <th>Tipo de Material</th>
     <th>Disciplina a la que pertenece</th>
     <th>Autores</th>
-    <th>Estado de aprobación</th>
   </tr>
   <tr th:each="material : ${materialesParticipantes}">
     <td th:text="${material.titulo}"></td>
@@ -22,6 +21,6 @@
     <td th:text="${material.autores}"></td>
   </tr>
 </table>
-<p th:unless="${materiales?.size() > 0}">Todavia no participa ningun material</p>
+<p th:unless="${materialesParticipantes?.size() > 0}">Todavia no participa ningun material</p>
 </body>
 </html>
