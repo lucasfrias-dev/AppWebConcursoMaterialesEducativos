@@ -63,12 +63,6 @@ public class AdminController {
         return "administrador/materiales";
     }
 
-    /*@GetMapping("/{id}/material")
-    public String viewMaterial(@PathVariable("id") Long id, Model model) {
-        model.addAttribute("material", materialService.getMaterial(id));
-        return "admin/material";
-    }*/
-
     /*mostrar materiales en revision*/
     @GetMapping("/materiales/pendientes-de-aprobacion")
     public String showMaterialesPendientesAprobaccion(Model model) {
@@ -160,20 +154,52 @@ public class AdminController {
     }
 
     @GetMapping("/evaluadores/registrados")
-    public String evaludoresDisponibles(Model model) {
+    public String showeEvaludoresDisponibles(Model model) {
         model.addAttribute("evaluadores", userService.getAllEvaluadores());
         return "administrador/evaluadores-registrados";
     }
 
     @GetMapping("/admin/registrados")
-    public String administradoresDisponibles(Model model) {
+    public String showAdministradoresDisponibles(Model model) {
         model.addAttribute("administradores", userService.getAllAdministradores());
         return "administrador/admin-registrados";
     }
 
+    @GetMapping("/usuarios/all")
+    public String mostrarUsuarios(Model model) {
+        model.addAttribute("usuarios", userService.findAll());
+        return "administrador/all-users";
+    }
+
+    @GetMapping("/usuarios/{id}/bajaUsuario")
+    public String showBajaUsuario(@PathVariable Long id, Model model) {
+        User usuario = userService.findById(id);
+        model.addAttribute("usuario", usuario);
+        return "administrador/baja-user";
+    }
+
+    @PostMapping("/usuarios/{id}/bajaUsuario")
+    public String bajaUsuario(@PathVariable Long id) {
+        userService.bajaUsuario(id);
+        return "redirect:/administrador/usuarios/all";
+    }
+
+    @GetMapping("/usuarios/{id}/altaUsuario")
+    public String showAltaUsuario(@PathVariable Long id, Model model) {
+        User usuario = userService.findById(id);
+        model.addAttribute("usuario", usuario);
+        return "administrador/alta-user";
+    }
+
+    @PostMapping("/usuarios/{id}/altaUsuario")
+    public String altaUsuario(@PathVariable Long id) {
+        userService.altaUsuario(id);
+        return "redirect:/administrador/usuarios/all";
+    }
+
     //funcion para asignar los materiales a los evaluadores//
     @GetMapping("/evaluadores/asignar-material")
-    public String showAssignMaterialForm(Model model) {
+    public String showAsignarMaterial(Model model) {
         model.addAttribute("materiales", materialService.getMateriales());
         model.addAttribute("evaluadores", userService.getAllEvaluadores());
         return "administrador/asignar-material-evaluador";
@@ -188,13 +214,6 @@ public class AdminController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
         return ResponseEntity.ok("Material asignado al evaluador exitosamente");
-    }
-
-    @GetMapping("/profile")
-    public String showProfile(Model model, Authentication authentication) {
-        User sessionUser = (User) authentication.getPrincipal();
-        model.addAttribute("user", sessionUser);
-        return "/administrador/profile";
     }
 
     @GetMapping("/profile/edit")
