@@ -45,6 +45,9 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private Rol rol;
 
+    @Column(name = "active")
+    private boolean active = true;
+
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "concursante", fetch = FetchType.EAGER)
     private Set<Material> materialesPostulados = new HashSet<>();
@@ -94,7 +97,7 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.active;
     }
 
     @Override
@@ -111,24 +114,6 @@ public class User implements UserDetails {
         EVALUADOR,
         CONCURSANTE
     }
-
-
-// Estas funciones me permite saber el rol del usuario//
-    /*public boolean isParticipante(){
-        return this.getRol().toString().equals("CONCURSANTE");
-    }
-    public boolean isEvaluador(){
-        return this.getTipo().toString().equals("EVALUADOR");
-    }
-    public boolean isAdministrador(){
-        return this.getRol().toString().equals("ADMINISTRADOR");
-    }
-   public Material getMaterialEducativo(){
-        //aqui tendria que devolver el material de concursarte si existe sino retorna null//
-   }
-    public void setMaterialEducativo(Material nuevoMaterial) {
-        //aqui tendria que setear el material de concursarte//
-    }*/
 
 }
 
