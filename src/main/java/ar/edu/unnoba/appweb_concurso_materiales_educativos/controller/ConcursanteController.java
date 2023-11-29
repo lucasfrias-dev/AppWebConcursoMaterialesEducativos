@@ -31,12 +31,6 @@ public class ConcursanteController {
     @Autowired
     private UserService userService;
 
-    /*@GetMapping("/")
-    public String panelConcursante(Model model) {
-        model.addAttribute("user", new User());
-        return "concursante/panel-concursante";
-    }*/
-
     //Esta es la pantalla de inicio o index//
     @GetMapping("/index")
     public String userInSession(Authentication authentication, Model model) {
@@ -73,35 +67,8 @@ public class ConcursanteController {
         return "redirect:/concursante/mis-materiales";
     }
 
-    /*Ver materiar del usuario en sesion*//*
-    @PreAuthorize("#hasRole('ROLE_CONCURSANTE')")  *//*Solo los administradores pueden acceder*//*
-    @GetMapping("/materialview")
-    public String publicarMaterial(Model model, Authentication authentication) {
-        User usuario= (User) authentication.getPrincipal();
-        Material materialEducativo= usuario.getMaterialEducativo();
-        model.addAttribute("material", materialEducativo);
-        return "/users/materialview";
-    }*/
-
-    /*@GetMapping("/mis-materiales")
-    public String getMisMateriales(Model model, Authentication authentication) {
-        User sessionUser = (User) authentication.getPrincipal();
-
-        // Busca al usuario en la base de datos
-        User user = userService.findById(sessionUser.getId());
-
-        // Obtiene los materiales postulados por el usuario
-        List<Material> misMateriales = materialService.getMaterialesByConcursante(user);
-
-        // Añade los materiales al modelo
-        model.addAttribute("misMateriales", misMateriales);
-
-        // Devuelve la vista de los materiales del usuario
-        return "concursante/mis-materiales";
-    }*/
-
     @GetMapping("/mis-materiales")
-    public ModelAndView getMyMaterials(Authentication authentication) {
+    public ModelAndView showMisMateriales(Authentication authentication) {
         User sessionUser = (User) authentication.getPrincipal();
         ModelAndView modelAndView = new ModelAndView("concursante/mis-materiales");
         modelAndView.addObject("materiales", materialService.getMaterialesByConcursante(sessionUser));
