@@ -94,4 +94,11 @@ public class EvaluadorController {
         materialService.estaEvaluado(material);
         return "redirect:/evaluador/materiales/asignados";
     }
+
+    @GetMapping("/profile")
+    public String showProfile(Model model, Authentication authentication) {
+        User sessionUser = (User) authentication.getPrincipal();
+        model.addAttribute("user", sessionUser);
+        return "evaluador/profile";
+    }
 }

@@ -216,29 +216,10 @@ public class AdminController {
         return ResponseEntity.ok("Material asignado al evaluador exitosamente");
     }
 
-    @GetMapping("/profile/edit")
-    public String showEditProfile(Model model, Authentication authentication) {
+    @GetMapping("/profile")
+    public String showProfile(Model model, Authentication authentication) {
         User sessionUser = (User) authentication.getPrincipal();
-        model.addAttribute("user", sessionUser); // Añade al usuario al modelo
-        return "/administrador/edit-profile"; // Devuelve la vista del formulario de edición del perfil
-    }
-
-    @PostMapping("/profile/edit")
-    public String updateProfile(@Valid @ModelAttribute("user") User updatedUser, Authentication authentication, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            return "/administrador/edit-profile"; // Redirige de vuelta al formulario de edición del perfil si hay errores de validación
-        }
-
-        User sessionUser = (User) authentication.getPrincipal(); // Obtiene al usuario en sesión
-        updatedUser.setPassword(sessionUser.getPassword()); // Copia la contraseña del usuario en sesión al usuario actualizado
-        // Actualiza la información del usuario
-        try {
-            userService.updateUser(updatedUser, sessionUser.getId());
-        } catch (Exception e) {
-            bindingResult.rejectValue("email", "error.email", e.getMessage());
-            return "/administrador/edit-profile"; // Redirige de vuelta al formulario de edición del perfil
-        }
-
-        return "redirect:administrador/profile"; // Redirige de vuelta a la página del perfil
+        model.addAttribute("user", sessionUser);
+        return "administrador/profile";
     }
 }
