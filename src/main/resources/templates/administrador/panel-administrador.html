@@ -1,24 +1,54 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Panel del administrador</title>
+    <meta charset="utf-8">
+    <title>Panel de Administrador</title>
+    <link rel="stylesheet" th:href="@{/css/panel.css}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let menuItems = document.querySelectorAll('.with-submenu');
+
+            menuItems.forEach(function(item) {
+                item.addEventListener('click', function() {
+                    let submenu = this.querySelector('ul');
+                    submenu.classList.toggle('show-submenu');
+                });
+            });
+        });
+    </script>
 </head>
 <body>
-<h1>Bienvenido al panel del administrador</h1>
+<div class="header">
+    <span>Bienvenido Administrador!</span>
+</div>
 
-<ul>
-    <li><a th:href="@{/administrador/materiales/all}">Listado de todos los Materiales</a></li>
-    <li><a th:href="@{/administrador/materiales/pendientes-de-aprobacion}">Listado de Materiales Pendientes de Aprobación</a></li>
-    <li><a th:href="@{/administrador/materiales/pendientes-de-evaluacion}">Listado de Materiales Pendientes de Evaluación</a></li>
-    <li><a th:href="@{/administrador/evaluadores/asignar-material}">Asignar Material a Evaluador</a></li>
-    <li><a th:href="@{/administrador/register/evaluador}">Registrar Evaluador</a></li>
-    <li><a th:href="@{/administrador/register/admin}">Registrar Administrador</a></li>
-    <li><a th:href="@{/administrador/usuarios/all}">Ver todos los usuarios</a></li>
-    <li><a th:href="@{/administrador/profile}">Ver mi perfil</a></li>
-    <form th:action="@{/logout}" method="post">
-        <input type="submit" value="Cerrar sesión">
-    </form>
-</ul>
+<nav class="menu">
+    <ul>
+        <li class="with-submenu">
+            <a th:href="@{/}" target="_self" title="Materiales">Materiales</a>
+            <ul>
+                <li><a th:href="@{/administrador/materiales/all}" target="_self">Ver Todos</a></li>
+                <li><a th:href="@{/administrador/materiales/pendientes-de-aprobacion}" target="_self">Pendientes de Aprobación</a></li>
+                <li><a th:href="@{/administrador/materiales/pendientes-de-evaluacion}" target="_self">Pendientes de Evaluación</a></li>
+                <li><a th:href="@{/administrador/evaluadores/asignar-material}" target="_self">Asignar a Evaluador</a></li>
+            </ul>
+        </li>
+        <li class="with-submenu">
+            <a th:href="@{/}" target="_self" title="Registrar">Registrar</a>
+            <ul>
+                <li><a th:href="@{/administrador/register/admin}" target="_self">Administrador</a></li>
+                <li><a th:href="@{/administrador/register/evaluador}" target="_self">Evaluador</a></li>
+            </ul>
+        </li>
+        <li class="with-submenu">
+            <a th:href="@{/}" target="_self">Ver</a>
+            <ul>
+                <li><a th:href="@{/administrador/profile}" target="_self">Perfil de Usuario</a></li>
+                <li><a th:href="@{/administrador/usuarios/all}" target="_self">Todos los Usuarios</a></li>
+            </ul>
+        </li>
+        <li><a th:href="@{/administrador/logout}" target="_self">Cerrar Sesión</a></li>
+    </ul>
+</nav>
 </body>
 </html>

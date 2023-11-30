@@ -54,7 +54,7 @@ public class EvaluadorController {
         model.addAttribute("usuario", usuario);
 
         // Devuelve el nombre de la vista que mostrará el panel del evaluador.
-        return "evaluador/evaluador_index";
+        return "evaluador/panel-evaluador";
     }
 
 

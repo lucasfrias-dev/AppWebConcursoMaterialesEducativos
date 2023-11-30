@@ -1,20 +1,40 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Panel del concursante</title>
+    <meta charset="utf-8">
+    <title>Panel del Concursante</title>
+    <link rel="stylesheet" th:href="@{/css/panel.css}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let menuItems = document.querySelectorAll('.with-submenu');
+
+            menuItems.forEach(function(item) {
+                item.addEventListener('click', function() {
+                    let submenu = this.querySelector('ul');
+                    submenu.classList.toggle('show-submenu');
+                });
+            });
+        });
+    </script>
 </head>
 <body>
-<h1>Bienvenido al panel del concursante</h1>
+<div class="header">
+    <span>Bienvenido Concursante!</span>
+</div>
 
-<ul>
-    <li><a th:href="@{/concursante/postular-material}">Postular un material</a></li>
-    <li><a th:href="@{/materiales-participantes}">Ver materiales participantes</a></li>
-    <li><a th:href="@{/concursante/mis-materiales}">Ver mis materiales postulados</a></li>
-    <li><a th:href="@{/concursante/profile}">Ver mi perfil</a></li>
-    <form th:action="@{/logout}" method="post">
-        <input type="submit" value="Cerrar sesión">
-    </form>
-</ul>
+<nav class="menu">
+    <ul>
+        <li class="with-submenu">
+            <a href="#" target="_self" title="Materiales">Materiales</a>
+            <ul>
+                <li><a href="/concursante/postular-material" target="_self">Postular</a></li>
+                <li><a href="/materiales-participantes" target="_self">Participantes</a></li>
+                <li><a href="/concursante/mis-materiales" target="_self">Mios</a></li>
+            </ul>
+        </li>
+        <li><a href="/concursante/profile" target="_self">Ver perfil</a></li>
+        <li><a th:href="@{/concursante/logout}" target="_self">Cerrar Sesión</a></li>
+    </ul>
+</nav>
 </body>
 </html>

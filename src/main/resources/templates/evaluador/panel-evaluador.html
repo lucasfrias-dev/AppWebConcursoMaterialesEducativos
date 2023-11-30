@@ -1,18 +1,39 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Panel del evaluador</title>
+    <meta charset="utf-8">
+    <title>Panel de Evaluador</title>
+    <link rel="stylesheet" th:href="@{/css/panel.css}">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            let menuItems = document.querySelectorAll('.with-submenu');
+
+            menuItems.forEach(function(item) {
+                item.addEventListener('click', function() {
+                    let submenu = this.querySelector('ul');
+                    submenu.classList.toggle('show-submenu');
+                });
+            });
+        });
+    </script>
 </head>
 <body>
-<h1>Bienvenido al panel del evaluador</h1>
+<div class="header">
+    <span>Bienvenido Evaluador!</span>
+</div>
 
-<ul>
-    <li><a th:href="@{/evaluador/materiales/asignados}">Ver materiales asignados a evaluar</a></li>
-    <li><a th:href="@{/materiales-participantes}">Ver materiales participantes</a></li>
-    <form th:action="@{/logout}" method="post">
-        <input type="submit" value="Cerrar sesión">
-    </form>
-</ul>
+<nav class="menu">
+    <ul>
+        <li class="with-submenu">
+            <a href="#" target="_self" title="Materiales">Materiales</a>
+            <ul>
+                <li><a href="/evaluador/materiales/asignados" target="_self">A evaluar</a></li>
+                <li><a href="/materiales-participantes" target="_self">Participantes</a></li>
+            </ul>
+        </li>
+        <li><a href="/evaluador/profile" target="_self">Ver perfil</a></li>
+        <li><a th:href="@{/evaluador/logout}" target="_self">Cerrar Sesión</a></li>
+    </ul>
+</nav>
 </body>
 </html>

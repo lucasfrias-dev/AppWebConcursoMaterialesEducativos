@@ -48,7 +48,7 @@ public class AdminController {
         model.addAttribute("usuario", usuario);
 
         // Devuelve el nombre de la vista que mostrará el panel del administrador.
-        return "administrador/index";
+        return "administrador/panel-administrador";
     }
 
 
