@@ -36,7 +36,7 @@ public class ConcursanteController {
     public String userInSession(Authentication authentication, Model model) {
         User usuario= (User) authentication.getPrincipal();
         model.addAttribute("usuario", usuario);
-        return "concursante/panel-concursante";
+        return "concursante/concursante_index";
     }
 
     /*Cerrar sesion*/
