@@ -43,7 +43,7 @@ public class EvaluadorController {
     public String userInSession(Authentication authentication, Model model) {
         User usuario = (User) authentication.getPrincipal();
         model.addAttribute("usuario", usuario);
-        return "evaluador/panel-evaluador";
+        return "evaluador/evaluador_index";
     }
 
     /*Cerrar sesion*/

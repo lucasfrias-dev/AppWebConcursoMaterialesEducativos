@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Panel de Evaluador</title>
+    <link rel="stylesheet" th:href="@{/css/Sin_titulo1.css}">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+<body>
+<div id="wb_CssMenu1" style="position:absolute;left:23px;top:52px;width:496px;height:100px;z-index:0;">
+<ul role="menubar">
+<li class="firstmain"><a role="menuitem" class="withsubmenu" href="#" target="_self" title="Materiales">Materiales</a>
+
+<ul role="menu">
+<li class="firstitem"><a role="menuitem" href="/evaluador/materiales/asignados" target="_self">A&nbsp;evaluar</a>
+</li>
+<li class="lastitem"><a role="menuitem" href="/materiales-participantes" target="_self">Participantes</a>
+</li>
+</ul>
+</li>
+<li><a role="menuitem" href="/evaluador/profile" target="_self">Ver&nbsp;perfil</a>
+</li>
+<li><a role="menuitem" th:href="@{/evaluador/logout}" target="_self">Cerrar&nbsp;Sesi&#243;n</a>
+</li>
+</ul>
+</div>
+<div id="wb_Text1" style="position:absolute;left:23px;top:16px;width:317px;height:16px;z-index:1;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Bienvenido Evaluador!</span></div>
+</body>
+</html>
