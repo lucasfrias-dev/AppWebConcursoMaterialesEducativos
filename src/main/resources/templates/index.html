@@ -1,16 +1,23 @@
-<!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<!doctype html>
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>ced</title>
+<meta charset="utf-8">
+<title>Página sin título</title>
+    <link rel="stylesheet" th:href="@{/css/Sin_titulo1.css}">
+    <link rel="stylesheet" th:href="@{/css/indexhome.css}">
 </head>
 <body>
-<h1>CED</h1>
-
-<ul>
-  <li><a th:href="@{/participar}">Participar</a></li>
-  <li><a th:href="@{/materiales-participantes}">Ver Materiales Presentados</a></li>
-  <li><a th:href="@{/login}">Iniciar Sesión</a></li>
+<div id="wb_CssMenu1" style="position:absolute;left:23px;top:57px;width:432px;height:100px;z-index:0;">
+<ul role="menubar">
+<li class="firstmain"><a role="menuitem" href="/materiales-participantes" target="_self" title="Materiales">Ver&nbsp;Materiales&nbsp;Disponibles</a>
+</li>
+<li><a role="menuitem" href="/participar" target="_self">Registrarse</a>
+</li>
+<li><a role="menuitem" href="/login" target="_self">Iniciar&nbsp;Sesi&#243;n</a>
+</li>
 </ul>
+</div>
+<div id="wb_Text1" style="position:absolute;left:23px;top:16px;width:317px;height:16px;z-index:1;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Bienvenido al Concurso De Materiales Educativos!</span></div>
 </body>
 </html>
