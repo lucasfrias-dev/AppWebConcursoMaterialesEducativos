@@ -43,7 +43,7 @@ public class AdminController {
     public String userInSession(Authentication authentication, Model model) {
         User usuario = (User) authentication.getPrincipal();
         model.addAttribute("usuario", usuario);
-        return "administrador/panel-administrador";
+        return "administrador/index";
     }
 
     /*Cerrar sesion*/

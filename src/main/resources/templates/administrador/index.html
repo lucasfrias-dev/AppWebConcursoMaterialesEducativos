@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>Panel de Administrador</title>
+    <link rel="stylesheet" th:href="@{/css/Sin_titulo1.css}">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+</head>
+<body>
+<div id="wb_CssMenu1" style="position:absolute;left:23px;top:52px;width:496px;height:100px;z-index:0;">
+<ul role="menubar">
+<li class="firstmain"><a role="menuitem" class="withsubmenu" href="#" target="_self" title="Materiales">Materiales</a>
+
+<ul role="menu">
+<li class="firstitem"><a role="menuitem" href="/administrador/materiales/all" target="_self">Ver&nbsp;Todos</a>
+</li>
+<li><a role="menuitem" href="/administrador/materiales/pendientes-de-aprobacion" target="_self">Pendientes&nbsp;de&nbsp;Aprobaci&#243;n</a>
+</li>
+<li><a role="menuitem" href="/administrador/materiales/pendientes-de-evaluacion" target="_self">Pendientes&nbsp;de&nbsp;Evaluaci&#243;n</a>
+</li>
+<li class="lastitem"><a role="menuitem" href="/administrador/evaluadores/asignar-material" target="_self">Asignar&nbsp;a&nbsp;Evaluador</a>
+</li>
+</ul>
+</li>
+<li><a role="menuitem" class="withsubmenu" href="#" target="_self" title="Registrar">Registrar</a>
+
+<ul role="menu">
+<li class="firstitem"><a role="menuitem" href="/administrador/register/evaluador" target="_self">Administrador</a>
+</li>
+<li class="lastitem"><a role="menuitem" href="/administrador/register/admin" target="_self">Evaluador</a>
+</li>
+</ul>
+</li>
+<li><a role="menuitem" class="withsubmenu" href="#" target="_self">Ver</a>
+
+<ul role="menu">
+<li class="firstitem"><a role="menuitem" href="/administrador/profile" target="_self">Perfil&nbsp;de&nbsp;Usuario</a>
+</li>
+<li class="lastitem"><a role="menuitem" href="/administrador/usuarios/all" target="_self">Todos&nbsp;los&nbsp;Usuarios</a>
+</li>
+</ul>
+</li>
+<li><a role="menuitem" th:href="@{/administrador/logout}" target="_self">Cerrar&nbsp;Ses&#237;on</a>
+</li>
+</ul>
+</div>
+<div id="wb_Text1" style="position:absolute;left:23px;top:16px;width:317px;height:16px;z-index:1;">
+<span style="color:#000000;font-family:Arial;font-size:13px;">Bienvenido Administrador!</span></div>
+</body>
+</html>
