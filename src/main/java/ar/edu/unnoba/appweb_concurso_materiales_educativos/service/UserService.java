@@ -11,26 +11,35 @@ import java.util.List;
 public interface UserService extends UserDetailsService{
 
 
+    // Recupera una lista de todos los evaluadores registrados en el sistema.
     List<User> getAllEvaluadores();
 
+    // Recupera una lista de todos los administradores registrados en el sistema.
     List<User> getAllAdministradores();
 
+    // Crea un nuevo usuario con el rol especificado.
     User createUser(User user, User.Rol rol) throws Exception;
 
+    // Recupera un usuario por su identificación.
     User findById(Long id);
 
-    void updateUser(User user, Long id) throws Exception;
-
+    // Asigna un material a un evaluador específico.
     void asignarMaterialAEvaluador(Long materialId, Long evaluadorId) throws Exception;
 
-    public List<User> getEvaluadoresPendientes(Material material);
+    // Recupera una lista de evaluadores pendientes de evaluar para un material específico.
+    List<User> getEvaluadoresPendientes(Material material);
 
-    //TODO: Verificar si el usuario ya evaluó el material
+    // Verifica si un usuario ha evaluado un material específico.
     boolean haEvaluadoMaterial(User usuario, Material material);
 
+    // Desactiva un usuario en el sistema.
     void bajaUsuario(Long id);
 
+    // Activa un usuario en el sistema.
+    void altaUsuario(Long id);
+
+    // Recupera una lista de todos los usuarios registrados en el sistema.
     List<User> findAll();
 
-    void altaUsuario(Long id);
+
 }

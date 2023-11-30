@@ -6,8 +6,9 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 
 public interface EvaluacionService {
 
+    //Crea una nueva evaluación y la relaciona con un evaluador y un material.
     Evaluacion createEvaluacion(Evaluacion evaluacion, User evaluador, Material material);
 
-    //obtener evaluacion de un usuario para un material
+    //Recupera una evaluación específica asociada a un usuario y a un material.
     Evaluacion getEvaluacionByUserAndMaterial(User user, Material material);
 }

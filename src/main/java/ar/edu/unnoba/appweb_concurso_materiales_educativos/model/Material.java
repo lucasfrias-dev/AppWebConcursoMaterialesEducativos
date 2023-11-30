@@ -59,5 +59,4 @@ public class Material implements Serializable {
     @EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "material", fetch = FetchType.EAGER)
     private Set<Evaluacion> evaluaciones = new HashSet<>();
-
 }
