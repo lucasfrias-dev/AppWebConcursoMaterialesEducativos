@@ -5,26 +5,31 @@
     <title>Detalles del Material</title>
 </head>
 <body>
-<h1>Material:</h1>
+<h1>Detalles del Material:</h1>
+
 <p><strong>Nombre:</strong> <span th:text="${material.titulo}"></span></p>
 <p><strong>Descripción:</strong> <span th:text="${material.descripcion}"></span></p>
 <p><strong>Tipo de Material:</strong> <span th:text="${material.tipoMaterial}"></span></p>
-<p><strong>Disciplina a la que pertenece:</strong> <span th:text="${material.disciplina}"></span></p>
+<p><strong>Disciplina:</strong> <span th:text="${material.disciplina}"></span></p>
 <p><strong>Autores:</strong> <span th:text="${material.autores}"></span></p>
 
+<h2>Evaluación:</h2>
 
-<h2>Evaluación</h2>
 <div th:if="${haEvaluado}">
     <p>Ya has enviado tu evaluación para este material.</p>
-    <h3>Tu Evaluación</h3>
+
+    <h3>Tu Evaluación:</h3>
     <p><strong>Comentario:</strong> <span th:text="${evaluacion.comentario}"></span></p>
     <p><strong>Nota:</strong> <span th:text="${evaluacion.nota}"></span></p>
 </div>
+
 <form th:if="${!haEvaluado}" th:action="@{/evaluador/materiales/asignados/{id}/createEvaluacion(id=${material.id})}" th:object="${evaluacion}" method="post">
     <label for="comentario">Comentario:</label>
     <textarea th:field="*{comentario}" id="comentario" name="comentario" required></textarea>
+
     <label for="nota">Nota:</label>
     <input type="number" th:field="*{nota}" id="nota" name="nota" min="0" max="10" required>
+
     <button type="submit">Enviar Evaluación</button>
 </form>
 </body>

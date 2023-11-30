@@ -2,30 +2,38 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Mis materiales postulados</title>
+    <title>Mis Materiales Postulados</title>
 </head>
 <body>
-<h1>Mis materiales postulados</h1>
+<h1>Mis Materiales Postulados</h1>
+
 <table th:if="${materiales?.size() > 0}">
+    <thead>
     <tr>
         <th>Nombre</th>
         <th>Descripción</th>
         <th>Tipo de Material</th>
-        <th>Disciplina a la que pertenece</th>
+        <th>Disciplina</th>
         <th>Autores</th>
-        <th>Estado de aprobación</th>
+        <th>Estado de Aprobación</th>
     </tr>
+    </thead>
+    <tbody>
     <tr th:each="material : ${materiales}">
         <td th:text="${material.titulo}"></td>
         <td th:text="${material.descripcion}"></td>
         <td th:text="${material.tipoMaterial}"></td>
         <td th:text="${material.disciplina}"></td>
         <td th:text="${material.autores}"></td>
-        <td th:if="${material.aprobado == null}">Pendiente</td>
-        <td th:if="${material.aprobado == true}">Aprobado</td>
-        <td th:if="${material.aprobado == false}">No aprobado</td>
+        <td>
+            <span th:if="${material.aprobado == null}">Pendiente</span>
+            <span th:if="${material.aprobado == true}">Aprobado</span>
+            <span th:if="${material.aprobado == false}">Rechazado</span>
+        </td>
     </tr>
+    </tbody>
 </table>
+
 <p th:unless="${materiales?.size() > 0}">No tienes materiales postulados.</p>
 </body>
 </html>
