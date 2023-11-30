@@ -2,6 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Asignar material</title>
+    <link rel="stylesheet" th:href="@{/css/asign.css}">
     <script>
         function updateFormAction() {
             let materialId = document.getElementById('materialId').value;
@@ -16,10 +17,12 @@
 <form id="assignForm" th:action="@{/administrador/evaluadores/asignar-material}" method="post">
     <label for="materialId">Material:</label>
     <select id="materialId" name="materialId" th:required="true">
+        <option value="" disabled selected>Selecciona un material</option>
         <option th:each="material : ${materiales}" th:value="${material.id}" th:text="${material.titulo}"></option>
     </select>
     <label for="evaluatorId">Evaluador:</label>
     <select id="evaluatorId" name="evaluatorId" th:required="true">
+        <option value="" disabled selected>Selecciona un evaluador</option>
         <option th:each="user : ${evaluadores}" th:value="${user.id}" th:text="${user.nombre + ' ' +  ' ' + user.apellido}"></option>
     </select>
     <button type="submit" onclick="updateFormAction()">Asignar</button>

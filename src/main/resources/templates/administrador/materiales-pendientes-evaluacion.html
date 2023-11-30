@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>Materiales Pendientes de Evaluacion</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
 <h1>Materiales Postulados Pendientes de Evaluacion</h1>
@@ -32,14 +33,14 @@
         <td>
             <ul>
                 <li th:each="evaluador : ${material.evaluadores}">
-                    <span th:text="${evaluador.nombre} + ' ' + ${evaluador.apellido}"></span>
+                    <span th:text="${evaluador.nombre} + ' ' + ${evaluador.apellido} + '. '"></span>
                 </li>
             </ul>
         </td>
         <td>
             <ul>
                 <li th:each="evaluador : ${evaluadoresPendientes.get(material)}">
-                    <span th:text="${evaluador.nombre} + ' ' + ${evaluador.apellido}"></span>
+                    <span th:text="${evaluador.nombre} + ' ' + ${evaluador.apellido} + '. '"></span>
                 </li>
             </ul>
         </td>

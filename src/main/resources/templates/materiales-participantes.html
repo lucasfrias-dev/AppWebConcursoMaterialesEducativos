@@ -2,9 +2,11 @@
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
-  <title>Mis participantes</title>
+  <title>Materiales participantes</title>
+  <link rel="stylesheet" th:href="@{/css/styles.css}">
 </head>
 <body>
+<h1>Materiales participantes</h1>
 <table th:if="${materialesParticipantes?.size() > 0}">
   <tr>
     <th>Nombre</th>
