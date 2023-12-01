@@ -39,8 +39,8 @@ public class SecurityConfig {
                         // Configura los parámetros de nombre de usuario y contraseña
                         .usernameParameter("email").passwordParameter("password")
                         // apunta a la funcion login despues del inicio de secion//
-                        .defaultSuccessUrl("/default", true)
-                        .failureHandler((request, response, exception) -> {
+                        .defaultSuccessUrl("/default", true) // Redirige a la página por defecto después de un inicio de sesión exitoso
+                        .failureHandler((request, response, exception) -> { // Configura el manejador de errores
                             String error = null;
                             if (exception instanceof DisabledException || exception instanceof InternalAuthenticationServiceException) {
                                 error = "disabled";

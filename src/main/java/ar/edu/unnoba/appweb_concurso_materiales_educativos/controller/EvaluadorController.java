@@ -140,7 +140,7 @@ public class EvaluadorController {
         model.addAttribute("haEvaluado", haEvaluado);
 
         // Si el evaluador ha evaluado el material, obtiene y agrega la evaluación al modelo.
-        // De lo contrario, agrega una nueva evaluación vacía al modelo.
+        // De lo contrario, agrega una nueva evaluación vacía al modelo para que la complete.
         if (haEvaluado) {
             Evaluacion evaluacion = evaluacionService.getEvaluacionByUserAndMaterial(usuario, material);
             model.addAttribute("evaluacion", evaluacion);
