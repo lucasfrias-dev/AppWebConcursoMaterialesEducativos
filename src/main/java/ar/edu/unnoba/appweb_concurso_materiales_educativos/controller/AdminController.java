@@ -287,7 +287,7 @@ public class AdminController {
      * @return El nombre de la vista que mostrará la lista de evaluadores registrados.
      */
     @GetMapping("/evaluadores/registrados")
-    public String showeEvaludoresDisponibles(Model model) {
+    public String showEvaludoresDisponibles(Model model) {
         // Agrega la lista de evaluadores registrados al modelo para que esté disponible en la vista.
         model.addAttribute("evaluadores", userService.getAllEvaluadores());
 
