@@ -25,7 +25,7 @@ public class SecurityConfig {
                 .userDetailsService(userService)
                 .authorizeHttpRequests((requests) -> requests // Configura las solicitudes autorizadas
                         // Permite el acceso a ciertos recursos sin autenticación
-                        .requestMatchers("/", "/webjars/**", "/resources/**","/css/**", "/js/**", "/login", "/materiales-participantes", "/participar").permitAll()
+                        .requestMatchers("/", "/webjars/**", "/resources/**","/css/**", "/js/**", "/login", "/materiales-participantes/**", "/participar").permitAll()
                         .requestMatchers("/concursante/**").hasRole("CONCURSANTE")
                         .requestMatchers("/administrador/**").hasRole("ADMINISTRADOR")
                         .requestMatchers("/evaluador/**").hasRole("EVALUADOR")
