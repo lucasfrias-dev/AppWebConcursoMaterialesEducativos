@@ -6,7 +6,13 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.ConcursoService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +21,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 @Controller
@@ -51,6 +61,7 @@ public class HomeController {
         model.addAttribute("concursosAnteriores", concursoService.getConcursosAnteriores());
 
         // Devuelve el nombre de la vista que representa la página principal del sistema.
+
         return "index";
     }
 
@@ -129,6 +140,32 @@ public class HomeController {
 
         // Devuelve el nombre de la vista que representa la lista de materiales participantes.
         return "materiales-participantes";
+    }
+    @GetMapping("/download/{id}")
+    public ResponseEntity<Resource> downloadFile(@PathVariable Long id) {
+        // Supongamos que tienes un servicio que te permite obtener la ruta del archivo a partir del ID del material
+        String filePath = materialService.getMaterial(id).getArchivo();
+
+        // Intenta cargar el archivo desde la ruta especificada
+        Path path = Paths.get(filePath);
+        Resource resource;
+        try {
+            resource = (Resource) new UrlResource(path.toUri());
+        } catch (IOException e) {
+            // Manejar el caso en el que no se pueda cargar el archivo
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        // Prepara la respuesta para la descarga del archivo
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + resource.getClass());
+        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+
+        // Devuelve la respuesta con el archivo para su descarga
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(resource);
     }
 
 

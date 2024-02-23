@@ -46,6 +46,9 @@ public class Material implements Serializable {
     @Column(name = "evaluado")
     private Boolean evaluado = false;
 
+    @Column(name = "archivo")
+    private String archivo;
+
     @Column(name = "likes")
     private int likes = 0;
 

@@ -23,6 +23,8 @@
         <input type="text" th:field="*{disciplina}" id="disciplina" name="disciplina"><br>
         <label for="autores">Autores:</label><br>
         <input type="text" th:field="*{autores}" id="autores" name="autores"><br>
+        <label for="file">Archivo:</label><br>
+        <input type="file" th:field="*{archivo}" id="file" name="file" accept=".pdf, .docx"><br>
         <button type="submit" th:disabled="${error != null}">Postular material</button>
     </fieldset>
 

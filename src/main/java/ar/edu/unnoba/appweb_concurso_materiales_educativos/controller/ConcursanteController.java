@@ -18,8 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,7 +123,8 @@ public class ConcursanteController {
             @Valid @ModelAttribute("material") Material material,
             BindingResult result,
             Model model,
-            Authentication authentication
+            Authentication authentication,
+            @RequestParam("file") MultipartFile file
     ) {
         // Verifica si hay errores de validación.
         if (result.hasErrors()) {
@@ -138,6 +142,25 @@ public class ConcursanteController {
             // Muestra un mensaje de error si no hay un concurso vigente y devuelve a la vista de postulación de material.
             model.addAttribute("error", "No puedes postular ningún material porque no hay un concurso vigente.");
             return "concursante/postular-material";
+        }
+
+        if (!file.isEmpty()) {
+            try {
+                // Guarda el archivo en el sistema de archivos del servidor
+                String uploadsDir = "/static/file/";
+                String fileName = file.getOriginalFilename();
+                String filePath = uploadsDir + fileName;
+                File dest = new File(filePath);
+                file.transferTo(dest);
+
+                // Guarda la ruta del archivo en el objeto Material
+                material.setArchivo(filePath);
+
+            } catch (IOException e) {
+                // Maneja el error de procesamiento del archivo adjunto
+                model.addAttribute("error", "Error al procesar el archivo adjunto: " + e.getMessage());
+                return "concursante/postular-material";
+            }
         }
 
         // Crea y postula el material utilizando el servicio.
