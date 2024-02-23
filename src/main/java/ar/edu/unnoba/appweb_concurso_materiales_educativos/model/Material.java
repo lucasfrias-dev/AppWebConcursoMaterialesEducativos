@@ -49,14 +49,23 @@ public class Material implements Serializable {
     @Column(name = "likes")
     private int likes = 0;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "usuario_id")
     private User concursante;
 
-    @ManyToMany(mappedBy = "materialesAEvaluar", fetch = FetchType.EAGER)
+    @EqualsAndHashCode.Exclude
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "evaluador_material",
+        joinColumns = @JoinColumn(name = "material_id"),
+        inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> evaluadores = new HashSet<>();
 
-    @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "material", fetch = FetchType.EAGER)
-    private Set<Evaluacion> evaluaciones = new HashSet<>();
+    @ManyToOne
+    @JoinColumn(name = "concurso_id")
+    private Concurso concurso;
+
+    /*@EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
+    private Set<Evaluacion> evaluaciones = new HashSet<>();*/
 }

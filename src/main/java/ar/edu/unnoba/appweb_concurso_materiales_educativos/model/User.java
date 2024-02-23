@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -48,21 +47,17 @@ public class User implements UserDetails {
     @Column(name = "active")
     private boolean active = true;
 
-    @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "concursante", fetch = FetchType.EAGER)
-    private Set<Material> materialesPostulados = new HashSet<>();
+    /*@EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "concursante", fetch = FetchType.LAZY)
+    private Set<Material> materialesPostulados = new HashSet<>();*/
 
     @EqualsAndHashCode.Exclude
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "evaluador_material",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "material_id"))
+    @ManyToMany(mappedBy = "evaluadores", fetch = FetchType.LAZY)
     private Set<Material> materialesAEvaluar = new HashSet<>();
 
-    @EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "evaluador", fetch = FetchType.EAGER)
-    private Set<Evaluacion> evaluacionesRealizadas = new HashSet<>();
+    /*@EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "evaluador", fetch = FetchType.LAZY)
+    private Set<Evaluacion> evaluacionesRealizadas = new HashSet<>();*/
 
     // Métodos de la interfaz UserDetails
     @Override
