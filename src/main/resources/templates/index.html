@@ -16,6 +16,24 @@
             });
         });
     </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descripcion Del Concurso De Materiales Educativos</title>
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+        }
+    </style>
 </head>
 <body>
 <div class="header">
@@ -25,7 +43,12 @@
 
 <nav class="menu">
     <ul>
-        <li><a th:href="@{/}" target="_self">Acerca del CED</a></li>
+        <li><a href="#" id="abrirPopup">Acerca del CED</a></li>
+
+        <div id="miPopup" class="popup">
+            <p>Texto dentro de la ventana emergente</p>
+            <button onclick="cerrarPopup()">Cerrar</button>
+        </div>
         <li><a th:href="@{'/materiales-participantes/' + ${#strings.replace(edicion, ' ', '-')}}" target="_self" title="Materiales">Ver materiales participantes</a></li>
         <ul th:if="${concursosAnteriores?.size() > 0}"><a target="_self">Ediciones anteriores</a>
             <li th:each="concurso : ${concursosAnteriores}" th:text="${concurso.edicion}"><a th:href="@{/materiales-participantes/${concurso.edicion}}"></a></li>
@@ -34,6 +57,23 @@
         <li><a th:href="@{/login}" target="_self">Iniciar sesión</a></li>
     </ul>
 </nav>
+<script>
+    // Función para abrir la ventana emergente
+    function abrirPopup() {
+        document.getElementById("miPopup").style.display = "block";
+    }
+
+    // Función para cerrar la ventana emergente
+    function cerrarPopup() {
+        document.getElementById("miPopup").style.display = "none";
+    }
+
+    // Manejar el evento clic del enlace para abrir la ventana emergente
+    document.getElementById("abrirPopup").addEventListener("click", function(event) {
+        event.preventDefault(); // Evita que el enlace redireccione
+        abrirPopup();
+    });
+</script>
 
 </body>
 </html>
