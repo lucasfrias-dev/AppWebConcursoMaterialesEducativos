@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>Panel de Administrador</title>
     <link rel="stylesheet" th:href="@{/css/panel.css}">
-    <script>
+    <script th:inline="javascript">
         document.addEventListener('DOMContentLoaded', function() {
             let menuItems = document.querySelectorAll('.with-submenu');
 
@@ -14,6 +14,20 @@
                     submenu.classList.toggle('show-submenu');
                 });
             });
+
+            /*[# th:if="${message}"]*/
+            let message = /*[[${message}]]*/ 'message';
+            if (message && message.trim() !== '') {
+                alert(message);
+            }
+            /*[/]*/
+
+            /*[# th:if="${error}"]*/
+            let error = /*[[${error}]]*/ 'error';
+            if (error && error.trim() !== '') {
+                alert(error);
+            }
+            /*[/]*/
         });
     </script>
 </head>
@@ -25,23 +39,54 @@
 <nav class="menu">
     <ul>
         <li class="with-submenu">
-            <a th:href="@{/}" target="_self" title="Materiales">Materiales</a>
+            <a th:href="@{/administrador/index}" target="_self" title="Concursos">Concursos</a>
             <ul>
-                <li><a th:href="@{/administrador/materiales/all}" target="_self">Ver Todos</a></li>
-                <li><a th:href="@{/administrador/materiales/pendientes-de-aprobacion}" target="_self">Pendientes de Aprobación</a></li>
-                <li><a th:href="@{/administrador/materiales/pendientes-de-evaluacion}" target="_self">Pendientes de Evaluación</a></li>
-                <li><a th:href="@{/administrador/evaluadores/asignar-material}" target="_self">Asignar a Evaluador</a></li>
+                <li class="with-submenu" th:if="${concursoActual != null}">
+                    <a href="#" target="_self">Actual: <span th:text="${concursoActual.edicion}"></span></a>
+                    <ul>
+                        <li class="with-submenu">
+                            <a href="#" target="_self">Materiales</a>
+                            <ul>
+                                <a th:href="@{'/administrador/' + 'materiales/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/all'}">Ver todos</a>
+                                <li><a th:href="@{'/administrador/' + 'materiales/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/pendientes-de-aprobacion'}" target="_self">Pendientes de Aprobación</a></li>
+                                <li><a th:href="@{'/administrador/' + 'materiales/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/pendientes-de-evaluacion'}" target="_self">Pendientes de Evaluación</a></li>
+                                <li><a th:href="@{/administrador/evaluadores/asignar-material}" target="_self">Asignar a Evaluador</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#" onclick="if (confirm('¿Estás seguro de que quieres cerrar el concurso?')) { document.getElementById('cerrarConcursoForm').submit(); } return false;">Cerrar concurso</a></li>
+                    </ul>
+                </li>
+                <li th:if="${concursoActual == null}">
+                    <a th:href="@{/administrador/new-concurso}" target="_self">Abrir nuevo concurso</a>
+                </li>
+                <li th:if="${concursosAnteriores?.size() > 0}">
+                    <a href="#" target="_self">Ediciones anteriores</a>
+                    <ul th:each="concurso : ${concursosAnteriores}">
+                        <li class="with-submenu">
+                            <a href="#" th:text="${concurso.edicion}"></a>
+                            <ul>
+                                <li class="with-submenu">
+                                    <a href="#" target="_self">Materiales</a>
+                                    <ul>
+                                        <li><a th:href="@{'/administrador/' + 'materiales/' + ${#strings.replace(concurso.edicion, ' ', '-')} + '/all'}" target="_self">Ver Todos</a></li>
+                                    </ul>
+                                </li>
+                                <li><a th:href="@{'/administrador/' + 'concurso/' + ${#strings.replace(concurso.edicion, ' ', '-')} + '/reabrir'}" target="_self">Reabrir concurso</a></li>
+                            </ul>
+                        </li>
+                    </ul>
+                </li>
             </ul>
         </li>
         <li class="with-submenu">
-            <a th:href="@{/}" target="_self" title="Registrar">Registrar</a>
+            <a th:href="@{/administrador/index}" target="_self" title="Registrar">Registrar</a>
             <ul>
                 <li><a th:href="@{/administrador/register/admin}" target="_self">Administrador</a></li>
                 <li><a th:href="@{/administrador/register/evaluador}" target="_self">Evaluador</a></li>
             </ul>
         </li>
         <li class="with-submenu">
-            <a th:href="@{/}" target="_self">Ver</a>
+            <a th:href="@{/administrador/index}" target="_self">Usuarios</a>
             <ul>
                 <li><a th:href="@{/administrador/profile}" target="_self">Perfil de Usuario</a></li>
                 <li><a th:href="@{/administrador/usuarios/all}" target="_self">Todos los Usuarios</a></li>
@@ -50,5 +95,9 @@
         <li><a th:href="@{/administrador/logout}" target="_self">Cerrar Sesión</a></li>
     </ul>
 </nav>
+<!-- Formulario oculto para cerrar el concurso -->
+<form id="cerrarConcursoForm" th:if="${concursoActual != null}" th:action="@{'/administrador/' + 'concurso/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/cerrar'}" method="post" style="display: none;">
+    <input type="hidden" name="edicion" th:value="${concursoActual.edicion}" />
+</form>
 </body>
 </html>

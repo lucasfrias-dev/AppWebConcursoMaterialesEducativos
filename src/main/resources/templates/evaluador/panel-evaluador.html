@@ -19,7 +19,7 @@
 </head>
 <body>
 <div class="header">
-    <span>Bienvenido Evaluador!</span>
+    <span th:text="'Bienvenido, ' + ${#authentication.name} + '!'">Bienvenido Evaluador!</span>
 </div>
 
 <nav class="menu">
@@ -27,11 +27,10 @@
         <li class="with-submenu">
             <a href="#" target="_self" title="Materiales">Materiales</a>
             <ul>
-                <li><a href="/evaluador/materiales/asignados" target="_self">A evaluar</a></li>
-                <li><a href="/materiales-participantes" target="_self">Participantes</a></li>
+                <li><a th:href="@{/evaluador/materiales/asignados}" target="_self">A evaluar</a></li>
             </ul>
         </li>
-        <li><a href="/evaluador/profile" target="_self">Ver perfil</a></li>
+        <li><a th:href="@{/evaluador/profile}" target="_self">Ver perfil</a></li>
         <li><a th:href="@{/evaluador/logout}" target="_self">Cerrar Sesión</a></li>
     </ul>
 </nav>

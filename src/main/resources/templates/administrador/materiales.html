@@ -7,7 +7,7 @@
 <body>
 <h1>Materiales</h1>
 
-<table th:if="${materiales}">
+<table th:if="${!#lists.isEmpty(materiales)}">
     <thead>
     <tr>
         <th>Título</th>
@@ -18,7 +18,7 @@
         <th>Aprobado</th>
         <th>Evaluado</th>
         <th>Evaluadores Asignados</th>
-        <th>Evaluaciones Entregadas</th>
+        <th>Evaluaciones</th>
     </tr>
     </thead>
     <tbody>
@@ -28,28 +28,35 @@
         <td th:text="${material.tipoMaterial}"></td>
         <td th:text="${material.disciplina}"></td>
         <td th:text="${material.autores}"></td>
-        <td th:text="${material.aprobado ? 'Sí' : 'No'}"></td>
+        <td th:text="${material.aprobado == null ? 'Aun no revisado' : (material.aprobado ? 'Sí' : 'No')}
+"></td>
         <td th:text="${material.evaluado ? 'Sí' : 'No'}"></td>
-        <td th:if="${material.evaluadores}">
-            <ul>
+        <td>
+            <ul th:if="${!#lists.isEmpty(material.evaluadores)}">
                 <li th:each="evaluador : ${material.evaluadores}">
                     <span th:text="${evaluador.nombre} + ' ' + ${evaluador.apellido}"></span>
                 </li>
             </ul>
+            <div th:if="${#lists.isEmpty(material.evaluadores)}">
+                No hay evaluadores asignados a este material.
+            </div>
         </td>
-        <td th:if="${material.evaluaciones}">
-            <ul>
-                <li th:each="evaluacion : ${material.evaluaciones}">
+        <td>
+            <ul th:if="${!#lists.isEmpty(evaluacionesPorMaterial[material.id])}">
+                <li th:each="evaluacion : ${evaluacionesPorMaterial[material.id]}">
                     <span th:text="${evaluacion.comentario} + ', '"></span>
                     <span th:text="${evaluacion.nota} + ', '"></span>
                     <span th:text="${evaluacion.evaluador.nombre} + ' ' + ${evaluacion.evaluador.apellido} + '. '"></span>
                 </li>
             </ul>
+            <div th:if="${#lists.isEmpty(evaluacionesPorMaterial[material.id])}">
+                No hay evaluaciones para este material.
+            </div>
         </td>
     </tr>
     </tbody>
 </table>
 
-<p th:if="${materiales == null}">No hay materiales para mostrar</p>
+<p th:if="${#lists.isEmpty(materiales)}">No hay materiales para mostrar</p>
 </body>
 </html>

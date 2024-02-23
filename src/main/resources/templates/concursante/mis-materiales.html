@@ -8,7 +8,8 @@
 <body>
 <h1>Mis Materiales Postulados</h1>
 
-<table th:if="${materiales?.size() > 0}">
+<h2>Materiales del concurso actual</h2>
+<table th:if="${materialesEdicionActual?.size() > 0}">
     <thead>
     <tr>
         <th>Nombre</th>
@@ -16,16 +17,19 @@
         <th>Tipo de Material</th>
         <th>Disciplina</th>
         <th>Autores</th>
+        <th>Edicion participante</th>
         <th>Estado de Aprobación</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="material : ${materiales}">
+    <tr th:each="material : ${materialesEdicionActual}">
         <td th:text="${material.titulo}"></td>
         <td th:text="${material.descripcion}"></td>
         <td th:text="${material.tipoMaterial}"></td>
         <td th:text="${material.disciplina}"></td>
         <td th:text="${material.autores}"></td>
+        <td th:if="${material.concurso != null}" th:text="${material.concurso.edicion} + '.Año: ' + ${material.concurso.fechaFin.year}"></td>
+        <td th:if="${material.concurso == null}">No disponible</td>
         <td>
             <span th:if="${material.aprobado == null}">Pendiente</span>
             <span th:if="${material.aprobado == true}">Aprobado</span>
@@ -34,7 +38,36 @@
     </tr>
     </tbody>
 </table>
+<p th:unless="${materialesEdicionActual?.size() > 0}">No tienes materiales postulados en el concurso actual.</p>
 
-<p th:unless="${materiales?.size() > 0}">No tienes materiales postulados.</p>
-</body>
-</html>
+<h2>Materiales de concursos anteriores</h2>
+<table th:if="${materialesEdicionesAnteriores?.size() > 0}">
+    <thead>
+    <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Tipo de Material</th>
+        <th>Disciplina</th>
+        <th>Autores</th>
+        <th>Edicion participante</th>
+        <th>Estado de Aprobación</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="material : ${materialesEdicionesAnteriores}">
+        <td th:text="${material.titulo}"></td>
+        <td th:text="${material.descripcion}"></td>
+        <td th:text="${material.tipoMaterial}"></td>
+        <td th:text="${material.disciplina}"></td>
+        <td th:text="${material.autores}"></td>
+        <td th:if="${material.concurso != null}" th:text="${material.concurso.edicion} + '.Año: ' + ${material.concurso.fechaFin.year}"></td>
+        <td th:if="${material.concurso == null}">No disponible</td>
+        <td>
+            <span th:if="${material.aprobado == null}">Pendiente</span>
+            <span th:if="${material.aprobado == true}">Aprobado</span>
+            <span th:if="${material.aprobado == false}">Rechazado</span>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<p th:unless="${materialesEdicionesAnteriores?.size() > 0}">No tienes materiales postulados en concursos anteriores.</p>

@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <title>Panel del Concursante</title>
     <link rel="stylesheet" th:href="@{/css/panel.css}">
-    <script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
         document.addEventListener('DOMContentLoaded', function() {
             let menuItems = document.querySelectorAll('.with-submenu');
 
@@ -15,11 +16,14 @@
                 });
             });
         });
+        /*]]>*/
     </script>
 </head>
 <body>
 <div class="header">
-    <span>Bienvenido Concursante!</span>
+    <span th:text="'Bienvenido, ' + ${#authentication.name} + '!'">Bienvenido Concursante!</span>
+    <span th:if="${edicionActual != 'null'}" th:text="'Edición del concurso actual: ' + ${edicionActual}">Edición del concurso actual: </span>
+    <span th:if="${edicionActual == 'null'}">No hay concurso vigente.</span>
 </div>
 
 <nav class="menu">
@@ -27,12 +31,16 @@
         <li class="with-submenu">
             <a href="#" target="_self" title="Materiales">Materiales</a>
             <ul>
-                <li><a href="/concursante/postular-material" target="_self">Postular</a></li>
-                <li><a href="/materiales-participantes" target="_self">Participantes</a></li>
-                <li><a href="/concursante/mis-materiales" target="_self">Mios</a></li>
+                <li>
+                    <a th:href="@{/concursante/postular-material}"
+                       th:onclick="${edicionActual == 'null'} ? 'alert(\'No puedes postular ningún material porque no hay un concurso vigente.\'); return false;' : ''"
+                       target="_self">Postular</a>
+                </li>
+                <li><a th:href="@{/materiales-participantes/{edicion}(edicion=${edicionActual})}" target="_self">Participantes</a></li>
+                <li><a th:href="@{/concursante/mis-materiales}" target="_self">Mios</a></li>
             </ul>
         </li>
-        <li><a href="/concursante/profile" target="_self">Ver perfil</a></li>
+        <li><a th:href="@{/concursante/profile}" target="_self">Ver perfil</a></li>
         <li><a th:href="@{/concursante/logout}" target="_self">Cerrar Sesión</a></li>
     </ul>
 </nav>

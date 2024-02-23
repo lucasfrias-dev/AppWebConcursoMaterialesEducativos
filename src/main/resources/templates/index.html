@@ -19,14 +19,19 @@
 </head>
 <body>
 <div class="header">
-    <span>Bienvenido al Concurso De Materiales Educativos!</span>
+    <span th:if="${edicion != null}" th:text="'Bienvenido al Concurso De Materiales Educativos! ' + ${edicion} + ' año: ' + ${anio}"></span>
+    <span th:if="${edicion == null}">Bienvenido al Concurso De Materiales Educativos! No hay una edición actual.</span>
 </div>
 
 <nav class="menu">
     <ul>
-        <li><a th:href="@{/materiales-participantes}" target="_self" title="Materiales">Ver Materiales Disponibles</a></li>
-        <li><a th:href="@{/participar}" target="_self">Registrarse</a></li>
-        <li><a th:href="@{/login}" target="_self">Iniciar Sesión</a></li>
+        <li><a th:href="@{/}" target="_self">Acerca del CED</a></li>
+        <li><a th:href="@{'/materiales-participantes/' + ${#strings.replace(edicion, ' ', '-')}}" target="_self" title="Materiales">Ver materiales participantes</a></li>
+        <ul th:if="${concursosAnteriores?.size() > 0}"><a target="_self">Ediciones anteriores</a>
+            <li th:each="concurso : ${concursosAnteriores}" th:text="${concurso.edicion}"><a th:href="@{/materiales-participantes/${concurso.edicion}}"></a></li>
+        </ul>
+        <li><a th:href="@{/participar}" target="_self">Participar</a></li>
+        <li><a th:href="@{/login}" target="_self">Iniciar sesión</a></li>
     </ul>
 </nav>
 

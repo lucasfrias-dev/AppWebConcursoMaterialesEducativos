@@ -57,6 +57,12 @@ body {
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
+    z-index: 1;
+}
+
+.menu ul ul ul {
+    top: 0;
+    left: 100%;
 }
 
 .menu li:hover > ul {
@@ -73,4 +79,41 @@ body {
 .menu ul ul a:hover {
     background-color: #45A4D2;
     color: #fff;
+}
+
+/* Estilos para el modal */
+.modal {
+    display: none; /* Modal oculto por defecto */
+    position: fixed; /* Fijar posición */
+    z-index: 1; /* Situar en primer plano */
+    left: 0;
+    top: 0;
+    width: 100%; /* Ancho completo */
+    height: 100%; /* Altura completa */
+    overflow: auto; /* Habilitar scroll si es necesario */
+    background-color: rgba(0,0,0,0.4); /* Color de fondo */
+}
+
+/* Contenido del modal */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% desde arriba y centrado */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Ancho del modal */
+}
+
+/* Botón de cierre del modal */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
 }

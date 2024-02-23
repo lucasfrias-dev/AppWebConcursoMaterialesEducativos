@@ -7,19 +7,23 @@
 </head>
 <body>
 <h1>Datos del material a postular</h1>
+
+<div th:if="${error}" class="error-block">
+    <p th:text="${error}"></p>
+</div>
 <form th:action="@{/concursante/postular-material}" th:object="${material}" method="post">
     <fieldset>
-    <label for="titulo">Titulo:</label><br>
-    <input type="text" th:field="*{titulo}" id="titulo" name="titulo"><br>
-    <label for="descripcion">Descripción:</label><br>
-    <input type="text" th:field="*{descripcion}" id="descripcion" name="descripcion"><br>
-    <label for="tipoMaterial">Tipo de Material:</label><br>
-    <input type="text" th:field="*{tipoMaterial}" id="tipoMaterial" name="tipoMaterial"><br>
-    <label for="disciplina">Disciplina:</label><br>
-    <input type="text" th:field="*{disciplina}" id="disciplina" name="disciplina"><br>
-    <label for="autores">Autores:</label><br>
-    <input type="text" th:field="*{autores}" id="autores" name="autores"><br>
-    <button type="submit">Postular material</button>
+        <label for="titulo">Titulo:</label><br>
+        <input type="text" th:field="*{titulo}" id="titulo" name="titulo"><br>
+        <label for="descripcion">Descripción:</label><br>
+        <input type="text" th:field="*{descripcion}" id="descripcion" name="descripcion"><br>
+        <label for="tipoMaterial">Tipo de Material:</label><br>
+        <input type="text" th:field="*{tipoMaterial}" id="tipoMaterial" name="tipoMaterial"><br>
+        <label for="disciplina">Disciplina:</label><br>
+        <input type="text" th:field="*{disciplina}" id="disciplina" name="disciplina"><br>
+        <label for="autores">Autores:</label><br>
+        <input type="text" th:field="*{autores}" id="autores" name="autores"><br>
+        <button type="submit" th:disabled="${error != null}">Postular material</button>
     </fieldset>
 
     <div class="error-block" th:if="${#fields.hasErrors('*')}">

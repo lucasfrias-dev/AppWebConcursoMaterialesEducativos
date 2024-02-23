@@ -7,7 +7,7 @@
 </head>
 <body>
 <h1>Materiales Postulados Pendientes de Evaluacion</h1>
-<table th:if="${materiales}">
+<table th:if="${!materiales.isEmpty()}">
     <thead>
     <tr>
         <th>ID</th>
@@ -31,22 +31,24 @@
         <td th:text="${material.concursante}"></td>
         <td th:text="${material.autores}"></td>
         <td>
-            <ul>
+            <ul th:if="${material.evaluadores != null && material.evaluadores.size() > 0}">
                 <li th:each="evaluador : ${material.evaluadores}">
                     <span th:text="${evaluador.nombre} + ' ' + ${evaluador.apellido} + '. '"></span>
                 </li>
             </ul>
+            <p th:unless="${material.evaluadores != null && material.evaluadores.size() > 0}">Sin asignar a evaluadores</p>
         </td>
         <td>
-            <ul>
+            <ul th:if="${evaluadoresPendientes.get(material) != null && evaluadoresPendientes.get(material).size() > 0}">
                 <li th:each="evaluador : ${evaluadoresPendientes.get(material)}">
                     <span th:text="${evaluador.nombre} + ' ' + ${evaluador.apellido} + '. '"></span>
                 </li>
             </ul>
+            <p th:unless="${evaluadoresPendientes.get(material) != null && evaluadoresPendientes.get(material).size() > 0}">No tiene ninguna evaluación</p>
         </td>
     </tr>
     </tbody>
 </table>
-<p th:unless="${materiales}">No hay materiales pendientes de evaluacion</p>
+<p th:if="${materiales.isEmpty()}">No hay materiales pendientes de evaluacion</p>
 </body>
 </html>
