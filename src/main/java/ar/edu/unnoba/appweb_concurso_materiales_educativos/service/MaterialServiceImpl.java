@@ -1,12 +1,19 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.service;
 
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.dto.MaterialDTO;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Evaluacion;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.ConcursoRepository;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.EvaluacionRepository;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.MaterialRepository;
-import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -16,32 +23,49 @@ public class MaterialServiceImpl implements MaterialService {
     @Autowired
     private MaterialRepository materialRepository;
     @Autowired
-    private UserRepository userRepository;
+    private ConcursoRepository concursoRepository;
+    @Autowired
+    private EvaluacionRepository evaluacionRepository;
 
     /**
-     * Crea un nuevo material y lo asocia con un usuario como concursante.
+     * Crea un nuevo material y lo asocia con un usuario y un concurso.
      *
-     * @param material El material que se va a crear y postular.
-     * @param user El usuario que está creando y postulando el material.
-     * @return El material creado y postulado.
+     * @param material El material que se va a crear y asociar.
+     * @param user     El usuario que será el concursante del material.
+     * @param concurso El concurso al que pertenecerá el material.
+     * @return El material creado y asociado.
      */
     @Override
-    public Material createMaterial(Material material, User user) {
+    @Transactional
+    public Material createMaterial(Material material, User user, Concurso concurso) {
         // Establece al usuario como concursante del material.
         material.setConcursante(user);
+        material.setConcurso(concurso);
 
-        // Agrega el material a la lista de materiales postulados por el usuario.
-        user.getMaterialesPostulados().add(material);
+        /*concurso.getMateriales().add(material);
+        concursoRepository.save(concurso);*/
 
-        // Guarda el material en el repositorio de materiales.
-        materialRepository.save(material);
+        /*// Agrega el material a la lista de materiales postulados por el usuario.
+        user.getMaterialesPostulados().add(material);*/
 
-        // Guarda el usuario en el repositorio de usuarios.
-        userRepository.save(user);
+        /*// Guarda el usuario en el repositorio de usuarios.
+        userRepository.save(user);*/
 
-        // Devuelve el material creado y postulado.
-        return material;
+        //Guarda el material en el repositorio de materiales y lo retorna.
+        return materialRepository.save(material);
     }
+
+    /**
+     * Obtiene una lista de materiales asociados a un concurso específico.
+     *
+     * @param concurso El concurso del cual se desean recuperar los materiales.
+     * @return Una lista de materiales asociados al concurso especificado.
+     */
+    @Override
+    public List<Material> getMaterialesByConcurso(Concurso concurso) {
+        return materialRepository.findAllByConcurso(concurso);
+    }
+
 
     /**
      * Recupera una lista de materiales asociados a un concursante específico.
@@ -69,41 +93,99 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
     /**
-     * Recupera una lista de materiales que han sido aprobados para participar.
+     * Obtiene una lista de materiales participantes en un concurso específico.
      *
-     * @return Una lista de materiales aprobados para participar, o una lista vacía si no hay materiales aprobados.
+     * @param concurso El concurso del cual se desean recuperar los materiales participantes.
+     * @return Una lista de materiales participantes asociados al concurso especificado.
+     */
+    @Override
+    public List<Material> getMaterialesParticipantesByConcurso(Concurso concurso) {
+
+        // Obtiene todos los materiales aprobados en general.
+        List<Material> materialesAprobados = materialRepository.findMaterialsByAprobadoIsTrue();
+
+        // Obtiene todos los materiales asociados al concurso específico.
+        List<Material> materialesConcurso = getMaterialesByConcurso(concurso);
+
+        // Filtra los materiales aprobados para mantener solo los que están asociados al concurso.
+        materialesAprobados.removeIf(material -> !materialesConcurso.contains(material));
+
+        return materialesAprobados;
+    }
+
+
+    /**
+     * Obtiene una lista de materiales participantes en el concurso actual.
+     *
+     * @return Una lista de materiales participantes en el concurso actual.
      */
     @Override
     public List<Material> getMaterialesParticipantes() {
-        // Utiliza el método findMaterialsByAprobadoIsTrue del repositorio de materiales
-        // para recuperar la lista de materiales que han sido aprobados para participar.
-        return materialRepository.findMaterialsByAprobadoIsTrue();
+        // Obtiene todos los materiales aprobados en general.
+        List<Material> materialesAprobados = materialRepository.findMaterialsByAprobadoIsTrue();
+
+        // Obtiene el concurso actual.
+        Concurso concurso = concursoRepository.findCurrentConcurso(LocalDateTime.now());
+
+        // Obtiene todos los materiales asociados al concurso actual.
+        List<Material> materialesConcursoActual = getMaterialesByConcurso(concurso);
+
+        // Filtra los materiales aprobados para mantener solo los asociados al concurso actual.
+        materialesAprobados.removeIf(material -> !materialesConcursoActual.contains(material));
+
+        return materialesAprobados;
     }
 
+
     /**
-     * Recupera una lista de materiales que están pendientes de aprobación.
+     * Obtiene una lista de materiales pendientes de aprobación para el concurso actual.
      *
-     * @return Una lista de materiales pendientes de aprobación, o una lista vacía si no hay materiales pendientes.
+     * @return Una lista de objetos MaterialDTO que representan los materiales pendientes de aprobación.
      */
     @Override
-    public List<Material> getMaterialesPendientesAprobacion() {
-        // Utiliza el método findMaterialsByAprobadoIsNull del repositorio de materiales
-        // para recuperar la lista de materiales que están pendientes de aprobación.
-        return materialRepository.findMaterialsByAprobadoIsNull();
+    public List<MaterialDTO> getMaterialesPendientesAprobacion() {
+        // Obtiene el concurso actual.
+        Concurso concurso = concursoRepository.findCurrentConcurso(LocalDateTime.now());
+
+        // Obtiene una lista de materiales sin aprobar asociados al concurso actual.
+        List<Material> materialesSinAprobar = materialRepository.findMaterialsByAprobadoIsNullAndConcurso(concurso);
+
+        // Crea una lista para almacenar los materiales DTO.
+        List<MaterialDTO> materialesDTO = new ArrayList<>();
+
+        // Itera sobre los materiales sin aprobar para crear los objetos MaterialDTO correspondientes.
+        for (Material material : materialesSinAprobar) {
+            MaterialDTO dto = new MaterialDTO();
+            dto.setId(material.getId());
+            dto.setTitulo(material.getTitulo());
+            dto.setDescripcion(material.getDescripcion());
+            dto.setDisciplina(material.getDisciplina());
+            dto.setTipoMaterial(material.getTipoMaterial());
+            dto.setConcursante(material.getConcursante());
+            dto.setAutores(material.getAutores());
+
+            materialesDTO.add(dto);
+        }
+
+        return materialesDTO;
     }
 
 
+
     /**
-     * Recupera una lista de materiales que han sido aprobados pero aún no han sido evaluados.
+     * Obtiene una lista de materiales pendientes de evaluación.
      *
-     * @return Una lista de materiales pendientes de evaluación, o una lista vacía si no hay materiales pendientes.
+     * @return Una lista de materiales pendientes de evaluación.
      */
     @Override
     public List<Material> getMaterialesPendientesEvaluacion() {
-        // Utiliza el método findMaterialsByEvaluadoIsFalseAndAprobadoIsTrue del repositorio de materiales
-        // para recuperar la lista de materiales que han sido aprobados pero aún no han sido evaluados.
-        return materialRepository.findMaterialsByEvaluadoIsFalseAndAprobadoIsTrue();
+        // Obtiene el concurso actual.
+        Concurso concurso = concursoRepository.findCurrentConcurso(LocalDateTime.now());
+
+        // Busca los materiales pendientes de evaluación para el concurso actual.
+        return materialRepository.findMaterialsByEvaluadoIsFalseAndAprobadoIsTrueAndConcurso(concurso);
     }
+
 
     /**
      * Recupera un material específico por su identificación.
@@ -138,6 +220,7 @@ public class MaterialServiceImpl implements MaterialService {
      * @throws IllegalArgumentException Si no se encuentra el material educativo con la identificación proporcionada.
      */
     @Override
+    @Transactional
     public void aprobarMaterial(Long id) {
         // Utiliza el repositorio de materiales para buscar el material por su identificación.
         Material material = materialRepository.findById(id)
@@ -158,6 +241,7 @@ public class MaterialServiceImpl implements MaterialService {
      * @throws IllegalArgumentException Si no se encuentra el material educativo con la identificación proporcionada.
      */
     @Override
+    @Transactional
     public void rechazarMaterial(Long id) {
         // Utiliza el repositorio de materiales para buscar el material por su identificación.
         Material material = materialRepository.findById(id)
@@ -174,12 +258,31 @@ public class MaterialServiceImpl implements MaterialService {
     /**
      * Actualiza el estado de evaluación de un material educativo.
      *
-     * @param material El material educativo cuyo estado de evaluación se actualizará.
+     * @param materialId El identificador del material educativo cuyo estado de evaluación se actualizará.
      */
     @Override
-    public void updateEvaluado(Material material) {
+    @Transactional
+    public void updateEvaluado(Long materialId) {
+        // Carga el material desde la base de datos.
+        Material material = materialRepository.findById(materialId)
+                .orElseThrow(() -> new RuntimeException("Material not found"));
+
+        // Inicializa el contador de evaluaciones del material.
+        int totalEvaluacionesMaterial = 0;
+        // Recorre cada evaluador del material.
+        for (User evaluador : material.getEvaluadores()){
+            // Busca si el evaluador ha realizado una evaluación para este material.
+            Evaluacion evaluacion = evaluacionRepository.findByEvaluadorAndMaterial(evaluador, material);
+            // Si se encuentra una evaluación para el evaluador actual, aumenta el contador de evaluaciones.
+            if (evaluacion != null) {
+                totalEvaluacionesMaterial += 1;
+            }
+        }
+        // Obtiene el total de evaluadores asignados al material.
+        int totalEvaluadoresMaterial = material.getEvaluadores().size();
+
         // Establece el estado de evaluación del material basándose en si el número de evaluaciones es igual al número de evaluadores.
-        material.setEvaluado(material.getEvaluaciones().size() == material.getEvaluadores().size());
+        material.setEvaluado(totalEvaluacionesMaterial == totalEvaluadoresMaterial);
 
         // Guarda los cambios en el repositorio de materiales.
         materialRepository.save(material);

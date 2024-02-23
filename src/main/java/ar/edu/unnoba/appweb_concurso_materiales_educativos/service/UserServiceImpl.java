@@ -1,7 +1,9 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.service;
 
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Evaluacion;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.EvaluacionRepository;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.MaterialRepository;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -21,6 +24,8 @@ public class UserServiceImpl implements UserService{
     private UserRepository userRepository;
     @Autowired
     private MaterialRepository materialRepository;
+    @Autowired
+    private EvaluacionRepository evaluacionRepository;
 
     /**
      * Carga detalles de un usuario basado en su nombre de usuario (correo electrónico).
@@ -59,6 +64,7 @@ public class UserServiceImpl implements UserService{
      * @throws Exception Si el correo electrónico del usuario ya existe en la base de datos.
      */
     @Override
+    @Transactional
     public User createUser(User user, User.Rol rol) throws Exception {
         // Verifica si el correo electrónico del usuario ya existe en la base de datos.
         // si no existe, crea el usuario
@@ -120,11 +126,10 @@ public class UserServiceImpl implements UserService{
      *
      * @param materialId La identificación del material a asignar.
      * @param evaluadorId La identificación del evaluador al cual asignar el material.
-     * @throws Exception Si no se encuentra el material o el evaluador con las identificaciones proporcionadas.
-     * @throws IllegalStateException Si el material ya está asignado al evaluador.
      */
     @Override
-    public void asignarMaterialAEvaluador(Long materialId, Long evaluadorId) throws Exception {
+    @Transactional
+    public void asignarMaterialAEvaluador(Long materialId, Long evaluadorId) {
         // Busca el material por su identificación en el repositorio de materiales.
         Material material = materialRepository.findById(materialId)
                 .orElseThrow(() -> new NoSuchElementException("No se encontró material con id. " + materialId));
@@ -181,7 +186,7 @@ public class UserServiceImpl implements UserService{
     public List<User> getEvaluadoresPendientes(Material material) {
         // Utiliza el método findEvaluadoresPendientes del repositorio de usuarios
         // para recuperar la lista de usuarios que son evaluadores pendientes para el material.
-        return userRepository.findEvaluadoresPendientes(material);
+        return userRepository.findEvaluadoresPendientesByMaterial(material);
     }
 
 
@@ -194,10 +199,8 @@ public class UserServiceImpl implements UserService{
      */
     @Override
     public boolean haEvaluadoMaterial(User usuario, Material material) {
-        // Utiliza Stream API para verificar si alguna evaluación asociada al material
-        // tiene al usuario como evaluador.
-        return material.getEvaluaciones().stream()
-                .anyMatch(evaluacion -> evaluacion.getEvaluador().equals(usuario));
+        Evaluacion evaluacion = evaluacionRepository.findByEvaluadorAndMaterial(usuario, material);
+        return evaluacion != null;
     }
 
     /**
@@ -206,6 +209,7 @@ public class UserServiceImpl implements UserService{
      * @param id La identificación del usuario a desactivar.
      */
     @Override
+    @Transactional
     public void bajaUsuario(Long id) {
         // Busca el usuario por su identificación en el repositorio de usuarios.
         User user = userRepository.findById(id).get();
@@ -224,6 +228,7 @@ public class UserServiceImpl implements UserService{
      * @param id La identificación del usuario a activar.
      */
     @Override
+    @Transactional
     public void altaUsuario(Long id) {
         // Busca el usuario por su identificación en el repositorio de usuarios.
         User user = userRepository.findById(id).get();
@@ -247,5 +252,24 @@ public class UserServiceImpl implements UserService{
         return userRepository.findAll();
     }
 
+    /**
+     * Obtiene un usuario con la colección 'materialesAEvaluar' inicializada.
+     *
+     * @param userId El identificador del usuario.
+     * @return El usuario con la colección 'materialesAEvaluar' inicializada.
+     */
+    @Override
+    @Transactional
+    public User getUsuarioConMaterialesAsignados(Long userId) {
+        // Busca al usuario en la base de datos.
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Inicializa la colección 'materialesAEvaluar'.
+        user.getMaterialesAEvaluar().size();
+
+        // Retorna el usuario con la colección 'materialesAEvaluar' inicializada.
+        return user;
+    }
 
 }

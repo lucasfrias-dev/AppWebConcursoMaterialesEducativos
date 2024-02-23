@@ -2,8 +2,6 @@ package ar.edu.unnoba.appweb_concurso_materiales_educativos.service;
 
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
-import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.UserRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
@@ -41,5 +39,5 @@ public interface UserService extends UserDetailsService{
     // Recupera una lista de todos los usuarios registrados en el sistema.
     List<User> findAll();
 
-
+    User getUsuarioConMaterialesAsignados(Long userId);
 }
