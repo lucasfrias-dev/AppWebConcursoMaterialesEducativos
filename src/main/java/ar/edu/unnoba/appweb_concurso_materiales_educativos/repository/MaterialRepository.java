@@ -1,5 +1,6 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.repository;
 
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -25,12 +26,22 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     List<Material> findMaterialsByAprobadoIsTrue();
 
     /**
-     * Método de consulta para obtener una lista de materiales que no han sido evaluados pero han sido aprobados.
+     * Busca todos los materiales que no han sido evaluados, han sido aprobados y pertenecen a un concurso específico.
      *
-     * @return Una lista de materiales que cumplen con los criterios de no evaluado y aprobado.
+     * @param concurso El concurso al que pertenecen los materiales.
+     * @return Una lista de materiales que cumplen con los criterios de no evaluados, aprobados y pertenecientes al concurso especificado.
      */
-    List<Material> findMaterialsByEvaluadoIsFalseAndAprobadoIsTrue();
+    @Query("SELECT m FROM Material m LEFT JOIN FETCH m.evaluadores WHERE m.evaluado = FALSE AND m.aprobado = TRUE AND m.concurso = :concurso")
+    List<Material> findMaterialsByEvaluadoIsFalseAndAprobadoIsTrueAndConcurso(Concurso concurso);
 
+    /**
+     * Busca todos los materiales que aún no han sido aprobados y pertenecen a un concurso específico.
+     *
+     * @param concurso El concurso al que pertenecen los materiales.
+     * @return Una lista de materiales que aún no han sido aprobados y pertenecen al concurso especificado.
+     */
+    @Query("SELECT m FROM Material m WHERE m.aprobado IS NULL AND m.concurso = :concurso")
+    List<Material> findMaterialsByAprobadoIsNullAndConcurso(Concurso concurso);
 
     /**
      * Método de consulta para obtener una lista de materiales asociados a un concursante específico.
@@ -40,12 +51,14 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      */
     List<Material> findByConcursante(User user);
 
-
     /**
-     * Método de consulta para obtener una lista de materiales que aún no han sido aprobados ni rechazados.
+     * Método de consulta para obtener una lista de materiales asociados a un concurso específico.
      *
-     * @return Una lista de materiales que no tienen la propiedad "aprobado" establecida.
+     * @param concurso El concurso cuyos materiales se desean recuperar.
+     * @return Una lista de materiales asociados al concurso especificado.
      */
-    List<Material> findMaterialsByAprobadoIsNull();
+    @Query("SELECT m FROM Material m LEFT JOIN FETCH m.evaluadores WHERE m.concurso = :concurso")
+    List<Material> findAllByConcurso(Concurso concurso);
+
 
 }
