@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <title>Crear Concurso</title>
+
+    <script>
+        window.onload = function(){
+            let fechaActual = new Date();
+            let dia = ("0" + fechaActual.getDate()).slice(-2);
+            let mes = ("0" + (fechaActual.getMonth() + 1)).slice(-2);
+            let hora = ("0" + fechaActual.getHours()).slice(-2);
+            let minuto = ("0" + fechaActual.getMinutes()).slice(-2);
+            let fechaHoy = fechaActual.getFullYear()+"-"+(mes)+"-"+(dia) +"T"+(hora)+":"+(minuto);
+
+            document.getElementById("fechaInicio").setAttribute("min", fechaHoy);
+            document.getElementById("fechaFin").setAttribute("min", fechaHoy);
+        }
+
+        function actualizarFechaFin(){
+            let fechaInicio = document.getElementById("fechaInicio").value;
+            document.getElementById("fechaFin").setAttribute("min", fechaInicio);
+        }
+    </script>
+</head>
+<body>
+<div th:if="${success}" class="alert alert-success" role="alert">
+    <p th:text="${success}"></p>
+</div>
+<div class="container">
+    <h1>Crear Concurso</h1>
+    <form action="#" th:action="@{/administrador/new-concurso}" th:object="${concurso}" method="post">
+        <div class="mb-3">
+            <label for="edicion" class="form-label">Edición</label>
+            <input type="text" th:value="${concurso.edicion != null ? concurso.edicion : 'III Edicion'}" class="form-control" id="edicion" readonly>
+        </div>
+        <div class="mb-3">
+            <label for="fechaInicio" class="form-label">Fecha de inicio</label>
+            <input type="datetime-local" th:field="*{fechaInicio}" class="form-control" id="fechaInicio" required onchange="actualizarFechaFin()">
+            <div class="invalid-feedback">
+                Por favor, ingrese una fecha de inicio.
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="fechaFin" class="form-label">Fecha de fin</label>
+            <input type="datetime-local" th:field="*{fechaFin}" class="form-control" id="fechaFin" required>
+            <div class="invalid-feedback">
+                Por favor, ingrese una fecha de fin que sea posterior a la fecha de inicio.
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Crear</button>
+
+        <div class="error-block" th:if="${#fields.hasErrors('*')}">
+            <ul class="error-messages">
+                <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
+            </ul>
+        </div>
+    </form>
+</div>
+</body>
+</html>
