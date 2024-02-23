@@ -1,7 +1,9 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.controller;
 
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.ConcursoService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -10,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
@@ -26,18 +27,34 @@ public class HomeController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private ConcursoService concursoService;
+
     /**
      * Controlador para redirigir a la página principal del sistema.
      *
+     * @param model El modelo que se utilizará para pasar datos a la vista.
      * @return El nombre de la vista que representa la página principal del sistema.
      */
     @GetMapping("/index")
-    public String home() {
+    public String home(Model model) {
+        // Obtiene el concurso actual desde el servicio concursoService.
+        Concurso concurso = concursoService.getConcursoActual();
+
+        // Agrega el nombre de la edición del concurso actual al modelo para que esté disponible en la vista.
+        model.addAttribute("edicion", concurso.getEdicion());
+
+        // Agrega el año de finalización del concurso actual al modelo para que esté disponible en la vista.
+        model.addAttribute("anio", concursoService.getConcursoActual().getFechaFin().getYear());
+
+        // Agrega la lista de concursos anteriores al modelo para que esté disponible en la vista.
+        model.addAttribute("concursosAnteriores", concursoService.getConcursosAnteriores());
+
         // Devuelve el nombre de la vista que representa la página principal del sistema.
         return "index";
     }
 
-    /**
+    /**+
      * Controlador para mostrar la página de inicio de sesión.
      *
      * @param error El parámetro opcional que indica el tipo de error ocurrido durante el intento de inicio de sesión.
@@ -84,18 +101,31 @@ public class HomeController {
 
 
     /**
-     * Controlador para mostrar la lista de materiales participantes.
+     * Controlador para mostrar la lista de materiales participantes de una edición específica del concurso.
      *
-     * @param model El modelo que se utilizará para pasar datos a la vista.
+     * @param model   El modelo que se utilizará para pasar datos a la vista.
+     * @param edicion La edición del concurso de la cual se mostrarán los materiales participantes.
      * @return El nombre de la vista que representa la lista de materiales participantes.
      */
-    @GetMapping("/materiales-participantes")
-    public String showMaterialesParticipantes(Model model) {
-        // Obtiene la lista de materiales participantes desde el servicio materialService.
-        List<Material> materialesParticipantes = materialService.getMaterialesParticipantes();
+    @GetMapping("/materiales-participantes/{edicion}")
+    public String showMaterialesParticipantes(Model model, @PathVariable String edicion) {
+        // Verifica si la edición no es nula.
+        if (!"null".equals(edicion)) {
+            // Reemplaza los guiones con espacios en la edición.
+            edicion = edicion.replace("-", " ");
+            // Obtiene el concurso asociado a la edición desde el servicio concursoService.
+            Concurso concurso = concursoService.getConcursoByEdicion(edicion);
+            // Obtiene la lista de materiales participantes del concurso actual desde el servicio materialService.
+            List<Material> materialesParticipantes = materialService.getMaterialesParticipantesByConcurso(concurso);
 
-        // Agrega la lista de materiales participantes al modelo para que esté disponible en la vista.
-        model.addAttribute("materialesParticipantes", materialesParticipantes);
+            // Agrega la lista de materiales participantes al modelo para que esté disponible en la vista.
+            model.addAttribute("materialesParticipantes", materialesParticipantes);
+            // Agrega la edición al modelo para que esté disponible en la vista.
+            model.addAttribute("edicion", edicion);
+        } else {
+            // Si la edición es nula, agrega null al modelo para indicarlo.
+            model.addAttribute("edicion", null);
+        }
 
         // Devuelve el nombre de la vista que representa la lista de materiales participantes.
         return "materiales-participantes";

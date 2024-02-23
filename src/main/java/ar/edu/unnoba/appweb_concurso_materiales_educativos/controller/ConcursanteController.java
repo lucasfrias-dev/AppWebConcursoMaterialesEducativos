@@ -1,9 +1,10 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.controller;
 
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.ConcursoService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
-import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -13,11 +14,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -29,7 +32,7 @@ public class ConcursanteController {
     private MaterialService materialService;
 
     @Autowired
-    private UserService userService;
+    private ConcursoService concursoService;
 
     /**
      * Controlador para mostrar el panel del concursante.
@@ -40,11 +43,16 @@ public class ConcursanteController {
      */
     @GetMapping("/index")
     public String dashboardConcursante(Authentication authentication, Model model) {
-        // Obtiene al usuario autenticado desde la información de autenticación.
+        // Obtiene al usuario autenticado.
         User usuario = (User) authentication.getPrincipal();
 
-        // Agrega el usuario al modelo para que esté disponible en la vista.
+        // Agrega el usuario al modelo.
         model.addAttribute("usuario", usuario);
+
+        // Obtiene la edición del concurso actual, si existe.
+        Concurso concurso = concursoService.getConcursoActual();
+        String edicionActual = (concurso != null) ? concurso.getEdicion() : "null";
+        model.addAttribute("edicionActual", edicionActual);
 
         // Devuelve el nombre de la vista que mostrará el panel del concursante.
         return "concursante/panel-concursante";
@@ -81,8 +89,16 @@ public class ConcursanteController {
      */
     @GetMapping("/postular-material")
     public String showPostularMaterial(Model model) {
-        // Agrega un nuevo objeto Material al modelo para que esté disponible en la vista.
+        // Obtiene el concurso actual.
+        Concurso concursoActual = concursoService.getConcursoActual();
+
+        // Agrega un objeto material vacío al modelo.
         model.addAttribute("material", new Material());
+
+        // Si no hay un concurso vigente, muestra un mensaje de error en la vista de postulación de material.
+        if (concursoActual == null) {
+            model.addAttribute("error", "No puedes postular ningún material porque no hay un concurso vigente.");
+        }
 
         // Devuelve el nombre de la vista que mostrará la página de postulación de material.
         return "concursante/postular-material";
@@ -92,12 +108,13 @@ public class ConcursanteController {
     /**
      * Controlador para procesar la creación y postulación de un nuevo material por parte del concursante.
      *
-     * @param material        El objeto Material que se ha vinculado desde el formulario.
-     * @param result          El objeto BindingResult que contiene los resultados de la validación.
+     * @param material        El objeto Material vinculado desde el formulario.
+     * @param result          El resultado de la validación del objeto Material.
      * @param model           El modelo que se utilizará para pasar datos a la vista.
-     * @param authentication  La información de autenticación que contiene al concursante autenticado.
+     * @param authentication  La información de autenticación del concursante.
      * @return Una redirección a la página que muestra los materiales del concursante o la página de postulación en caso de errores.
      */
+    @Transactional
     @PostMapping("/postular-material")
     public String createMaterial(
             @Valid @ModelAttribute("material") Material material,
@@ -105,22 +122,31 @@ public class ConcursanteController {
             Model model,
             Authentication authentication
     ) {
-        // Verifica si hay errores de validación en el formulario.
+        // Verifica si hay errores de validación.
         if (result.hasErrors()) {
-            // Si hay errores, agrega el objeto Material y retorna a la página de postulación de material.
-            model.addAttribute("material", material);
+            // Devuelve a la vista de postulación de material con los errores de validación.
             return "concursante/postular-material";
         }
 
-        // Obtiene al concursante autenticado desde la información de autenticación.
+        // Obtiene el usuario autenticado.
         User sessionUser = (User) authentication.getPrincipal();
+        // Obtiene el concurso actual.
+        Concurso concurso = concursoService.getConcursoActual();
 
-        // Crea y postula el nuevo material utilizando el servicio materialService.
-        materialService.createMaterial(material, sessionUser);
+        // Verifica si hay un concurso vigente.
+        if (concurso == null) {
+            // Muestra un mensaje de error si no hay un concurso vigente y devuelve a la vista de postulación de material.
+            model.addAttribute("error", "No puedes postular ningún material porque no hay un concurso vigente.");
+            return "concursante/postular-material";
+        }
+
+        // Crea y postula el material utilizando el servicio.
+        materialService.createMaterial(material, sessionUser, concurso);
 
         // Redirige a la página que muestra los materiales del concursante.
         return "redirect:/concursante/mis-materiales";
     }
+
 
     /**
      * Controlador para mostrar la página de materiales postulados por el concursante autenticado.
@@ -128,6 +154,7 @@ public class ConcursanteController {
      * @param authentication La información de autenticación que contiene al concursante autenticado.
      * @return Un objeto ModelAndView que representa la vista de los materiales del concursante.
      */
+    @Transactional
     @GetMapping("/mis-materiales")
     public ModelAndView showMisMateriales(Authentication authentication) {
         // Obtiene al concursante autenticado desde la información de autenticación.
@@ -136,12 +163,39 @@ public class ConcursanteController {
         // Crea un objeto ModelAndView asociado a la vista "concursante/mis-materiales".
         ModelAndView modelAndView = new ModelAndView("concursante/mis-materiales");
 
-        // Agrega la lista de materiales postulados por el concursante al modelo para que esté disponible en la vista.
-        modelAndView.addObject("materiales", materialService.getMaterialesByConcursante(sessionUser));
+        // Obtiene todos los materiales postulados por el concursante.
+        List<Material> materialesConcursante = materialService.getMaterialesByConcursante(sessionUser);
 
-        // Retorna el objeto ModelAndView.
+        // Obtiene la edición del concurso actual, si existe.
+        Concurso concursoActual = concursoService.getConcursoActual();
+        String edicionActual = (concursoActual != null) ? concursoActual.getEdicion() : null;
+
+        // Filtra los materiales del concursante según la edición del concurso.
+        List<Material> materialesEdicionActual = new ArrayList<>();
+        List<Material> materialesEdicionesAnteriores;
+        if (edicionActual != null) {
+            // Filtra los materiales postulados por el concursante para la edición actual del concurso.
+            materialesEdicionActual = materialesConcursante.stream()
+                    .filter(material -> material.getConcurso() != null && material.getConcurso().getEdicion().equals(edicionActual))
+                    .toList();
+
+            // Filtra los materiales postulados por el concursante para ediciones anteriores del concurso.
+            materialesEdicionesAnteriores = materialesConcursante.stream()
+                    .filter(material -> material.getConcurso() != null && !material.getConcurso().getEdicion().equals(edicionActual))
+                    .toList();
+        } else {
+            // Si no hay una edición actual del concurso, todos los materiales son considerados como ediciones anteriores.
+            materialesEdicionesAnteriores = materialesConcursante;
+        }
+
+        // Agrega las listas de materiales al modelo para que estén disponibles en la vista.
+        modelAndView.addObject("materialesEdicionActual", materialesEdicionActual);
+        modelAndView.addObject("materialesEdicionesAnteriores", materialesEdicionesAnteriores);
+
+        // Retorna el objeto ModelAndView que representa la vista de los materiales del concursante.
         return modelAndView;
     }
+
 
 
     /**

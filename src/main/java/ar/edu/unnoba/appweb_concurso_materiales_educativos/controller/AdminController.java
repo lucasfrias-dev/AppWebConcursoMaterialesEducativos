@@ -1,7 +1,11 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.controller;
 
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Evaluacion;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.ConcursoService;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.EvaluacionService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,11 +18,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,21 +38,37 @@ public class AdminController {
     private UserService userService;
     @Autowired
     private MaterialService materialService;
-
+    @Autowired
+    private ConcursoService concursoService;
+    @Autowired
+    private EvaluacionService evaluacionService;
     /**
-     * Controlador para la página de inicio ("/index") que muestra el panel del administrador.
+     * Método controlador para mostrar el panel del administrador en la vista.
      *
      * @param authentication La información de autenticación del usuario.
-     * @param model          El modelo que se utilizará para pasar datos a la vista.
-     * @return El nombre de la vista que mostrará el panel del administrador.
+     * @param model El modelo utilizado para pasar datos a la vista.
+     * @param error Mensaje de error a mostrar en la vista.
+     * @param message Mensaje informativo a mostrar en la vista.
+     * @return El nombre de la vista que muestra el panel del administrador.
      */
     @GetMapping("/index")
-    public String dashboardAdministrador(Authentication authentication, Model model) {
+    public String dashboardAdministrador(Authentication authentication, Model model, @ModelAttribute("error") String error, @ModelAttribute("message") String message) {
         // Obtiene el usuario autenticado desde la información de autenticación.
         User usuario = (User) authentication.getPrincipal();
 
         // Agrega el usuario al modelo para que esté disponible en la vista.
         model.addAttribute("usuario", usuario);
+
+        // Agrega el concurso actual al modelo para que esté disponible en la vista.
+        model.addAttribute("concursoActual", concursoService.getConcursoActual());
+
+        // Agrega la lista de concursos anteriores al modelo para que esté disponible en la vista.
+        model.addAttribute("concursosAnteriores", concursoService.getConcursosAnteriores());
+
+        // Agrega un mensaje de error al modelo para que esté disponible en la vista.
+        model.addAttribute("error", error);
+        // Agrega un mensaje al modelo para que esté disponible en la vista.
+        model.addAttribute("message", message);
 
         // Devuelve el nombre de la vista que mostrará el panel del administrador.
         return "administrador/panel-administrador";
@@ -73,31 +96,168 @@ public class AdminController {
         return "redirect:/login?logout";
     }
 
-
     /**
-     * Controlador para mostrar todos los materiales en la interfaz de administrador.
+     * Método controlador para mostrar el formulario de creación de un nuevo concurso en la vista.
      *
-     * @param model El modelo que se utilizará para pasar datos a la vista.
-     * @return El nombre de la vista que mostrará la lista de materiales.
+     * @param model El modelo utilizado para pasar datos a la vista.
+     * @return El nombre de la vista que muestra el formulario de creación de un nuevo concurso.
      */
-    @GetMapping("/materiales/all")
-    public String showMateriales(Model model) {
-        // Agrega la lista de materiales al modelo para que esté disponible en la vista.
-        model.addAttribute("materiales", materialService.getMateriales());
+    @GetMapping("/new-concurso")
+    public String ShowCreateConcurso(Model model) {
+        // Agrega un nuevo objeto Concurso al modelo para inicializar el formulario.
+        model.addAttribute("concurso", new Concurso());
 
-        // Devuelve el nombre de la vista que mostrará la lista de materiales.
-        return "administrador/materiales";
+        // Devuelve el nombre de la vista que mostrará el formulario de creación de un nuevo concurso.
+        return "administrador/new-concurso";
     }
 
+    /**
+     * Método controlador para crear un nuevo concurso.
+     *
+     * @param concurso El objeto Concurso a crear, obtenido del formulario.
+     * @param result El resultado de la validación del objeto Concurso.
+     * @param model El modelo utilizado para pasar datos a la vista en caso de error.
+     * @param redirectAttributes Los atributos de redirección para agregar mensajes flash.
+     * @return Una redirección a la página de inicio del administrador si el concurso se crea con éxito,
+     *         de lo contrario, muestra nuevamente el formulario de creación de concurso con mensajes de error.
+     */
+    @PostMapping("/new-concurso")
+    public String createConcurso(@Valid @ModelAttribute("concurso") Concurso concurso, BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+        // Verifica si hay errores de validación en el objeto Concurso.
+        if (result.hasErrors()) {
+            // Si hay errores, vuelve a mostrar el formulario de creación de concurso con los errores.
+            model.addAttribute("concurso", concurso);
+            return "administrador/new-concurso";
+        }
+
+        // Si no hay errores de validación, crea el concurso utilizando el servicio correspondiente.
+        concursoService.createConcurso(concurso);
+
+        // Agrega un mensaje de éxito como atributo flash para que esté disponible después de la redirección.
+        redirectAttributes.addFlashAttribute("success", "Concurso creado exitosamente");
+
+        // Redirige al usuario a la página de inicio del administrador.
+        return "redirect:/administrador/index";
+    }
+
+    /**
+     * Método controlador para cerrar un concurso específico.
+     *
+     * @param edicion La edición del concurso a cerrar, obtenida como parte de la URL.
+     * @param redirectAttributes Los atributos de redirección para agregar mensajes flash.
+     * @return Una redirección a la página de inicio del administrador con un mensaje de éxito si el concurso se cierra con éxito,
+     *         de lo contrario, redirige con un mensaje de error.
+     */
+    @PostMapping("/concurso/{edicion}/cerrar")
+    public String cerrarConcurso(@PathVariable String edicion, RedirectAttributes redirectAttributes) {
+        // Reemplaza cualquier guión en el nombre de la edición con un espacio para manejar correctamente los nombres compuestos.
+        edicion = edicion.replace("-", " ");
+        try {
+            // Intenta cerrar el concurso utilizando el servicio correspondiente.
+            concursoService.cerrarConcurso(edicion);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // Si se produce una excepción durante el cierre del concurso, agrega un mensaje de error como atributo flash.
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            // Redirige al usuario a la página de inicio del administrador.
+            return "redirect:/administrador/index";
+        }
+        // Si el concurso se cierra con éxito, agrega un mensaje de éxito como atributo flash.
+        redirectAttributes.addFlashAttribute("message", "Concurso cerrado exitosamente.");
+        // Redirige al usuario a la página de inicio del administrador.
+        return "redirect:/administrador/index";
+    }
+
+    /**
+     * Método controlador para mostrar el formulario de reabrir un concurso específico.
+     *
+     * @param edicion La edición del concurso a reabrir, obtenida como parte de la URL.
+     * @param model El modelo utilizado para pasar datos a la vista.
+     * @return El nombre de la vista que muestra el formulario de reabrir concurso.
+     */
+    @GetMapping("/concurso/{edicion}/reabrir")
+    public String reabrirConcurso(@PathVariable String edicion, Model model) {
+        // Reemplaza cualquier guión en el nombre de la edición con un espacio para manejar correctamente los nombres compuestos.
+        edicion = edicion.replace("-", " ");
+        // Obtiene el concurso específico por su edición utilizando el servicio correspondiente.
+        Concurso concurso = concursoService.getConcursoByEdicion(edicion);
+        // Agrega el concurso al modelo para que esté disponible en la vista.
+        model.addAttribute("concurso", concurso);
+        // Devuelve el nombre de la vista que muestra el formulario de reabrir concurso.
+        return "administrador/reabrir-concurso";
+    }
+
+    /**
+     * Método controlador para reabrir un concurso específico.
+     *
+     * @param edicion La edición del concurso a reabrir, obtenida como parte de la URL.
+     * @param fechaFin La nueva fecha de finalización del concurso, obtenida como parámetro de solicitud.
+     * @param redirectAttributes Los atributos de redirección para agregar mensajes flash.
+     * @return Una redirección a la página de inicio del administrador con un mensaje de éxito si el concurso se reabre con éxito,
+     *         de lo contrario, redirige con un mensaje de error.
+     */
+    @PostMapping("/concurso/{edicion}/reabrir")
+    public String reabrirConcurso(@PathVariable String edicion, @RequestParam("fechaFin") LocalDateTime fechaFin, RedirectAttributes redirectAttributes) {
+        // Reemplaza cualquier guión en el nombre de la edición con un espacio para manejar correctamente los nombres compuestos.
+        edicion = edicion.replace("-", " ");
+        try {
+            // Intenta reabrir el concurso con la nueva fecha de finalización utilizando el servicio correspondiente.
+            concursoService.reabrirConcurso(edicion, fechaFin);
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            // Si se produce una excepción durante la reapertura del concurso, agrega un mensaje de error como atributo flash.
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+            // Redirige al usuario a la página de inicio del administrador.
+            return "redirect:/administrador/index";
+        }
+        // Si el concurso se reabre con éxito, agrega un mensaje de éxito como atributo flash.
+        redirectAttributes.addFlashAttribute("message", "Concurso reabierto exitosamente.");
+        // Redirige al usuario a la página de inicio del administrador.
+        return "redirect:/administrador/index";
+    }
+
+    /**
+     * Método controlador para mostrar todos los materiales asociados a un concurso específico.
+     *
+     * @param model El modelo utilizado para pasar datos a la vista.
+     * @param edicion La edición del concurso para la cual se mostrarán los materiales, obtenida como parte de la URL.
+     * @return El nombre de la vista que muestra todos los materiales asociados al concurso.
+     */
+    @GetMapping("/materiales/{edicion}/all")
+    @Transactional
+    public String showMateriales(Model model, @PathVariable String edicion) {
+        // Reemplaza cualquier guión en el nombre de la edición con un espacio para manejar correctamente los nombres compuestos.
+        edicion = edicion.replace("-", " ");
+
+        // Obtiene el concurso específico por su edición utilizando el servicio correspondiente.
+        Concurso concurso = concursoService.getConcursoByEdicion(edicion);
+
+        // Obtiene todos los materiales asociados al concurso utilizando el servicio correspondiente.
+        List<Material> materiales = materialService.getMaterialesByConcurso(concurso);
+
+        // Crea un mapa para almacenar las evaluaciones por material.
+        Map<Long, List<Evaluacion>> evaluacionesPorMaterial = new HashMap<>();
+        // Itera sobre cada material para obtener sus evaluaciones y las almacena en el mapa.
+        for (Material material : materiales) {
+            List<Evaluacion> evaluaciones = evaluacionService.getEvaluacionesByMaterial(material);
+            evaluacionesPorMaterial.put(material.getId(), evaluaciones);
+        }
+
+        // Agrega los materiales y las evaluaciones por material al modelo para que estén disponibles en la vista.
+        model.addAttribute("materiales", materiales);
+        model.addAttribute("evaluacionesPorMaterial", evaluacionesPorMaterial);
+
+        // Devuelve el nombre de la vista que muestra todos los materiales asociados al concurso.
+        return "administrador/materiales";
+    }
 
     /**
      * Controlador para mostrar todos los materiales pendientes de aprobación en la interfaz de administrador.
      *
      * @param model El modelo que se utilizará para pasar datos a la vista.
+     * @param edicion La edición del concurso para la cual se mostrarán los materiales pendientes de aprobación, obtenida como parte de la URL.
      * @return El nombre de la vista que mostrará la lista de materiales pendientes de aprobación.
      */
-    @GetMapping("/materiales/pendientes-de-aprobacion")
-    public String showMaterialesPendientesAprobaccion(Model model) {
+    @GetMapping("/materiales/{edicion}/pendientes-de-aprobacion")
+    public String showMaterialesPendientesAprobacion(Model model, @PathVariable String edicion) {
         // Agrega la lista de materiales pendientes de aprobación al modelo para que esté disponible en la vista.
         model.addAttribute("materiales", materialService.getMaterialesPendientesAprobacion());
 
@@ -111,10 +271,12 @@ public class AdminController {
      * Incluye información sobre los evaluadores pendientes asociados a cada material.
      *
      * @param model El modelo que se utilizará para pasar datos a la vista.
+     * @param edicion La edición del concurso para la cual se mostrarán los materiales pendientes de evaluación, obtenida como parte de la URL.
      * @return El nombre de la vista que mostrará la lista de materiales pendientes de evaluación.
      */
-    @GetMapping("/materiales/pendientes-de-evaluacion")
-    public String showMaterialesPendientesEvaluacion(Model model) {
+    @GetMapping("/materiales/{edicion}/pendientes-de-evaluacion")
+    @Transactional
+    public String showMaterialesPendientesEvaluacion(Model model, @PathVariable String edicion) {
         // Obtiene la lista de materiales pendientes de evaluación.
         List<Material> materiales = materialService.getMaterialesPendientesEvaluacion();
 
@@ -144,8 +306,12 @@ public class AdminController {
         // Aprobar el material utilizando el servicio materialService.
         materialService.aprobarMaterial(id);
 
+        // Obtiene el concurso actual para construir la URL de redirección.
+        Concurso concurso = concursoService.getConcursoActual();
+        // Reemplaza los espacios en blanco en la edición del concurso con guiones para construir la URL.
+        String edicion = concurso.getEdicion().replace(" ", "-");
         // Redirige a la página que muestra la lista de materiales pendientes de aprobación.
-        return "redirect:/administrador/materiales/pendientes-de-aprobacion";
+        return "redirect:/administrador/materiales/" + edicion + "/pendientes-de-aprobacion";
     }
 
 
@@ -160,8 +326,12 @@ public class AdminController {
         // Rechazar el material utilizando el servicio materialService.
         materialService.rechazarMaterial(id);
 
+        // Obtiene el concurso actual para construir la URL de redirección.
+        Concurso concurso = concursoService.getConcursoActual();
+        // Reemplaza los espacios en blanco en la edición del concurso con guiones para construir la URL.
+        String edicion = concurso.getEdicion().replace(" ", "-");
         // Redirige a la página que muestra la lista de materiales pendientes de aprobación.
-        return "redirect:/administrador/materiales/pendientes-de-aprobacion";
+        return "redirect:/administrador/materiales/" + edicion + "/pendientes-de-aprobacion";
     }
 
     /**
@@ -408,7 +578,7 @@ public class AdminController {
     @GetMapping("/evaluadores/asignar-material")
     public String showAsignarMaterial(Model model) {
         // Agrega la lista de materiales y la lista de evaluadores al modelo para que estén disponibles en la vista.
-        model.addAttribute("materiales", materialService.getMateriales());
+        model.addAttribute("materiales", materialService.getMaterialesByConcurso(concursoService.getConcursoActual()));
         model.addAttribute("evaluadores", userService.getAllEvaluadores());
 
         // Devuelve el nombre de la vista que mostrará la página de asignación de material a evaluadores.

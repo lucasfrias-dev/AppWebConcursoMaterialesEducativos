@@ -15,9 +15,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -88,9 +87,13 @@ public class EvaluadorController {
      * @return El nombre de la vista que mostrará la página de materiales asignados al evaluador.
      */
     @GetMapping("/materiales/asignados")
+    @Transactional
     public String showMaterialesAsignados(Authentication authentication, Model model) {
         // Obtiene al evaluador autenticado desde la información de autenticación.
         User usuario = (User) authentication.getPrincipal();
+
+        // Recarga el usuario con la colección 'materialesAEvaluar' inicializada.
+        usuario = userService.getUsuarioConMaterialesAsignados(usuario.getId());
 
         // Agrega al evaluador al modelo para que esté disponible en la vista.
         model.addAttribute("usuario", usuario);
@@ -99,8 +102,9 @@ public class EvaluadorController {
         Set<Material> materiales = materialService.getMaterialesAsignados(usuario);
 
         // Calcula una lista de booleanos que indica si el evaluador ha evaluado cada material.
+        User finalUsuario = usuario;
         List<Boolean> fueEvaluado = materiales.stream()
-                .map(material -> userService.haEvaluadoMaterial(usuario, material))
+                .map(material -> userService.haEvaluadoMaterial(finalUsuario, material))
                 .collect(Collectors.toList());
 
         // Agrega la lista de materiales y la lista de evaluaciones al modelo para que estén disponibles en la vista.
@@ -154,7 +158,7 @@ public class EvaluadorController {
 
 
     /**
-     * Controlador para crear una evaluación para un material asignado al evaluador autenticado.
+     * Controlador para crear una evaluación de un material asignado al evaluador autenticado.
      *
      * @param id             El identificador del material al que se asociará la evaluación.
      * @param evaluacion     El objeto Evaluacion que contiene los datos de la nueva evaluación.
@@ -162,18 +166,19 @@ public class EvaluadorController {
      * @return Una redirección a la página que muestra los materiales asignados al evaluador.
      */
     @PostMapping("/materiales/asignados/{id}/createEvaluacion")
+    @Transactional // Se usa transacción para asegurar la integridad de la base de datos.
     public String createEvaluacion(@PathVariable Long id, @ModelAttribute Evaluacion evaluacion, Authentication authentication) {
         // Obtiene al evaluador autenticado desde la información de autenticación.
         User evaluador = (User) authentication.getPrincipal();
 
-        // Obtiene el material con el identificador proporcionado desde el servicio materialService.
+        // Obtiene el material asociado al identificador proporcionado.
         Material material = materialService.getMaterial(id);
 
-        // Crea la evaluación asociada al evaluador y al material.
+        // Crea la evaluación y la asocia al evaluador y al material.
         evaluacionService.createEvaluacion(evaluacion, evaluador, material);
 
-        // Actualiza el estado de evaluación del material.
-        materialService.updateEvaluado(material);
+        // Actualiza el estado del material para indicar que ha sido evaluado.
+        materialService.updateEvaluado(id);
 
         // Redirige a la página que muestra los materiales asignados al evaluador.
         return "redirect:/evaluador/materiales/asignados";
