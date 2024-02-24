@@ -9,6 +9,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,9 +22,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -120,11 +126,12 @@ public class ConcursanteController {
     @Transactional
     @PostMapping("/postular-material")
     public String createMaterial(
+            @RequestParam("file") MultipartFile file,
             @Valid @ModelAttribute("material") Material material,
             BindingResult result,
             Model model,
             Authentication authentication,
-            @RequestParam("file") MultipartFile file
+            RedirectAttributes redirectAttributes
     ) {
         // Verifica si hay errores de validación.
         if (result.hasErrors()) {
@@ -140,34 +147,39 @@ public class ConcursanteController {
         // Verifica si hay un concurso vigente.
         if (concurso == null) {
             // Muestra un mensaje de error si no hay un concurso vigente y devuelve a la vista de postulación de material.
-            model.addAttribute("error", "No puedes postular ningún material porque no hay un concurso vigente.");
+            return "redirect:/concursante/mis-materiales";
+        }
+
+        try {
+            if (!file.isEmpty()) {
+                // Guarda el archivo en el directorio de recursos estáticos
+                String fileName = file.getOriginalFilename();
+                String uploadsDir = "src/main/resources/static/file/";
+                Path uploadPath = Paths.get(uploadsDir);
+                if (!Files.exists(uploadPath)) {
+                    Files.createDirectories(uploadPath);
+                }
+                Path filePath = uploadPath.resolve(fileName);
+                Files.copy(file.getInputStream(), filePath);
+
+                // Actualiza la ruta del archivo en el objeto Material para que sea relativa a la raíz de la aplicación
+                String relativeFilePath = "/file/" + fileName;
+                material.setArchivo(relativeFilePath);
+            }
+
+            // Crea y postula el material utilizando el servicio.
+            materialService.createMaterial(material, sessionUser, concurso);
+
+            // Agrega un mensaje de éxito para mostrar en la página de materiales del concursante.
+            redirectAttributes.addFlashAttribute("successMessage", "Material postulado exitosamente.");
+
+            // Redirige a la página que muestra los materiales del concursante.
+            return "redirect:/concursante/mis-materiales";
+        } catch (IOException e) {
+            // Maneja el error de procesamiento del archivo adjunto
+            model.addAttribute("error", "Error al procesar el archivo adjunto: " + e.getMessage());
             return "concursante/postular-material";
         }
-
-        if (!file.isEmpty()) {
-            try {
-                // Guarda el archivo en el sistema de archivos del servidor
-                String uploadsDir = "/static/file/";
-                String fileName = file.getOriginalFilename();
-                String filePath = uploadsDir + fileName;
-                File dest = new File(filePath);
-                file.transferTo(dest);
-
-                // Guarda la ruta del archivo en el objeto Material
-                material.setArchivo(filePath);
-
-            } catch (IOException e) {
-                // Maneja el error de procesamiento del archivo adjunto
-                model.addAttribute("error", "Error al procesar el archivo adjunto: " + e.getMessage());
-                return "concursante/postular-material";
-            }
-        }
-
-        // Crea y postula el material utilizando el servicio.
-        materialService.createMaterial(material, sessionUser, concurso);
-
-        // Redirige a la página que muestra los materiales del concursante.
-        return "redirect:/concursante/mis-materiales";
     }
 
 
