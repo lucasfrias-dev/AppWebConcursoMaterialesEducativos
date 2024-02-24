@@ -19,6 +19,7 @@
         <th>Autores</th>
         <th>Evaluadores</th>
         <th>Falta Evaluacion de</th>
+        <th>Ver Archivo</th>
     </tr>
     </thead>
     <tbody>
@@ -30,7 +31,6 @@
         <td th:text="${material.tipoMaterial}"></td>
         <td th:text="${material.concursante}"></td>
         <td th:text="${material.autores}"></td>
-        <td th:href="@{'/download/' + ${material.id}}">Descargar</td>
         <td>
             <ul th:if="${material.evaluadores != null && material.evaluadores.size() > 0}">
                 <li th:each="evaluador : ${material.evaluadores}">
@@ -47,6 +47,7 @@
             </ul>
             <p th:unless="${evaluadoresPendientes.get(material) != null && evaluadoresPendientes.get(material).size() > 0}">No tiene ninguna evaluación</p>
         </td>
+        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
     </tr>
     </tbody>
 </table>

@@ -16,6 +16,7 @@
     <th>Tipo de Material</th>
     <th>Disciplina a la que pertenece</th>
     <th>Autores</th>
+    <th>Descargar</th>
   </tr>
   <tr th:each="material : ${materialesParticipantes}">
     <td th:text="${material.titulo}"></td>
@@ -23,7 +24,7 @@
     <td th:text="${material.tipoMaterial}"></td>
     <td th:text="${material.disciplina}"></td>
     <td th:text="${material.autores}"></td>
-    <td th:href="@{'/download/' + ${material.id}}">Descargar</td>
+    <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
   </tr>
 </table>
 <p th:if="${edicion != null}" th:unless="${materialesParticipantes?.size() > 0}">Todavia no participa ningun material</p>

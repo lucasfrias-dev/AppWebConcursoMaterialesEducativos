@@ -163,7 +163,7 @@ public class ConcursanteController {
                 Files.copy(file.getInputStream(), filePath);
 
                 // Actualiza la ruta del archivo en el objeto Material para que sea relativa a la raíz de la aplicación
-                String relativeFilePath = "/file/" + fileName;
+                String relativeFilePath = uploadsDir + fileName;
                 material.setArchivo(relativeFilePath);
             }
 

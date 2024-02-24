@@ -19,6 +19,7 @@
         <th>Autores</th>
         <th>Edicion participante</th>
         <th>Estado de Aprobación</th>
+        <th>Descargar</th>
     </tr>
     </thead>
     <tbody>
@@ -35,6 +36,7 @@
             <span th:if="${material.aprobado == true}">Aprobado</span>
             <span th:if="${material.aprobado == false}">Rechazado</span>
         </td>
+        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
     </tr>
     </tbody>
 </table>
@@ -51,6 +53,7 @@
         <th>Autores</th>
         <th>Edicion participante</th>
         <th>Estado de Aprobación</th>
+        <th>Descargar</th>
     </tr>
     </thead>
     <tbody>
@@ -67,6 +70,7 @@
             <span th:if="${material.aprobado == true}">Aprobado</span>
             <span th:if="${material.aprobado == false}">Rechazado</span>
         </td>
+        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
     </tr>
     </tbody>
 </table>

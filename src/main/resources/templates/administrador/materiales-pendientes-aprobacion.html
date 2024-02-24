@@ -19,6 +19,7 @@
         <th>Autores</th>
         <th>Aprobar</th>
         <th>Rechazar</th>
+        <th>Ver Archivo</th>
     </tr>
     </thead>
     <tbody>
@@ -40,6 +41,7 @@
                 <input type="submit" value="Rechazar">
             </form>
         </td>
+        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
     </tr>
     </tbody>
 </table>

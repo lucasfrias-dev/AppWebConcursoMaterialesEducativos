@@ -8,6 +8,7 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialServi
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,11 +22,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.io.File;
 
 @Controller
 @RequestMapping("/")
@@ -65,7 +68,8 @@ public class HomeController {
         return "index";
     }
 
-    /**+
+    /**
+     * +
      * Controlador para mostrar la página de inicio de sesión.
      *
      * @param error El parámetro opcional que indica el tipo de error ocurrido durante el intento de inicio de sesión.
@@ -141,32 +145,26 @@ public class HomeController {
         // Devuelve el nombre de la vista que representa la lista de materiales participantes.
         return "materiales-participantes";
     }
+
     @GetMapping("/download/{id}")
-    public ResponseEntity<Resource> downloadFile(@PathVariable Long id) {
-        // Supongamos que tienes un servicio que te permite obtener la ruta del archivo a partir del ID del material
+    public ResponseEntity<InputStreamResource> downloadFile(@PathVariable Long id) throws IOException {
+        // Obtener la ruta completa del archivo junto con el nombre desde el servicio
         String filePath = materialService.getMaterial(id).getArchivo();
 
-        // Intenta cargar el archivo desde la ruta especificada
-        Path path = Paths.get(filePath);
-        Resource resource;
-        try {
-            resource = (Resource) new UrlResource(path.toUri());
-        } catch (IOException e) {
-            // Manejar el caso en el que no se pueda cargar el archivo
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
+        File file = new File(filePath);
 
-        // Prepara la respuesta para la descarga del archivo
         HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + resource.getClass());
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
 
-        // Devuelve la respuesta con el archivo para su descarga
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
         return ResponseEntity.ok()
                 .headers(headers)
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .contentLength(file.length())
                 .body(resource);
     }
+
 
 
     /**
