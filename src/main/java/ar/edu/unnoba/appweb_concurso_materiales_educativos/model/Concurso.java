@@ -5,6 +5,8 @@ import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
 
 
 @Data
@@ -25,14 +27,12 @@ public class Concurso {
     private LocalDateTime fechaInicio;
 
     @NotNull
-    @FutureOrPresent
     @Column(name = "fecha_fin")
     private LocalDateTime fechaFin;
 
     /*@OneToMany(mappedBy = "concurso", fetch = FetchType.LAZY)
     private Set<Material> materiales = new HashSet<>();*/
 
-    @OneToOne
-    @JoinColumn(name = "material_ganador_id")
-    private Material materialGanador;
+    @OneToMany(mappedBy = "concurso", fetch = FetchType.LAZY)
+    private Set<Material> materialesGanadores;
 }

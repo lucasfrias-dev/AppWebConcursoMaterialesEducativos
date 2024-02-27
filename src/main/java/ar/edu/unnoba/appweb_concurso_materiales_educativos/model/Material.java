@@ -1,10 +1,13 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.URL;
 
 import java.io.Serializable;
 import java.util.HashSet;
@@ -22,10 +25,12 @@ public class Material implements Serializable {
 
     @Column(name = "titulo")
     @NotBlank(message = "El titulo es obligatorio")
+    @Size(max = 100, message = "El título no puede tener más de 100 caracteres")
     private String titulo;
 
     @NotBlank(message = "La descripción es obligatoria")
     @Column(name = "descripcion")
+    @Size(max = 500, message = "La descripción no puede tener más de 500 caracteres")
     private String descripcion;
 
     @NotBlank(message = "El tipo de material es obligatorio")
@@ -49,6 +54,11 @@ public class Material implements Serializable {
     @Column(name = "archivo")
     private String archivo;
 
+    @NotBlank(message = "El link del video de presentación es obligatorio")
+    @Column(name = "url_video_presentacion")
+    @URL(message = "El link del video de presentación debe ser una URL válida")
+    private String urlVideoPresentacion;
+
     @Column(name = "likes")
     private int likes = 0;
 
@@ -64,7 +74,7 @@ public class Material implements Serializable {
         inverseJoinColumns = @JoinColumn(name = "user_id"))
     private Set<User> evaluadores = new HashSet<>();
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concurso_id")
     private Concurso concurso;
 

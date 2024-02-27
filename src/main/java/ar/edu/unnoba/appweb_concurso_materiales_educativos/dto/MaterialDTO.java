@@ -12,6 +12,7 @@ public class MaterialDTO implements Serializable {
     private String descripcion;
     private String tipoMaterial;
     private String disciplina;
+    private String urlVideoPresentacion;
     private String autores;
     private User concursante;
 
