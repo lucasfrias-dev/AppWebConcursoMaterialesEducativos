@@ -34,14 +34,19 @@ import java.util.Map;
 @RequestMapping("/administrador")
 @PreAuthorize("hasRole('ADMINISTRADOR')") /*solo los administradores acceden a este controlador*/
 public class AdminController {
+    private final UserService userService;
+    private final MaterialService materialService;
+    private final ConcursoService concursoService;
+    private final EvaluacionService evaluacionService;
+
     @Autowired
-    private UserService userService;
-    @Autowired
-    private MaterialService materialService;
-    @Autowired
-    private ConcursoService concursoService;
-    @Autowired
-    private EvaluacionService evaluacionService;
+    public AdminController(UserService userService, MaterialService materialService, ConcursoService concursoService, EvaluacionService evaluacionService) {
+        this.userService = userService;
+        this.materialService = materialService;
+        this.concursoService = concursoService;
+        this.evaluacionService = evaluacionService;
+    }
+
     /**
      * Método controlador para mostrar el panel del administrador en la vista.
      *
