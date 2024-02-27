@@ -14,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
@@ -34,14 +36,18 @@ import java.io.File;
 @RequestMapping("/")
 public class HomeController {
 
-    @Autowired
-    private MaterialService materialService;
+    private final MaterialService materialService;
+
+    private final UserService userService;
+
+    private final ConcursoService concursoService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private ConcursoService concursoService;
+    public HomeController(MaterialService materialService, UserService userService, ConcursoService concursoService) {
+        this.materialService = materialService;
+        this.userService = userService;
+        this.concursoService = concursoService;
+    }
 
     /**
      * Controlador para redirigir a la página principal del sistema.
@@ -49,10 +55,11 @@ public class HomeController {
      * @param model El modelo que se utilizará para pasar datos a la vista.
      * @return El nombre de la vista que representa la página principal del sistema.
      */
-    @GetMapping("/index")
+    @GetMapping("/")
     public String home(Model model) {
         // Obtiene el concurso actual desde el servicio concursoService.
         Concurso concurso = concursoService.getConcursoActual();
+        System.out.println(concurso.getEdicion());
 
         // Agrega el nombre de la edición del concurso actual al modelo para que esté disponible en la vista.
         model.addAttribute("edicion", concurso.getEdicion());
@@ -69,15 +76,20 @@ public class HomeController {
     }
 
     /**
-     * +
      * Controlador para mostrar la página de inicio de sesión.
      *
-     * @param error El parámetro opcional que indica el tipo de error ocurrido durante el intento de inicio de sesión.
-     * @param model El modelo que se utilizará para pasar datos a la vista.
+     * @param error          El tipo de error que se produjo durante el inicio de sesión.
+     * @param model          El modelo que se utilizará para pasar datos a la vista.
+     * @param authentication La autenticación del usuario que ha iniciado sesión.
      * @return El nombre de la vista que representa la página de inicio de sesión.
      */
     @GetMapping("/login")
-    public String showLogin(@RequestParam(value = "error", required = false) String error, Model model) {
+    public String showLogin(@RequestParam(value = "error", required = false) String error, Model model, Authentication authentication) {
+        // Si el usuario ya está autenticado, redirige a la página de inicio correspondiente
+        if (authentication != null && authentication.isAuthenticated()) {
+            return defaultAfterLogin(authentication);
+        }
+
         // Verifica el tipo de error y agrega un mensaje correspondiente al modelo.
         if ("disabled".equals(error)) {
             model.addAttribute("loginError", "Esta cuenta ha sido desactivada");
@@ -94,19 +106,22 @@ public class HomeController {
 
 
     /**
-     * Controlador para redirigir a diferentes páginas después de iniciar sesión, según el rol del usuario.
+     * Controlador para redirigir a la página por defecto después de un inicio de sesión exitoso.
      *
-     * @param request La solicitud HTTP que contiene la información sobre el usuario autenticado.
-     * @return La URL de redirección según el rol del usuario.
+     * @param authentication La autenticación del usuario que ha iniciado sesión.
+     * @return La URL de redirección después de un inicio de sesión exitoso.
      */
     @GetMapping("/default")
-    public String defaultAfterLogin(HttpServletRequest request) {
+    public String defaultAfterLogin(Authentication authentication) {
         // Verifica el rol del usuario y redirige a la URL correspondiente.
-        if (request.isUserInRole("ADMINISTRADOR")) {
+        if (authentication.getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ROLE_ADMINISTRADOR"))) {
             return "redirect:/administrador/index";
-        } else if (request.isUserInRole("CONCURSANTE")) {
+        } else if (authentication.getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ROLE_CONCURSANTE"))) {
             return "redirect:/concursante/index";
-        } else if (request.isUserInRole("EVALUADOR")) {
+        } else if (authentication.getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ROLE_EVALUADOR"))) {
             return "redirect:/evaluador/index";
         } else {
             // Si el usuario no tiene un rol reconocido, redirige a la página de inicio de sesión.
@@ -148,23 +163,31 @@ public class HomeController {
 
     @GetMapping("/download/{id}")
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable Long id) throws IOException {
-        // Obtener la ruta completa del archivo junto con el nombre desde el servicio
-        String filePath = materialService.getMaterial(id).getArchivo();
+        // Obtiene el material con el id especificado desde el servicio materialService.
+        Material material = materialService.getMaterial(id);
+        // Verifica si el material o su archivo son nulos.
+        if (material == null || material.getArchivo() == null) {
+            throw new FileNotFoundException("No se encontró el archivo para descargar.");
+        }
 
+        // Obtiene el archivo del material.
+        String filePath = material.getArchivo();
         File file = new File(filePath);
 
+        // Verifica si el archivo existe.
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + file.getName());
 
+        // Crea un recurso de InputStream para el archivo.
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
 
+        // Devuelve una respuesta con el archivo para descargar.
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .contentLength(file.length())
                 .body(resource);
     }
-
 
 
     /**
