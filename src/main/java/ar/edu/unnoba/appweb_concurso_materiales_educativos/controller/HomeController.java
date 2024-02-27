@@ -6,12 +6,9 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.ConcursoService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -24,9 +21,6 @@ import jakarta.validation.Valid;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.io.File;
 
@@ -165,7 +159,12 @@ public class HomeController {
                 .body(resource);
     }
 
-
+    @GetMapping("/materiales-participantes/voto/{idmaterial}")
+    public String valoracionMaterial(@PathVariable Long idmaterial) {
+        Material material = materialService.getMaterial(idmaterial);
+        materialService.likesMaterial(material);
+        return "materiales-participantes";
+    }
 
     /**
      * Controlador para mostrar la página de registro de concursantes.

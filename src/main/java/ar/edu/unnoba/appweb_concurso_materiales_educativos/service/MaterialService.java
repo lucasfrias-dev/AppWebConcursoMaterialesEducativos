@@ -46,4 +46,5 @@ public interface MaterialService {
 
     // Actualiza el estado de evaluación de un material educativo.
     void updateEvaluado(Long materialId);
+    void likesMaterial(Material material);
 }

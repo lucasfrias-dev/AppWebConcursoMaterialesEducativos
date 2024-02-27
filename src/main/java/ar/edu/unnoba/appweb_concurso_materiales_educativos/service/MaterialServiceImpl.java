@@ -54,6 +54,10 @@ public class MaterialServiceImpl implements MaterialService {
         //Guarda el material en el repositorio de materiales y lo retorna.
         return materialRepository.save(material);
     }
+    public void likesMaterial(Material material){
+        material.likes();
+        materialRepository.save(material);
+    }
 
     /**
      * Obtiene una lista de materiales asociados a un concurso específico.
