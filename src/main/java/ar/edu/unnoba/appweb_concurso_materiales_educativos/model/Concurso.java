@@ -25,7 +25,6 @@ public class Concurso {
     private LocalDateTime fechaInicio;
 
     @NotNull
-    @FutureOrPresent
     @Column(name = "fecha_fin")
     private LocalDateTime fechaFin;
 
