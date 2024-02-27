@@ -59,7 +59,6 @@ public class HomeController {
     public String home(Model model) {
         // Obtiene el concurso actual desde el servicio concursoService.
         Concurso concurso = concursoService.getConcursoActual();
-        System.out.println(concurso.getEdicion());
 
         // Agrega el nombre de la edición del concurso actual al modelo para que esté disponible en la vista.
         model.addAttribute("edicion", concurso.getEdicion());
