@@ -49,7 +49,8 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      * @param user El concursante cuyos materiales se desean recuperar.
      * @return Una lista de materiales asociados al concursante especificado.
      */
-    List<Material> findByConcursante(User user);
+    @Query("SELECT m FROM Material m WHERE m.concursante = :user")
+    List<Material> findAllByConcursante(User user);
 
     /**
      * Método de consulta para obtener una lista de materiales asociados a un concurso específico.

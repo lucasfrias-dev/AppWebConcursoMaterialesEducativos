@@ -14,5 +14,6 @@ public interface EvaluacionService {
     //Recupera una evaluación específica asociada a un usuario y a un material.
     Evaluacion getEvaluacionByUserAndMaterial(User user, Material material);
 
+    //Recupera todas las evaluaciones asociadas a un material.
     List<Evaluacion> getEvaluacionesByMaterial(Material material);
 }

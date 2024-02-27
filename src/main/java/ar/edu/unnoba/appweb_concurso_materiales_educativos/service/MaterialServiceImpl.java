@@ -77,7 +77,7 @@ public class MaterialServiceImpl implements MaterialService {
     public List<Material> getMaterialesByConcursante(User user) {
         // Utiliza el método findByConcursante del repositorio de materiales
         // para recuperar la lista de materiales asociados al concursante.
-        return materialRepository.findByConcursante(user);
+        return materialRepository.findAllByConcursante(user);
     }
 
     /**
@@ -161,6 +161,7 @@ public class MaterialServiceImpl implements MaterialService {
             dto.setDescripcion(material.getDescripcion());
             dto.setDisciplina(material.getDisciplina());
             dto.setTipoMaterial(material.getTipoMaterial());
+            dto.setUrlVideoPresentacion(material.getUrlVideoPresentacion());
             dto.setConcursante(material.getConcursante());
             dto.setAutores(material.getAutores());
 
