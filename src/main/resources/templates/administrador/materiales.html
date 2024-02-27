@@ -19,6 +19,7 @@
         <th>Evaluado</th>
         <th>Evaluadores Asignados</th>
         <th>Evaluaciones</th>
+        <th>Video presentación</th>
         <th>Ver Archivo</th>
     </tr>
     </thead>
@@ -53,6 +54,7 @@
                 No hay evaluaciones para este material.
             </div>
         </td>
+        <td><a th:href="${material.urlVideoPresentacion}">Ver</a></td>
         <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
 
     </tr>

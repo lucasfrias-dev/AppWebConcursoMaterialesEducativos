@@ -46,7 +46,14 @@
         <li><a href="#" id="abrirPopup">Acerca del CED</a></li>
 
         <div id="miPopup" class="popup">
-            <p>Texto dentro de la ventana emergente</p>
+            <p>Concurso de Diseño
+                de materiales educativos</p>
+            <p><span>OBJETIVO</span>
+                Reconocer y estimular a docentes innovadores para impulsar espacios educativos creativos y promover el aprendizaje colaborativo entre pares.</p>
+            <p><span>TEMÁTICA</span>
+                Los participantes pueden presentar uno o varios materiales digitales originales que cumplan las condiciones del concurso.</p>
+            <p><span>DESTINATARIOS</span>
+                Docentes de todas las carreras y niveles, presentando materiales individualmente o en equipos de hasta cinco personas, siendo de la misma asignatura o curso.</p>
             <button onclick="cerrarPopup()">Cerrar</button>
         </div>
         <li><a th:href="@{'/materiales-participantes/' + ${#strings.replace(edicion, ' ', '-')}}" target="_self" title="Materiales">Ver materiales participantes</a></li>
