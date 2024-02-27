@@ -28,14 +28,18 @@ import java.util.stream.Collectors;
 @PreAuthorize("hasRole('EVALUADOR')")
 public class EvaluadorController {
 
-    @Autowired
-    private MaterialService materialService;
+    private final MaterialService materialService;
+
+    private final UserService userService;
+
+    private final EvaluacionService evaluacionService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
-    private EvaluacionService evaluacionService;
+    public EvaluadorController(MaterialService materialService, UserService userService, EvaluacionService evaluacionService) {
+        this.materialService = materialService;
+        this.userService = userService;
+        this.evaluacionService = evaluacionService;
+    }
 
     /**
      * Controlador para mostrar el panel del evaluador autenticado.
