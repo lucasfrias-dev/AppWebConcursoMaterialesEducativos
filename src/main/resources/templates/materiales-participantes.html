@@ -4,20 +4,20 @@
     <meta charset="UTF-8">
     <title>Materiales participantes</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <script>
+    <!--<script>
         function voteForArticle(materialId) {
             // Verificar si el usuario ya ha votado por este artículo
-            var hasVoted = getVoto(materialId);
+            let hasVoted = getVoto(materialId);
 
             if (hasVoted) {
                 alert("¡Ya has votado por este Material!");
             } else {
                 // Realizar la llamada al controlador para registrar el voto
-                fetch('/materiales-participantes/voto/' + materialId.toString())
+                fetch('/materiales-participantes/' + materialId.toString() + '/like')
                     .then(response => {
                         if (response.ok) {
                             // Bloquear el botón después de votar
-                            var button = document.getElementById('voteButton_' + materialId);
+                            let button = document.getElementById('voteButton_' + materialId);
                             button.disabled = true;
                             // Establecer una cookie para recordar que se ha votado
                             setVoto(materialId, true, 365);
@@ -30,19 +30,19 @@
 
         // Función para establecer una cookie para guardar los materiales votados
         function setVoto(name, value, days) {
-            var d = new Date();
+            let d = new Date();
             d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-            var expires = "expires=" + d.toUTCString();
+            let expires = "expires=" + d.toUTCString();
             document.cookie = name + "=" + value + ";" + expires + ";path=/";
         }
 
         // Función para verificar si el material ya se votó mediante una cookie
         function getVoto(name) {
-            var cname = name + "=";
-            var decodedCookie = decodeURIComponent(document.cookie);
-            var cookieArray = decodedCookie.split(';');
-            for (var i = 0; i < cookieArray.length; i++) {
-                var c = cookieArray[i];
+            let cname = name + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let cookieArray = decodedCookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+                let c = cookieArray[i];
                 while (c.charAt(0) == ' ') {
                     c = c.substring(1);
                 }
@@ -52,13 +52,14 @@
             }
             return false;
         }
-    </script>
+    </script>-->
 
 </head>
 <body>
 <h1>Materiales participantes</h1>
 <h2 th:if="${edicion != null}" th:text="'Edición: ' + ${edicion}">Edición: </h2>
 <h2 th:if="${edicion == null}">No hay ningún concurso vigente</h2>
+<p th:if="${message != null}" th:text="${message}"></p>
 <table th:if="${edicion != null and materialesParticipantes?.size() > 0}">
     <tr>
         <th>Nombre</th>
@@ -67,7 +68,8 @@
         <th>Disciplina a la que pertenece</th>
         <th>Autores</th>
         <th>Descargar</th>
-        <th>Danos tu Opinion</th>
+        <th>Likes</th>
+        <th></th>
     </tr>
     <tr th:each="material : ${materialesParticipantes}">
         <td th:text="${material.titulo}"></td>
@@ -76,7 +78,12 @@
         <td th:text="${material.disciplina}"></td>
         <td th:text="${material.autores}"></td>
         <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
-        <td><button id="voteButton_${material.id}" onclick="voteForArticle('${material.id}')">Votar</button></td>
+        <td th:text="${material.likes}"></td>
+        <td>
+            <form th:action="@{/materiales-participantes/{idmaterial}/like(idmaterial=${material.id})}" method="post">
+                <button type="submit">Like</button>
+            </form>
+        </td>
     </tr>
 </table>
 <p th:if="${edicion != null}" th:unless="${materialesParticipantes?.size() > 0}">Todavia no participa ningun material</p>

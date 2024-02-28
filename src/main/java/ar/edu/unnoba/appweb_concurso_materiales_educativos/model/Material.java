@@ -81,8 +81,4 @@ public class Material implements Serializable {
     /*@EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
     private Set<Evaluacion> evaluaciones = new HashSet<>();*/
-
-    public void likes(){
-        setLikes(getLikes()+1);
-    }
 }

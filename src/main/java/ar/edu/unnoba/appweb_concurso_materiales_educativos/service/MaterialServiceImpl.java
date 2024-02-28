@@ -54,9 +54,12 @@ public class MaterialServiceImpl implements MaterialService {
         //Guarda el material en el repositorio de materiales y lo retorna.
         return materialRepository.save(material);
     }
-    public void likesMaterial(Material material){
-        // Dar Likes
-        material.likes();
+
+    @Transactional
+    @Override
+    public void darLikeMaterial(Material material){
+        // Dar Like al material
+        material.setLikes(material.getLikes() + 1);
         // Guardar modificacion del material
         materialRepository.save(material);
     }

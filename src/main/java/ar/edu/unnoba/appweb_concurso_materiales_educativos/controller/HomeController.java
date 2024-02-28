@@ -6,11 +6,16 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.ConcursoService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,11 +23,13 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.List;
+import java.util.*;
 import java.io.File;
 
 @Controller
@@ -127,10 +134,11 @@ public class HomeController {
      *
      * @param model   El modelo que se utilizará para pasar datos a la vista.
      * @param edicion La edición del concurso de la cual se mostrarán los materiales participantes.
+     * @param redirectAttrs Los atributos de redirección que se utilizarán para enviar mensajes al cliente.
      * @return El nombre de la vista que representa la lista de materiales participantes.
      */
     @GetMapping("/materiales-participantes/{edicion}")
-    public String showMaterialesParticipantes(Model model, @PathVariable String edicion) {
+    public String showMaterialesParticipantes(Model model, @PathVariable String edicion, RedirectAttributes redirectAttrs, HttpServletRequest request) {
         // Verifica si la edición no es nula.
         if (!"null".equals(edicion)) {
             // Reemplaza los guiones con espacios en la edición.
@@ -148,10 +156,68 @@ public class HomeController {
             model.addAttribute("edicion", null);
         }
 
+        //Agrega el mensaje del redirect
+        if (redirectAttrs.getFlashAttributes().containsKey("message")) {
+            model.addAttribute("message", redirectAttrs.getFlashAttributes().get("message"));
+        }
+
         // Devuelve el nombre de la vista que representa la lista de materiales participantes.
         return "materiales-participantes";
     }
 
+
+    /**
+     * Controlador para dar "like" a un material participante.
+     *
+     * @param idmaterial     El id del material al que se le dará "like".
+     * @param response       La respuesta HTTP que se utilizará para enviar cookies al cliente.
+     * @param request        La solicitud HTTP que se utilizará para obtener cookies del cliente.
+     * @param redirectAttrs  Los atributos de redirección que se utilizarán para enviar mensajes al cliente.
+     * @return La URL de redirección después de dar "like" a un material.
+     */
+    @Transactional
+    @PostMapping("/materiales-participantes/{idmaterial}/like")
+    public String likeMaterial(@PathVariable Long idmaterial, HttpServletResponse response, HttpServletRequest request, RedirectAttributes redirectAttrs) {
+        // Obtener material educativo
+        Material material = materialService.getMaterial(idmaterial);
+
+        // Obtener el valor de 'edicion'
+        String edicion = material.getConcurso().getEdicion();
+        edicion = edicion.replace(" ", "-");
+
+        // Verifica si el usuario ya ha dado "like" a este material.
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("like_" + idmaterial)) {
+                    redirectAttrs.addFlashAttribute("message", "Ya has dado like a este material.");
+                    return "redirect:/materiales-participantes/" + edicion;
+                }
+            }
+        }
+
+        // El usuario no ha dado "like" a este material, así que incrementamos el contador de "likes" del material.
+        materialService.darLikeMaterial(material);
+
+        // Crea una nueva cookie para recordar que el usuario ya ha dado "like" a este material.
+        Cookie likeCookie = new Cookie("like_" + idmaterial, "true");
+        likeCookie.setMaxAge(60 * 60 * 24 * 365); // La cookie expira después de un año.
+        response.addCookie(likeCookie);
+
+        //Agrega mensaje al redirect
+        redirectAttrs.addFlashAttribute("message", "Sumaste un like al material " + material.getTitulo() + ". Gracias por tu voto!");
+
+        return "redirect:/materiales-participantes/" + edicion;
+    }
+
+
+    /**
+     * Controlador para descargar un archivo de un material.
+     *
+     * @param id El id del material del cual se descargará el archivo.
+     * @return La respuesta HTTP que contiene el archivo para descargar.
+     * @throws IOException Si ocurre un error al leer el archivo.
+     */
     @GetMapping("/download/{id}")
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable Long id) throws IOException {
         // Obtiene el material con el id especificado desde el servicio materialService.
@@ -180,16 +246,6 @@ public class HomeController {
                 .body(resource);
     }
 
-    @GetMapping("/materiales-participantes/voto/{idmaterial}")
-    public String valoracionMaterial(@PathVariable Long idmaterial) {
-        // Obtener material educativo
-        Material material = materialService.getMaterial(idmaterial);
-        // Dar like/valoracion al material
-        materialService.likesMaterial(material);
-        // Después de registrar el voto, puedes devolver una respuesta apropiada, como un mensaje de éxito
-        return "El voto para el material con ID " + idmaterial + " ha sido registrado exitosamente.";
-
-    }
 
     /**
      * Controlador para mostrar la página de registro de concursantes.

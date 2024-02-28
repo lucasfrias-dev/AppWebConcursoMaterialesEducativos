@@ -6,6 +6,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
+import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,8 +18,12 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    final UserDetailsService userService;
+
     @Autowired
-    UserDetailsService userService;
+    public SecurityConfig(UserDetailsService userService) {
+        this.userService = userService;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
@@ -25,7 +31,7 @@ public class SecurityConfig {
                 .userDetailsService(userService)
                 .authorizeHttpRequests((requests) -> requests // Configura las solicitudes autorizadas
                         // Permite el acceso a ciertos recursos sin autenticación
-                        .requestMatchers("/", "/webjars/**", "/resources/**","/css/**", "/js/**", "/login", "/materiales-participantes/**", "/participar").permitAll()
+                        .requestMatchers("/", "/webjars/**", "/resources/**","/css/**", "/js/**", "/login", "/materiales-participantes/**","/participar", "/download/**").permitAll()
                         .requestMatchers("/concursante/**").hasRole("CONCURSANTE")
                         .requestMatchers("/administrador/**").hasRole("ADMINISTRADOR")
                         .requestMatchers("/evaluador/**").hasRole("EVALUADOR")
@@ -61,5 +67,4 @@ public class SecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
