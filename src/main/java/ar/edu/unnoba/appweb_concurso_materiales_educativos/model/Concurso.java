@@ -33,6 +33,6 @@ public class Concurso {
     /*@OneToMany(mappedBy = "concurso", fetch = FetchType.LAZY)
     private Set<Material> materiales = new HashSet<>();*/
 
-    @OneToMany(mappedBy = "concurso", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "concurso", fetch = FetchType.EAGER)
     private Set<Material> materialesGanadores;
 }

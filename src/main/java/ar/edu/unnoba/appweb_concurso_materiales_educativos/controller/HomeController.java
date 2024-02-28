@@ -186,8 +186,9 @@ public class HomeController {
         Material material = materialService.getMaterial(idmaterial);
         // Dar like/valoracion al material
         materialService.likesMaterial(material);
-        // Retornar a la pagina de materiales participantes
-        return "materiales-participantes";
+        // Después de registrar el voto, puedes devolver una respuesta apropiada, como un mensaje de éxito
+        return "El voto para el material con ID " + idmaterial + " ha sido registrado exitosamente.";
+
     }
 
     /**

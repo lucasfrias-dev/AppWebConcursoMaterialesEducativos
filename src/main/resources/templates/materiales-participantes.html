@@ -1,73 +1,83 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <title>Materiales participantes</title>
-  <link rel="stylesheet" th:href="@{/css/styles.css}">
-  <script>
-    function voteForArticle(materialid) {
-      // Verificar si el usuario ya ha votado por este artículo
-      var hasVoted = getVoto(materialid);
+    <meta charset="UTF-8">
+    <title>Materiales participantes</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <script>
+        function voteForArticle(materialId) {
+            // Verificar si el usuario ya ha votado por este artículo
+            var hasVoted = getVoto(materialId);
 
-      if (hasVoted) {
-        alert("¡Ya has votado por este Material!");
-      } else {
-        // Simular el proceso de votación (aquí puedes enviar una solicitud al servidor para registrar el voto)
-        alert("¡Gracias por tu Participar!");
-
-        // Establecer una cookie que expire en 1 año (o el tiempo que desees)
-        setVoto(materialid, true, 365);
-      }
-    }
-    // Función para establecer una cookie para guardar los materiales votados
-    function setVoto(name, value, days) {
-      var d = new Date();
-      d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-      var expires = "expires=" + d.toUTCString();
-      document.cookie = name + "=" + value + ";" + expires + ";path=/";
-    }
-
-    // Función para verificar si el material ya se voto mediante una cookie
-    function getVoto(name) {
-      var cname = name + "=";
-      var decodedCookie = decodeURIComponent(document.cookie);
-      var cookieArray = decodedCookie.split(';');
-      for (var i = 0; i < cookieArray.length; i++) {
-        var c = cookieArray[i];
-        while (c.charAt(0) == ' ') {
-          c = c.substring(1);
+            if (hasVoted) {
+                alert("¡Ya has votado por este Material!");
+            } else {
+                // Realizar la llamada al controlador para registrar el voto
+                fetch('/materiales-participantes/voto/' + materialId.toString())
+                    .then(response => {
+                        if (response.ok) {
+                            // Bloquear el botón después de votar
+                            var button = document.getElementById('voteButton_' + materialId);
+                            button.disabled = true;
+                            // Establecer una cookie para recordar que se ha votado
+                            setVoto(materialId, true, 365);
+                        } else {
+                            alert('Hubo un error al votar. Por favor, inténtalo de nuevo.');
+                        }
+                    });
+            }
         }
-        if (c.indexOf(cname) == 0) {
-          return true;
+
+        // Función para establecer una cookie para guardar los materiales votados
+        function setVoto(name, value, days) {
+            var d = new Date();
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            var expires = "expires=" + d.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
         }
-      }
-      return false;
-    }
+
+        // Función para verificar si el material ya se votó mediante una cookie
+        function getVoto(name) {
+            var cname = name + "=";
+            var decodedCookie = decodeURIComponent(document.cookie);
+            var cookieArray = decodedCookie.split(';');
+            for (var i = 0; i < cookieArray.length; i++) {
+                var c = cookieArray[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(cname) == 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
     </script>
+
 </head>
 <body>
 <h1>Materiales participantes</h1>
 <h2 th:if="${edicion != null}" th:text="'Edición: ' + ${edicion}">Edición: </h2>
 <h2 th:if="${edicion == null}">No hay ningún concurso vigente</h2>
 <table th:if="${edicion != null and materialesParticipantes?.size() > 0}">
-  <tr>
-    <th>Nombre</th>
-    <th>Descripción</th>
-    <th>Tipo de Material</th>
-    <th>Disciplina a la que pertenece</th>
-    <th>Autores</th>
-    <th>Archivo material</th>
-    <th>Danos tu Opinion</th>
-  </tr>
-  <tr th:each="material : ${materialesParticipantes}">
-    <td th:text="${material.titulo}"></td>
-    <td th:text="${material.descripcion}"></td>
-    <td th:text="${material.tipoMaterial}"></td>
-    <td th:text="${material.disciplina}"></td>
-    <td th:text="${material.autores}"></td>
-    <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
-    <button id="voteButton" th:href="@{'/materiales-participantes/voto/' + ${material.id}}" onclick="voteForArticle(${material.getId()})">+</button>
-  </tr>
+    <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Tipo de Material</th>
+        <th>Disciplina a la que pertenece</th>
+        <th>Autores</th>
+        <th>Descargar</th>
+        <th>Danos tu Opinion</th>
+    </tr>
+    <tr th:each="material : ${materialesParticipantes}">
+        <td th:text="${material.titulo}"></td>
+        <td th:text="${material.descripcion}"></td>
+        <td th:text="${material.tipoMaterial}"></td>
+        <td th:text="${material.disciplina}"></td>
+        <td th:text="${material.autores}"></td>
+        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
+        <td><button id="voteButton_${material.id}" onclick="voteForArticle('${material.id}')">Votar</button></td>
+    </tr>
 </table>
 <p th:if="${edicion != null}" th:unless="${materialesParticipantes?.size() > 0}">Todavia no participa ningun material</p>
 </body>
