@@ -104,6 +104,7 @@ public class MaterialServiceImpl implements MaterialService {
      * @param concurso El concurso del cual se desean recuperar los materiales participantes.
      * @return Una lista de materiales participantes asociados al concurso especificado.
      */
+    @Transactional
     @Override
     public List<Material> getMaterialesParticipantesByConcurso(Concurso concurso) {
 
