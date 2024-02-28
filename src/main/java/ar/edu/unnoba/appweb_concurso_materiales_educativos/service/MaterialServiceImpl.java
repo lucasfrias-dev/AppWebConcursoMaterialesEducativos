@@ -55,7 +55,9 @@ public class MaterialServiceImpl implements MaterialService {
         return materialRepository.save(material);
     }
     public void likesMaterial(Material material){
+        // Dar Likes
         material.likes();
+        // Guardar modificacion del material
         materialRepository.save(material);
     }
 

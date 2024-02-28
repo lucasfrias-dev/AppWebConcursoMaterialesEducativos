@@ -6,7 +6,6 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.ConcursoService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -140,7 +139,6 @@ public class HomeController {
             Concurso concurso = concursoService.getConcursoByEdicion(edicion);
             // Obtiene la lista de materiales participantes del concurso actual desde el servicio materialService.
             List<Material> materialesParticipantes = materialService.getMaterialesParticipantesByConcurso(concurso);
-
             // Agrega la lista de materiales participantes al modelo para que esté disponible en la vista.
             model.addAttribute("materialesParticipantes", materialesParticipantes);
             // Agrega la edición al modelo para que esté disponible en la vista.
@@ -184,8 +182,11 @@ public class HomeController {
 
     @GetMapping("/materiales-participantes/voto/{idmaterial}")
     public String valoracionMaterial(@PathVariable Long idmaterial) {
+        // Obtener material educativo
         Material material = materialService.getMaterial(idmaterial);
+        // Dar like/valoracion al material
         materialService.likesMaterial(material);
+        // Retornar a la pagina de materiales participantes
         return "materiales-participantes";
     }
 
