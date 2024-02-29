@@ -634,14 +634,45 @@ public class AdminController {
         // Devuelve el nombre de la vista que mostrará la página de perfil del usuario.
         return "administrador/profile";
     }
+    @GetMapping("/materiales-participantes/{edicion}")
+    public String showPosiblesMaterialesGanadores(Model model, @PathVariable String edicion, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+        // Verifica si la edición no es nula.
+        if (!"null".equals(edicion)) {
+            // Reemplaza los guiones con espacios en la edición.
+            edicion = edicion.replace("-", " ");
+            // Obtiene el concurso asociado a la edición desde el servicio concursoService.
+            Concurso concurso = concursoService.getConcursoByEdicion(edicion);
+            // Obtiene la lista de materiales participantes del concurso actual desde el servicio materialService.
+            List<Material> materialesParticipantes = materialService.getMaterialesParticipantesByConcurso(concurso);
+            // Agrega la lista de materiales participantes al modelo para que esté disponible en la vista.
+            model.addAttribute("materialesParticipantes", materialesParticipantes);
 
+            List<Material> materialesGanadores = materialService.getMaterialGanador(concurso);
+            model.addAttribute("materialesGanadores", materialesGanadores);
+            // Agrega la edición al modelo para que esté disponible en la vista.
+            model.addAttribute("edicion", edicion);
+        } else {
+            // Si la edición es nula, agrega null al modelo para indicarlo.
+            model.addAttribute("edicion", null);
+        }
+
+        //Agrega el mensaje del redirect
+        if (redirectAttrs.getFlashAttributes().containsKey("message")) {
+            model.addAttribute("message", redirectAttrs.getFlashAttributes().get("message"));
+        }
+
+        // Devuelve el nombre de la vista que representa la lista de materiales participantes.
+        return "administrador/materiales-participantes";
+    }
     @GetMapping("/ganador/{idmanterial}")
     public String ganadorMaterial(@PathVariable("idmanterial") Long materialId){
+
         // Obtiene el concurso asociado a la edición desde el servicio concursoService.
         Concurso concurso = concursoService.getConcursoActual();
         Material material = materialService.getMaterial(materialId);
         materialService.setMaterialGanador(concurso, material);
         return "administrador/materiales-participantes";
     }
+
 
 }

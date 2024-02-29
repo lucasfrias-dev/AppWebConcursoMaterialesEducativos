@@ -138,7 +138,7 @@ public class HomeController {
      * @return El nombre de la vista que representa la lista de materiales participantes.
      */
     @GetMapping("/materiales-participantes/{edicion}")
-    public String showMaterialesParticipantes(Model model, @PathVariable String edicion, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+    public String showMaterialesParticipantes(Model model, @PathVariable String edicion,RedirectAttributes redirectAttrs, HttpServletRequest request) {
         // Verifica si la edición no es nula.
         if (!"null".equals(edicion)) {
             // Reemplaza los guiones con espacios en la edición.

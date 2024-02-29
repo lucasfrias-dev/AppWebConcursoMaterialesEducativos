@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Materiales participantes</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <!--<script>
+        function voteForArticle(materialId) {
+            // Verificar si el usuario ya ha votado por este artículo
+            let hasVoted = getVoto(materialId);
+
+            if (hasVoted) {
+                alert("¡Ya has votado por este Material!");
+            } else {
+                // Realizar la llamada al controlador para registrar el voto
+                fetch('/materiales-participantes/' + materialId.toString() + '/like')
+                    .then(response => {
+                        if (response.ok) {
+                            // Bloquear el botón después de votar
+                            let button = document.getElementById('voteButton_' + materialId);
+                            button.disabled = true;
+                            // Establecer una cookie para recordar que se ha votado
+                            setVoto(materialId, true, 365);
+                        } else {
+                            alert('Hubo un error al votar. Por favor, inténtalo de nuevo.');
+                        }
+                    });
+            }
+        }
+
+        // Función para establecer una cookie para guardar los materiales votados
+        function setVoto(name, value, days) {
+            let d = new Date();
+            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+            let expires = "expires=" + d.toUTCString();
+            document.cookie = name + "=" + value + ";" + expires + ";path=/";
+        }
+
+        // Función para verificar si el material ya se votó mediante una cookie
+        function getVoto(name) {
+            let cname = name + "=";
+            let decodedCookie = decodeURIComponent(document.cookie);
+            let cookieArray = decodedCookie.split(';');
+            for (let i = 0; i < cookieArray.length; i++) {
+                let c = cookieArray[i];
+                while (c.charAt(0) == ' ') {
+                    c = c.substring(1);
+                }
+                if (c.indexOf(cname) == 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    </script>-->
+
+</head>
+<body>
+<h1>Materiales participantes</h1>
+<h2 th:if="${edicion != null}" th:text="'Edición: ' + ${edicion}">Edición: </h2>
+<h2 th:if="${edicion == null}">No hay ningún concurso vigente</h2>
+<p th:if="${message != null}" th:text="${message}"></p>
+<table th:if="${edicion != null and materialesParticipantes?.size() > 0}">
+    <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Tipo de Material</th>
+        <th>Disciplina a la que pertenece</th>
+        <th>Autores</th>
+        <th>Descargar</th>
+        <th>Likes</th>
+        <th>Declarar Como Uno de los Ganadores</th>
+    </tr>
+    <tr th:each="material : ${materialesParticipantes}">
+        <td th:text="${material.titulo}"></td>
+        <td th:text="${material.descripcion}"></td>
+        <td th:text="${material.tipoMaterial}"></td>
+        <td th:text="${material.disciplina}"></td>
+        <td th:text="${material.autores}"></td>
+        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
+        <td th:text="${material.likes}"></td>
+        <td><a th:href="@{'/ganador/' + ${material.id}}">Ganador</a></td>
+    </tr>
+</table>
+<p th:if="${edicion != null}" th:unless="${materialesParticipantes?.size() > 0}">Todavia no participa ningun material</p>
+<table th:if="${edicion != null and materialesGanadores?.size() > 0}">
+    <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Tipo de Material</th>
+        <th>Disciplina a la que pertenece</th>
+        <th>Autores</th>
+        <th>Descargar</th>
+        <th>Likes</th>
+        <th>Declarar Como Uno de los Ganadores</th>
+    </tr>
+    <tr th:each="material : ${materialesParticipantes}">
+        <td th:text="${material.titulo}"></td>
+        <td th:text="${material.descripcion}"></td>
+        <td th:text="${material.tipoMaterial}"></td>
+        <td th:text="${material.disciplina}"></td>
+        <td th:text="${material.autores}"></td>
+        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
+        <td th:text="${material.likes}"></td>
+        <td><a>Ganador</a></td>
+    </tr>
+</table>
+
+<p th:if="${edicion != null}" th:unless="${materialesGanadores?.size() > 0}">Todavia no se a seleccionado ningun material ganador</p>
+</body>
+</html>

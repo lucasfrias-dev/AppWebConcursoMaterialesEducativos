@@ -51,6 +51,7 @@
                                 <li><a th:href="@{'/administrador/' + 'materiales/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/pendientes-de-aprobacion'}" target="_self">Pendientes de Aprobación</a></li>
                                 <li><a th:href="@{'/administrador/' + 'materiales/' + ${#strings.replace(concursoActual.edicion, ' ', '-')} + '/pendientes-de-evaluacion'}" target="_self">Pendientes de Evaluación</a></li>
                                 <li><a th:href="@{/administrador/evaluadores/asignar-material}" target="_self">Asignar a Evaluador</a></li>
+                                <li><a th:href="@{'/administrador/materiales-participantes/' + ${#strings.replace(concursoActual.edicion, ' ', '-')}}" target="_self">Materiales Participantes</a></li>
                             </ul>
                         </li>
                         <li><a href="#" onclick="if (confirm('¿Estás seguro de que quieres cerrar el concurso?')) { document.getElementById('cerrarConcursoForm').submit(); } return false;">Cerrar concurso</a></li>
