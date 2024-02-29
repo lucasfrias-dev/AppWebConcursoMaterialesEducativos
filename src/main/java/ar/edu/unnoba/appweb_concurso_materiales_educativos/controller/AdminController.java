@@ -635,4 +635,13 @@ public class AdminController {
         return "administrador/profile";
     }
 
+    @GetMapping("/ganador/{idmanterial}")
+    public String ganadorMaterial(@PathVariable("idmanterial") Long materialId){
+        // Obtiene el concurso asociado a la edición desde el servicio concursoService.
+        Concurso concurso = concursoService.getConcursoActual();
+        Material material = materialService.getMaterial(materialId);
+        materialService.setMaterialGanador(concurso, material);
+        return "administrador/materiales-participantes";
+    }
+
 }
