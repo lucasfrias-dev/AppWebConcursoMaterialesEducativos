@@ -307,7 +307,9 @@ public class MaterialServiceImpl implements MaterialService {
      */
     public void setMaterialGanador(Concurso concurso, Material material){
         // Agrega el material proporcionado a la lista de materiales ganadores del concurso
-        concurso.getMaterialesGanadores().add(material);
+        Set<Material> concurso1=concurso.getMaterialesGanadores();
+        concurso1.add(material);
+        concurso.setMaterialesGanadores(concurso1);
         // Guarda el concurso actualizado en la base de datos
         concursoRepository.save(concurso);
     }
