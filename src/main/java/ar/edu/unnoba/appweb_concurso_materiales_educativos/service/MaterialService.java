@@ -48,4 +48,6 @@ public interface MaterialService {
     void updateEvaluado(Long materialId);
     void darLikeMaterial(Material material);
     public void setMaterialGanador(Concurso concurso, Material material);
+    public boolean isMaterialGanador(Concurso concurso, Material material);
+    public List<Material> getMaterialGanador(Concurso concurso);
 }

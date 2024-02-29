@@ -313,5 +313,18 @@ public class MaterialServiceImpl implements MaterialService {
         // Guarda el concurso actualizado en la base de datos
         concursoRepository.save(concurso);
     }
+    // Método para obtener la lista de materiales ganadores de un concurso
+    public List<Material> getMaterialGanador(Concurso concurso){
+        return concursoRepository.findMaterialesGanadoresByConcurso(concurso);
+    }
+
+    // Método para verificar si un material es ganador en un concurso dado
+    public boolean isMaterialGanador(Concurso concurso, Material material){
+        // Obtener la lista de materiales ganadores del concurso
+        List<Material> materials = concursoRepository.findMaterialesGanadoresByConcurso(concurso);
+
+        // Verificar si el material dado está en la lista de materiales ganadores
+        return materials.contains(material);
+    }
 
 }

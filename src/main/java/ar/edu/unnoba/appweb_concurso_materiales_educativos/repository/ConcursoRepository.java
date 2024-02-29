@@ -1,6 +1,7 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.repository;
 
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -45,4 +46,6 @@ public interface ConcursoRepository extends JpaRepository<Concurso, Long> {
     @Query("SELECT c FROM Concurso c WHERE :currentDate NOT BETWEEN c.fechaInicio AND c.fechaFin")
     List<Concurso> findAllConcursosFinalizados(@Param("currentDate") LocalDateTime currentDate);
 
+    @Query("SELECT c.materialesGanadores FROM Concurso c WHERE c = :concurso")
+    List<Material> findMaterialesGanadoresByConcurso(@Param("concurso") Concurso concurso);
 }
