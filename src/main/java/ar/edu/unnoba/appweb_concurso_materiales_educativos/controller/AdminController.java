@@ -664,14 +664,11 @@ public class AdminController {
         // Devuelve el nombre de la vista que representa la lista de materiales participantes.
         return "administrador/materiales-participantes";
     }
-    @GetMapping("/ganador/{idmanterial}")
-    public String ganadorMaterial(@PathVariable("idmanterial") Long materialId){
-
+    @GetMapping("/ganador/{edicion}/{idmanterial}")
+    public String ganadorMaterial(@PathVariable("idmanterial") Long materialId,@PathVariable("edicion") String edicion){
         // Obtiene el concurso asociado a la edición desde el servicio concursoService.
-        Concurso concurso = concursoService.getConcursoActual();
-        Material material = materialService.getMaterial(materialId);
-        materialService.setMaterialGanador(concurso, material);
-        return "administrador/materiales-participantes";
+        materialService.setMaterialGanador(materialId);
+        return "redirect:/administrador/materiales-participantes/" + edicion;
     }
 
 

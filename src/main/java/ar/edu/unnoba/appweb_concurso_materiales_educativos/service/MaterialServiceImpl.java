@@ -305,26 +305,18 @@ public class MaterialServiceImpl implements MaterialService {
      * @param concurso El concurso al que se agregarán los materiales ganadores.
      * @param material El material que se agregará a la lista de ganadores del concurso.
      */
-    public void setMaterialGanador(Concurso concurso, Material material){
+    public void setMaterialGanador(Long materialId){
+        Material material = materialRepository.findMaterialById(materialId);
         // Agrega el material proporcionado a la lista de materiales ganadores del concurso
-        Set<Material> concurso1=concurso.getMaterialesGanadores();
-        concurso1.add(material);
-        concurso.setMaterialesGanadores(concurso1);
+        material.setGanador(true);
         // Guarda el concurso actualizado en la base de datos
-        concursoRepository.save(concurso);
+        materialRepository.save(material);
     }
     // Método para obtener la lista de materiales ganadores de un concurso
     public List<Material> getMaterialGanador(Concurso concurso){
-        return concursoRepository.findMaterialesGanadoresByConcurso(concurso);
+        return materialRepository.findMaterialesGanadoresByConcurso(concurso);
     }
 
     // Método para verificar si un material es ganador en un concurso dado
-    public boolean isMaterialGanador(Concurso concurso, Material material){
-        // Obtener la lista de materiales ganadores del concurso
-        List<Material> materials = concursoRepository.findMaterialesGanadoresByConcurso(concurso);
-
-        // Verificar si el material dado está en la lista de materiales ganadores
-        return materials.contains(material);
-    }
 
 }

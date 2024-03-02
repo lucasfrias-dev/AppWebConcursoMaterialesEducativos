@@ -79,7 +79,7 @@
         <td th:text="${material.autores}"></td>
         <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
         <td th:text="${material.likes}"></td>
-        <td><a th:href="@{'/ganador/' + ${material.id}}">Ganador</a></td>
+        <td><a th:href="@{'/administrador/ganador/' + ${edicion} + '/' + ${material.id}}">Ganador</a></td>
     </tr>
 </table>
 <p th:if="${edicion != null}" th:unless="${materialesParticipantes?.size() > 0}">Todavia no participa ningun material</p>
@@ -94,7 +94,7 @@
         <th>Likes</th>
         <th>Declarar Como Uno de los Ganadores</th>
     </tr>
-    <tr th:each="material : ${materialesParticipantes}">
+    <tr th:each="material : ${materialesGanadores}">
         <td th:text="${material.titulo}"></td>
         <td th:text="${material.descripcion}"></td>
         <td th:text="${material.tipoMaterial}"></td>
