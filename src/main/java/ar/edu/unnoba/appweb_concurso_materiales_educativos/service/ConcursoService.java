@@ -26,5 +26,5 @@ public interface ConcursoService {
     //Reabre un concurso.
     void reabrirConcurso(String edicion, LocalDateTime fechaFin);
 
-    void addMaterialGanador(Concurso concurso, Material material);
+    /*void addMaterialGanador(Concurso concurso, Material material);*/
 }

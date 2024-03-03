@@ -32,7 +32,7 @@ public class Concurso {
     @Column(name = "fecha_fin")
     private LocalDateTime fechaFin;
 
-    @EqualsAndHashCode.Exclude
+    /*@EqualsAndHashCode.Exclude
     @OneToMany(mappedBy = "concurso", fetch = FetchType.LAZY)
-    private Set<Material> materialesGanadores;
+    private Set<Material> materialesGanadores;*/
 }

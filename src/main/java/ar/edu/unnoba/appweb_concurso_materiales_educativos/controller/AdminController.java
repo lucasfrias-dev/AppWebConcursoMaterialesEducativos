@@ -638,6 +638,7 @@ public class AdminController {
 
 
     @GetMapping("/materiales/{edicion}/participantes")
+    @Transactional
     public String showMaterialesAprobados(Model model, @PathVariable String edicion, RedirectAttributes redirectAttrs, HttpServletRequest request) {
         // Verifica si la edición no es nula.
         if (!"null".equals(edicion)) {
@@ -651,9 +652,7 @@ public class AdminController {
             model.addAttribute("materialesParticipantes", materialesParticipantes);
             // Obtiene la lista de materiales ganadores del concurso actual desde el servicio materialService.
             List<Material> materialesGanadores = materialService.getMaterialesGanadores(concurso);
-            System.out.println("Materiales ganadores: " + materialesGanadores.stream()
-                    .map(m -> m.getId() + ": " + m.getTitulo())
-                    .collect(Collectors.joining(", ")));
+            // Agrega la lista de materiales ganadores al modelo para que esté disponible en la vista.
             model.addAttribute("materialesGanadores", materialesGanadores);
             // Agrega la edición al modelo para que esté disponible en la vista.
             model.addAttribute("edicion", edicion);
@@ -685,13 +684,7 @@ public class AdminController {
     @Transactional
     public String ganadorMaterial(@PathVariable("idmaterial") Long materialId, @PathVariable("edicion") String edicion, RedirectAttributes redirectAttrs){
 
-        // Obtiene el concurso asociado a la edición desde el servicio concursoService.
-        Concurso concurso = concursoService.getConcursoActual();
-        // Obtiene el material asociado al id desde el servicio materialService.
-        Material material = materialService.getMaterial(materialId);
-        // Agrega el material ganador al concurso actual desde el servicio materialService.
-        concursoService.addMaterialGanador(concurso, material);
-        // Establece el material como ganador desde el servicio materialService.
+        // Establece el material como ganador.
         materialService.setMaterialGanador(materialId);
         // Agrega un mensaje de éxito como atributo flash para que esté disponible después de la redirección.
         redirectAttrs.addFlashAttribute("message", "Material declarado como ganador con éxito");

@@ -304,12 +304,10 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
 
-    
     /**
-     * Agrega un material a la lista de materiales ganadores de un concurso y guarda los cambios en la base de datos.
+     * Establece un material como ganador de un concurso.
      *
-     * @param concurso El concurso al que se agregarán los materiales ganadores.
-     * @param material El material que se agregará a la lista de ganadores del concurso.
+     * @param materialId La identificación del material que se establecerá como ganador.
      */
     @Override
     public void setMaterialGanador(Long materialId){
@@ -320,12 +318,16 @@ public class MaterialServiceImpl implements MaterialService {
         materialRepository.save(material);
     }
 
+    /**
+     * Método para obtener la lista de materiales ganadores de un concurso
+     * @param concurso El concurso del cual se desean recuperar los materiales ganadores.
+     * @return Una lista de materiales ganadores asociados al concurso especificado.
+     */
     @Override
     // Método para obtener la lista de materiales ganadores de un concurso
     public List<Material> getMaterialesGanadores(Concurso concurso){
         return materialRepository.findMaterialesGanadoresByConcurso(concurso);
     }
 
-    // Método para verificar si un material es ganador en un concurso dado
 
 }

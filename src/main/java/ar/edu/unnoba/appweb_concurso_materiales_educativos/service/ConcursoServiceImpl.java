@@ -140,12 +140,11 @@ public class ConcursoServiceImpl implements ConcursoService{
         concursoRepository.save(concurso);
     }
 
-    /**
+    /*/**
      * Agrega un material a la lista de materiales ganadores de un concurso y guarda los cambios en la base de datos.
      *
      * @param concurso El concurso al que se agregarán los materiales ganadores.
      * @param material El material que se agregará a la lista de ganadores del concurso.
-     */
     @Override
     @Transactional
     public void addMaterialGanador(Concurso concurso, Material material){
@@ -153,5 +152,5 @@ public class ConcursoServiceImpl implements ConcursoService{
         concurso.getMaterialesGanadores().add(material);
         // Guarda el concurso actualizado en la base de datos
         concursoRepository.save(concurso);
-    }
+    }*/
 }

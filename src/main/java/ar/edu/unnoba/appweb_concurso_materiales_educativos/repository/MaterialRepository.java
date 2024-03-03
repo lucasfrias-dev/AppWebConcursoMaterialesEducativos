@@ -62,7 +62,12 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     @Query("SELECT m FROM Material m LEFT JOIN FETCH m.evaluadores WHERE m.concurso = :concurso")
     List<Material> findAllByConcurso(Concurso concurso);
     
-
+    /**
+     * Método de consulta para obtener una lista de materiales ganadores asociados a un concurso específico.
+     *
+     * @param concurso El concurso cuyos materiales ganadores se desean recuperar.
+     * @return Una lista de materiales ganadores asociados al concurso especificado.
+     */
     @Query("SELECT m FROM Material m WHERE m.ganador = TRUE AND m.concurso = :concurso")
     List<Material> findMaterialesGanadoresByConcurso(Concurso concurso);
 

@@ -4,56 +4,6 @@
     <meta charset="UTF-8">
     <title>Materiales participantes</title>
     <link rel="stylesheet" th:href="@{/css/styles.css}">
-    <!--<script>
-        function voteForArticle(materialId) {
-            // Verificar si el usuario ya ha votado por este artículo
-            let hasVoted = getVoto(materialId);
-
-            if (hasVoted) {
-                alert("¡Ya has votado por este Material!");
-            } else {
-                // Realizar la llamada al controlador para registrar el voto
-                fetch('/materiales-participantes/' + materialId.toString() + '/like')
-                    .then(response => {
-                        if (response.ok) {
-                            // Bloquear el botón después de votar
-                            let button = document.getElementById('voteButton_' + materialId);
-                            button.disabled = true;
-                            // Establecer una cookie para recordar que se ha votado
-                            setVoto(materialId, true, 365);
-                        } else {
-                            alert('Hubo un error al votar. Por favor, inténtalo de nuevo.');
-                        }
-                    });
-            }
-        }
-
-        // Función para establecer una cookie para guardar los materiales votados
-        function setVoto(name, value, days) {
-            let d = new Date();
-            d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
-            let expires = "expires=" + d.toUTCString();
-            document.cookie = name + "=" + value + ";" + expires + ";path=/";
-        }
-
-        // Función para verificar si el material ya se votó mediante una cookie
-        function getVoto(name) {
-            let cname = name + "=";
-            let decodedCookie = decodeURIComponent(document.cookie);
-            let cookieArray = decodedCookie.split(';');
-            for (let i = 0; i < cookieArray.length; i++) {
-                let c = cookieArray[i];
-                while (c.charAt(0) == ' ') {
-                    c = c.substring(1);
-                }
-                if (c.indexOf(cname) == 0) {
-                    return true;
-                }
-            }
-            return false;
-        }
-    </script>-->
-
 </head>
 <body>
 <h1>Materiales participantes</h1>
