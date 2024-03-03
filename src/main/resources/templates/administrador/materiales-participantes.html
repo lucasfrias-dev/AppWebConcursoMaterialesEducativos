@@ -72,7 +72,7 @@
         <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
         <td th:text="${material.likes}"></td>
         <td>
-            <form th:if="${material.ganador}" th:action="@{'/administrador/materiales/' + ${#strings.replace(edicion, ' ', '-')} + '/participantes/' + ${material.id}} + '/remove-ganador'" method="post">
+            <form th:if="${material.ganador}" th:action="@{'/administrador/materiales/' + ${#strings.replace(edicion, ' ', '-')} + '/participantes/' + ${material.id} + '/remove-ganador'}" method="post">
                 <input type="submit" value="Quitar Ganador"/>
             </form>
         </td>
