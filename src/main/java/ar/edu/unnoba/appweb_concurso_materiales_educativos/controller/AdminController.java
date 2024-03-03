@@ -691,11 +691,12 @@ public class AdminController {
         Material material = materialService.getMaterial(materialId);
         // Agrega el material ganador al concurso actual desde el servicio materialService.
         concursoService.addMaterialGanador(concurso, material);
+        // Establece el material como ganador desde el servicio materialService.
+        materialService.setMaterialGanador(materialId);
         // Agrega un mensaje de éxito como atributo flash para que esté disponible después de la redirección.
         redirectAttrs.addFlashAttribute("message", "Material declarado como ganador con éxito");
 
         // Redirige a la página que muestra la lista de materiales participantes.
         return "redirect:/administrador/materiales/" + edicion + "/participantes";
-    }
-
+    }   
 }

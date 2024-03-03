@@ -62,6 +62,9 @@ public class Material implements Serializable {
     @Column(name = "likes")
     private int likes = 0;
 
+    @Column(name = "ganador")
+    private boolean ganador = false;
+
     @ManyToOne
     @JoinColumn(name = "usuario_id")
     private User concursante;

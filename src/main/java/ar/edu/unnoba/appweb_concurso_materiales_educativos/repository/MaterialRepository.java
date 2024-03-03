@@ -5,6 +5,7 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -60,7 +61,9 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      */
     @Query("SELECT m FROM Material m LEFT JOIN FETCH m.evaluadores WHERE m.concurso = :concurso")
     List<Material> findAllByConcurso(Concurso concurso);
+    
 
-    @Query("SELECT c.materialesGanadores FROM Concurso c WHERE c = :concurso")
+    @Query("SELECT m FROM Material m WHERE m.ganador = TRUE AND m.concurso = :concurso")
     List<Material> findMaterialesGanadoresByConcurso(Concurso concurso);
+
 }
