@@ -37,5 +37,36 @@
     </tr>
 </table>
 <p th:if="${edicion != null}" th:unless="${materialesParticipantes?.size() > 0}">Todavia no participa ningun material</p>
+
+<h2 t>Materiales Participantes Ganadores</h2>
+
+<table th:if="${edicion != null and materialesGanadores?.size() > 0}">
+    <tr>
+        <th>Nombre</th>
+        <th>Descripción</th>
+        <th>Tipo de Material</th>
+        <th>Disciplina a la que pertenece</th>
+        <th>Autores</th>
+        <th>Descargar</th>
+        <th>Likes</th>
+        <th>Ganadores</th>
+    </tr>
+    <tr th:each="material : ${materialesGanadores}">
+        <td th:text="${material.titulo}"></td>
+        <td th:text="${material.descripcion}"></td>
+        <td th:text="${material.tipoMaterial}"></td>
+        <td th:text="${material.disciplina}"></td>
+        <td th:text="${material.autores}"></td>
+        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
+        <td th:text="${material.likes}"></td>
+        <td>
+            <a>Ganador</a>
+        </td>
+    </tr>
+</table>
+
+<p th:if="${edicion != null}" th:unless="${materialesGanadores?.size() > 0}">Todavia no se a seleccionado ningun material ganador</p>
+
+
 </body>
 </html>

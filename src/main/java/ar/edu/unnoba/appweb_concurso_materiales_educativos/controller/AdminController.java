@@ -691,5 +691,13 @@ public class AdminController {
 
         // Redirige a la página que muestra la lista de materiales participantes.
         return "redirect:/administrador/materiales/" + edicion + "/participantes";
-    }   
+    }
+
+    @PostMapping("/materiales/{edicion}/participantes/{materialId}/remove-ganador")
+    public String deshacerGanadorMaterial(@PathVariable("idmanterial") Long materialId, @PathVariable("edicion") String edicion) {
+        // Se llama al servicio materialService para quitar el material como ganador.
+        materialService.removeMaterialGanador(materialId);
+        // Después de quitar el material como ganador, se redirige al usuario a la página de materiales participantes de esa edición del concurso.
+        return "redirect:/administrador/materiales-participantes/" + edicion;
+    }  
 }

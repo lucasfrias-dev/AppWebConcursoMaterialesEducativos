@@ -311,10 +311,11 @@ public class MaterialServiceImpl implements MaterialService {
      */
     @Override
     public void setMaterialGanador(Long materialId){
+        // Busca el material en la base de datos utilizando su ID.
         Material material = materialRepository.findMaterialById(materialId);
-        // Agrega el material proporcionado a la lista de materiales ganadores del concurso
+        // Establece el estado del material como ganador.
         material.setGanador(true);
-        // Guarda el concurso actualizado en la base de datos
+        // Guarda los cambios en el material en la base de datos.
         materialRepository.save(material);
     }
 
@@ -329,5 +330,17 @@ public class MaterialServiceImpl implements MaterialService {
         return materialRepository.findMaterialesGanadoresByConcurso(concurso);
     }
 
-
+    /**
+     * Método para remover el estado de ganador de un material
+     * @param materialId La identificación del material que se removerá como ganador.
+     */
+    @Override
+    public void removeMaterialGanador(Long materialId) {
+        // Busca el material en la base de datos utilizando su ID.
+        Material material = materialRepository.findMaterialById(materialId);
+        // Quitar el estado del material como ganador.
+        material.setGanador(false);
+        // Guarda los cambios en el material en la base de datos.
+        materialRepository.save(material);
+    }
 }

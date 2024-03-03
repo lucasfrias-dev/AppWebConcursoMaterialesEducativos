@@ -43,13 +43,14 @@
         <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
         <td th:text="${material.likes}"></td>
         <td>
-            <form th:action="@{'/administrador/materiales/' + ${#strings.replace(edicion, ' ', '-')} + '/participantes/' + ${material.id} + '/ganador'}" method="post">
+            <form th:if="${!material.ganador}" th:action="@{'/administrador/materiales/' + ${#strings.replace(edicion, ' ', '-')} + '/participantes/' + ${material.id} + '/ganador'}" method="post">
                 <input type="submit" value="Ganador"/>
             </form>
         </td>
     </tr>
 </table>
 <p th:if="${edicion != null}" th:unless="${materialesParticipantes?.size() > 0}">Todavia no participa ningun material</p>
+
 
 <h1 th:if="${edicion != null and materialesGanadores?.size() > 0}">Materiales ganadores</h1>
 <table th:if="${edicion != null and materialesGanadores?.size() > 0}">
@@ -70,6 +71,11 @@
         <td th:text="${material.autores}"></td>
         <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
         <td th:text="${material.likes}"></td>
+        <td>
+            <form th:if="${material.ganador}" th:action="@{'/administrador/materiales/' + ${#strings.replace(edicion, ' ', '-')} + '/participantes/' + ${material.id}} + '/remove-ganador'" method="post">
+                <input type="submit" value="Quitar Ganador"/>
+            </form>
+        </td>
     </tr>
 </table>
 
