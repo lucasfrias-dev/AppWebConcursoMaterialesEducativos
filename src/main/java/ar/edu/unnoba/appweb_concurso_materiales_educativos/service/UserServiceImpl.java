@@ -20,12 +20,16 @@ import java.util.NoSuchElementException;
 @Service
 public class UserServiceImpl implements UserService{
 
+    private final UserRepository userRepository;
+    private final MaterialRepository materialRepository;
+    private final EvaluacionRepository evaluacionRepository;
+
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private MaterialRepository materialRepository;
-    @Autowired
-    private EvaluacionRepository evaluacionRepository;
+    public UserServiceImpl(UserRepository userRepository, MaterialRepository materialRepository, EvaluacionRepository evaluacionRepository) {
+        this.userRepository = userRepository;
+        this.materialRepository = materialRepository;
+        this.evaluacionRepository = evaluacionRepository;
+    }
 
     /**
      * Carga detalles de un usuario basado en su nombre de usuario (correo electrónico).

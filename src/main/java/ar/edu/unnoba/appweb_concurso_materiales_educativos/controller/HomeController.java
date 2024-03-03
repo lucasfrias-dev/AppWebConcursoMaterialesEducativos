@@ -60,17 +60,18 @@ public class HomeController {
         // Obtiene el concurso actual desde el servicio concursoService.
         Concurso concurso = concursoService.getConcursoActual();
 
-        // Agrega el nombre de la edición del concurso actual al modelo para que esté disponible en la vista.
-        model.addAttribute("edicion", concurso.getEdicion());
+        if (concurso != null) {
+            // Agrega el nombre de la edición del concurso actual al modelo para que esté disponible en la vista.
+            model.addAttribute("edicion", concurso.getEdicion());
 
-        // Agrega el año de finalización del concurso actual al modelo para que esté disponible en la vista.
-        model.addAttribute("anio", concursoService.getConcursoActual().getFechaFin().getYear());
+            // Agrega el año de finalización del concurso actual al modelo para que esté disponible en la vista.
+            model.addAttribute("anio", concurso.getFechaFin().getYear());
+        }
 
         // Agrega la lista de concursos anteriores al modelo para que esté disponible en la vista.
         model.addAttribute("concursosAnteriores", concursoService.getConcursosAnteriores());
 
         // Devuelve el nombre de la vista que representa la página principal del sistema.
-
         return "index";
     }
 

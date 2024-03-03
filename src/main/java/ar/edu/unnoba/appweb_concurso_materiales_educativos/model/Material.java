@@ -77,8 +77,4 @@ public class Material implements Serializable {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "concurso_id")
     private Concurso concurso;
-
-    /*@EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "material", fetch = FetchType.LAZY)
-    private Set<Evaluacion> evaluaciones = new HashSet<>();*/
 }

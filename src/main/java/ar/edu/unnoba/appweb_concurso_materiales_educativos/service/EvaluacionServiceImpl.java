@@ -13,8 +13,12 @@ import java.util.List;
 @Service
 public class EvaluacionServiceImpl implements EvaluacionService{
 
+    private final EvaluacionRepository evaluacionRepository;
+
     @Autowired
-    private EvaluacionRepository evaluacionRepository;
+    public EvaluacionServiceImpl(EvaluacionRepository evaluacionRepository) {
+        this.evaluacionRepository = evaluacionRepository;
+    }
 
 
     /**

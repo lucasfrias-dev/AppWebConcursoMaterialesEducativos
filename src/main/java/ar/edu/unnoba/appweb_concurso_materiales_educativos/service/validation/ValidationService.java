@@ -11,8 +11,12 @@ import org.springframework.web.multipart.MultipartFile;
 public class ValidationService {
 
     // Inyecta el servicio de concurso
+    private final ConcursoService concursoService;
+
     @Autowired
-    private ConcursoService concursoService;
+    public ValidationService(ConcursoService concursoService) {
+        this.concursoService = concursoService;
+    }
 
     public String validateCreateMaterial(BindingResult result, MultipartFile file) {
         // Verifica si hay errores de validación.
