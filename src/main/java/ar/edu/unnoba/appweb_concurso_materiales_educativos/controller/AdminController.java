@@ -531,9 +531,17 @@ public class AdminController {
      * @return Una redirección a la página que muestra la lista de todos los usuarios.
      */
     @PostMapping("/usuarios/{id}/bajaUsuario")
-    public String bajaUsuario(@PathVariable Long id) {
-        // Realiza la baja del usuario utilizando el servicio userService.
-        userService.bajaUsuario(id);
+    public String bajaUsuario(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        try {
+            // Realiza la baja del usuario utilizando el servicio userService.
+            userService.bajaUsuario(id);
+        } catch (IllegalArgumentException e) {
+            // Agrega un mensaje de error al modelo para que esté disponible en la vista.
+            redirectAttributes.addFlashAttribute("error", e.getMessage());
+
+            // Redirige a la misma página de baja de usuario.
+            return "redirect:/administrador/usuarios/" + id + "/bajaUsuario";
+        }
 
         // Redirige a la página que muestra la lista de todos los usuarios.
         return "redirect:/administrador/usuarios/all";
@@ -584,7 +592,7 @@ public class AdminController {
     @GetMapping("/evaluadores/asignar-material")
     public String showAsignarMaterial(Model model) {
         // Agrega la lista de materiales y la lista de evaluadores al modelo para que estén disponibles en la vista.
-        model.addAttribute("materiales", materialService.getMaterialesByConcurso(concursoService.getConcursoActual()));
+        model.addAttribute("materiales", materialService.getMaterialesParticipantesByConcurso(concursoService.getConcursoActual()));
         model.addAttribute("evaluadores", userService.getAllEvaluadores());
 
         // Devuelve el nombre de la vista que mostrará la página de asignación de material a evaluadores.

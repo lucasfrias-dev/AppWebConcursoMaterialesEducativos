@@ -150,7 +150,7 @@ public class HomeController {
             List<Material> materialesParticipantes = materialService.getMaterialesParticipantesByConcurso(concurso);
             // Agrega la lista de materiales participantes al modelo para que esté disponible en la vista.
             model.addAttribute("materialesParticipantes", materialesParticipantes);
-            List<Material> materialesGanadores = materialService.getMaterialGanador(concurso);
+            List<Material> materialesGanadores = materialService.getMaterialesGanadores(concurso);
             model.addAttribute("materialesGanadores", materialesGanadores);
             // Agrega la edición al modelo para que esté disponible en la vista.
             model.addAttribute("edicion", edicion);

@@ -218,6 +218,11 @@ public class UserServiceImpl implements UserService{
         // Busca el usuario por su identificación en el repositorio de usuarios.
         User user = userRepository.findById(id).get();
 
+        // Verifica si el usuario es un evaluador o un concursante.
+        if (user.getRol() != User.Rol.EVALUADOR && user.getRol() != User.Rol.CONCURSANTE) {
+            throw new IllegalArgumentException("Solo los usuarios que son evaluadores o concursantes pueden ser dados de baja.");
+        }
+
         // Establece el estado activo del usuario como falso.
         user.setActive(false);
 

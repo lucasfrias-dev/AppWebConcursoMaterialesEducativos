@@ -7,6 +7,10 @@
 </head>
 <body>
 <h1>Dar de baja a usuario</h1>
+
+<!-- Elemento para mostrar el mensaje de error -->
+<div th:if="${error}" th:text="${error}" class="error-message"></div>
+
 <form th:action="@{/administrador/usuarios/{id}/bajaUsuario(id=${usuario.id})}" method="post">
     <p>¿Estás seguro de que quieres dar de baja al usuario <span th:text="${usuario.nombre}"></span>?</p>
     <button type="submit">Dar de baja</button>

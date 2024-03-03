@@ -120,6 +120,14 @@ public class ConcursoServiceImpl implements ConcursoService{
     @Override
     @Transactional
     public void reabrirConcurso(String edicion, LocalDateTime fechaFin) {
+        // Obtiene el concurso actual utilizando el método correspondiente.
+        Concurso concursoActual = concursoRepository.findCurrentConcurso(LocalDateTime.now());
+
+        // Si hay un concurso actual, lanza una excepción.
+        if (concursoActual != null) {
+            throw new IllegalStateException("No se puede reabrir un concurso porque ya hay un concurso actual.");
+        }
+
         // Busca el concurso con la edición especificada en la base de datos
         Concurso concurso = concursoRepository.findConcursoByEdicion(edicion);
 
