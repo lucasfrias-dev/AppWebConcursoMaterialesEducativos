@@ -1,6 +1,7 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.service;
 
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.ConcursoRepository;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.utils.RomanNumerals;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,12 @@ import java.util.List;
 @Service
 public class ConcursoServiceImpl implements ConcursoService{
 
+    private final ConcursoRepository concursoRepository;
+
     @Autowired
-    private ConcursoRepository concursoRepository;
+    public ConcursoServiceImpl(ConcursoRepository concursoRepository) {
+        this.concursoRepository = concursoRepository;
+    }
 
     /**
      * Retorna el concurso actual basado en la fecha y hora actual.
@@ -135,4 +140,18 @@ public class ConcursoServiceImpl implements ConcursoService{
         concursoRepository.save(concurso);
     }
 
+    /**
+     * Agrega un material a la lista de materiales ganadores de un concurso y guarda los cambios en la base de datos.
+     *
+     * @param concurso El concurso al que se agregarán los materiales ganadores.
+     * @param material El material que se agregará a la lista de ganadores del concurso.
+     */
+    @Override
+    @Transactional
+    public void addMaterialGanador(Concurso concurso, Material material){
+        // Agrega el material a la lista de materiales ganadores del concurso.
+        concurso.getMaterialesGanadores().add(material);
+        // Guarda el concurso actualizado en la base de datos
+        concursoRepository.save(concurso);
+    }
 }

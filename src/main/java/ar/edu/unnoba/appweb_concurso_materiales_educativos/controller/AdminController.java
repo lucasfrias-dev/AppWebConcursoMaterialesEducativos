@@ -29,6 +29,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/administrador")
@@ -634,8 +635,10 @@ public class AdminController {
         // Devuelve el nombre de la vista que mostrará la página de perfil del usuario.
         return "administrador/profile";
     }
-    @GetMapping("/materiales-participantes/{edicion}")
-    public String showPosiblesMaterialesGanadores(Model model, @PathVariable String edicion, RedirectAttributes redirectAttrs, HttpServletRequest request) {
+
+
+    @GetMapping("/materiales/{edicion}/participantes")
+    public String showMaterialesAprobados(Model model, @PathVariable String edicion, RedirectAttributes redirectAttrs, HttpServletRequest request) {
         // Verifica si la edición no es nula.
         if (!"null".equals(edicion)) {
             // Reemplaza los guiones con espacios en la edición.
@@ -646,11 +649,24 @@ public class AdminController {
             List<Material> materialesParticipantes = materialService.getMaterialesParticipantesByConcurso(concurso);
             // Agrega la lista de materiales participantes al modelo para que esté disponible en la vista.
             model.addAttribute("materialesParticipantes", materialesParticipantes);
-
-            List<Material> materialesGanadores = materialService.getMaterialGanador(concurso);
+            // Obtiene la lista de materiales ganadores del concurso actual desde el servicio materialService.
+            List<Material> materialesGanadores = materialService.getMaterialesGanadores(concurso);
+            System.out.println("Materiales ganadores: " + materialesGanadores.stream()
+                    .map(m -> m.getId() + ": " + m.getTitulo())
+                    .collect(Collectors.joining(", ")));
             model.addAttribute("materialesGanadores", materialesGanadores);
             // Agrega la edición al modelo para que esté disponible en la vista.
             model.addAttribute("edicion", edicion);
+
+            // Crea un mapa para almacenar las evaluaciones por material.
+            Map<Long, List<Evaluacion>> evaluacionesPorMaterial = new HashMap<>();
+            // Itera sobre cada material para obtener sus evaluaciones y las almacena en el mapa.
+            for (Material material : materialesParticipantes) {
+                List<Evaluacion> evaluaciones = evaluacionService.getEvaluacionesByMaterial(material);
+                evaluacionesPorMaterial.put(material.getId(), evaluaciones);
+            }
+            // Agrega las evaluaciones por material al modelo para que estén disponibles en la vista.
+            model.addAttribute("evaluacionesPorMaterial", evaluacionesPorMaterial);
         } else {
             // Si la edición es nula, agrega null al modelo para indicarlo.
             model.addAttribute("edicion", null);
@@ -664,15 +680,22 @@ public class AdminController {
         // Devuelve el nombre de la vista que representa la lista de materiales participantes.
         return "administrador/materiales-participantes";
     }
-    @GetMapping("/ganador/{idmanterial}")
-    public String ganadorMaterial(@PathVariable("idmanterial") Long materialId){
+
+    @PostMapping("/materiales/{edicion}/participantes/{idmaterial}/ganador")
+    @Transactional
+    public String ganadorMaterial(@PathVariable("idmaterial") Long materialId, @PathVariable("edicion") String edicion, RedirectAttributes redirectAttrs){
 
         // Obtiene el concurso asociado a la edición desde el servicio concursoService.
         Concurso concurso = concursoService.getConcursoActual();
+        // Obtiene el material asociado al id desde el servicio materialService.
         Material material = materialService.getMaterial(materialId);
-        materialService.setMaterialGanador(concurso, material);
-        return "administrador/materiales-participantes";
-    }
+        // Agrega el material ganador al concurso actual desde el servicio materialService.
+        concursoService.addMaterialGanador(concurso, material);
+        // Agrega un mensaje de éxito como atributo flash para que esté disponible después de la redirección.
+        redirectAttrs.addFlashAttribute("message", "Material declarado como ganador con éxito");
 
+        // Redirige a la página que muestra la lista de materiales participantes.
+        return "redirect:/administrador/materiales/" + edicion + "/participantes";
+    }
 
 }

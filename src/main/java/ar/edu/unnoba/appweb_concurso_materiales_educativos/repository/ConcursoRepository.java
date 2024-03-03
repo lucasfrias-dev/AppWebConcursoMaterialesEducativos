@@ -45,7 +45,4 @@ public interface ConcursoRepository extends JpaRepository<Concurso, Long> {
      */
     @Query("SELECT c FROM Concurso c WHERE :currentDate NOT BETWEEN c.fechaInicio AND c.fechaFin")
     List<Concurso> findAllConcursosFinalizados(@Param("currentDate") LocalDateTime currentDate);
-
-    @Query("SELECT c.materialesGanadores FROM Concurso c WHERE c = :concurso")
-    List<Material> findMaterialesGanadoresByConcurso(@Param("concurso") Concurso concurso);
 }

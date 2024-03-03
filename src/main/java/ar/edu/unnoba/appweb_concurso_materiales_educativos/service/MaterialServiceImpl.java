@@ -20,12 +20,16 @@ import java.util.Set;
 @Service
 public class MaterialServiceImpl implements MaterialService {
 
+    private final MaterialRepository materialRepository;
+    private final ConcursoRepository concursoRepository;
+    private final EvaluacionRepository evaluacionRepository;
+
     @Autowired
-    private MaterialRepository materialRepository;
-    @Autowired
-    private ConcursoRepository concursoRepository;
-    @Autowired
-    private EvaluacionRepository evaluacionRepository;
+    public MaterialServiceImpl(MaterialRepository materialRepository, ConcursoRepository concursoRepository, EvaluacionRepository evaluacionRepository) {
+        this.materialRepository = materialRepository;
+        this.concursoRepository = concursoRepository;
+        this.evaluacionRepository = evaluacionRepository;
+    }
 
     /**
      * Crea un nuevo material y lo asocia con un usuario y un concurso.
@@ -299,29 +303,17 @@ public class MaterialServiceImpl implements MaterialService {
         materialRepository.save(material);
     }
 
-    /**
-     * Agrega un material a la lista de materiales ganadores de un concurso y guarda los cambios en la base de datos.
-     *
-     * @param concurso El concurso al que se agregarán los materiales ganadores.
-     * @param material El material que se agregará a la lista de ganadores del concurso.
-     */
-    public void setMaterialGanador(Concurso concurso, Material material){
-        // Agrega el material proporcionado a la lista de materiales ganadores del concurso
-        Set<Material> concurso1=concurso.getMaterialesGanadores();
-        concurso1.add(material);
-        concurso.setMaterialesGanadores(concurso1);
-        // Guarda el concurso actualizado en la base de datos
-        concursoRepository.save(concurso);
-    }
     // Método para obtener la lista de materiales ganadores de un concurso
-    public List<Material> getMaterialGanador(Concurso concurso){
-        return concursoRepository.findMaterialesGanadoresByConcurso(concurso);
+    @Override
+    public List<Material> getMaterialesGanadores(Concurso concurso){
+        return materialRepository.findMaterialesGanadoresByConcurso(concurso);
     }
 
     // Método para verificar si un material es ganador en un concurso dado
+    @Override
     public boolean isMaterialGanador(Concurso concurso, Material material){
         // Obtener la lista de materiales ganadores del concurso
-        List<Material> materials = concursoRepository.findMaterialesGanadoresByConcurso(concurso);
+        List<Material> materials = materialRepository.findMaterialesGanadoresByConcurso(concurso);
 
         // Verificar si el material dado está en la lista de materiales ganadores
         return materials.contains(material);

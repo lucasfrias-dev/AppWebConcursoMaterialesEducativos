@@ -1,6 +1,7 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.service;
 
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,4 +25,6 @@ public interface ConcursoService {
 
     //Reabre un concurso.
     void reabrirConcurso(String edicion, LocalDateTime fechaFin);
+
+    void addMaterialGanador(Concurso concurso, Material material);
 }

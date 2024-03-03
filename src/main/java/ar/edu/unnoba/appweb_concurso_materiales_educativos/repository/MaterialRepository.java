@@ -61,5 +61,6 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     @Query("SELECT m FROM Material m LEFT JOIN FETCH m.evaluadores WHERE m.concurso = :concurso")
     List<Material> findAllByConcurso(Concurso concurso);
 
-
+    @Query("SELECT c.materialesGanadores FROM Concurso c WHERE c = :concurso")
+    List<Material> findMaterialesGanadoresByConcurso(Concurso concurso);
 }
