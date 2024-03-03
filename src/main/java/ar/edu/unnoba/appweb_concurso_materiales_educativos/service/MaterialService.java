@@ -49,4 +49,6 @@ public interface MaterialService {
     void darLikeMaterial(Material material);
     public void setMaterialGanador(Long materialId);
     public List<Material> getMaterialGanador(Concurso concurso);
+    public void quitMaterialGanador(Long materialId);
+
 }

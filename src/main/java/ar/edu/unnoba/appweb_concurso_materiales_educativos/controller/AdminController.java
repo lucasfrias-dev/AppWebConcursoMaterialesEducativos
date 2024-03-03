@@ -664,10 +664,19 @@ public class AdminController {
         // Devuelve el nombre de la vista que representa la lista de materiales participantes.
         return "administrador/materiales-participantes";
     }
+    // Este método controlador maneja las solicitudes GET para seleccionar un ganador para un material específico en una edición específica del concurso.
     @GetMapping("/ganador/{edicion}/{idmanterial}")
-    public String ganadorMaterial(@PathVariable("idmanterial") Long materialId,@PathVariable("edicion") String edicion){
-        // Obtiene el concurso asociado a la edición desde el servicio concursoService.
+    public String ganadorMaterial(@PathVariable("idmanterial") Long materialId, @PathVariable("edicion") String edicion) {
+        // Se llama al servicio materialService para establecer el material como ganador.
         materialService.setMaterialGanador(materialId);
+        // Después de establecer el material como ganador, se redirige al usuario a la página de materiales participantes de esa edición del concurso.
+        return "redirect:/administrador/materiales-participantes/" + edicion;
+    }
+    @GetMapping("/quitar-ganador/{edicion}/{idmanterial}")
+    public String quitarGanadorMaterial(@PathVariable("idmanterial") Long materialId, @PathVariable("edicion") String edicion) {
+        // Se llama al servicio materialService para quitar el material como ganador.
+        materialService.quitMaterialGanador(materialId);
+        // Después de quitar el material como ganador, se redirige al usuario a la página de materiales participantes de esa edición del concurso.
         return "redirect:/administrador/materiales-participantes/" + edicion;
     }
 
