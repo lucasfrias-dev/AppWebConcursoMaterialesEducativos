@@ -8,6 +8,7 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.ConcursoServi
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.EvaluacionService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.email.EmailService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -29,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/administrador")
@@ -39,13 +39,15 @@ public class AdminController {
     private final MaterialService materialService;
     private final ConcursoService concursoService;
     private final EvaluacionService evaluacionService;
+    private final EmailService emailService;
 
     @Autowired
-    public AdminController(UserService userService, MaterialService materialService, ConcursoService concursoService, EvaluacionService evaluacionService) {
+    public AdminController(UserService userService, MaterialService materialService, ConcursoService concursoService, EvaluacionService evaluacionService, EmailService emailService) {
         this.userService = userService;
         this.materialService = materialService;
         this.concursoService = concursoService;
         this.evaluacionService = evaluacionService;
+        this.emailService = emailService;
     }
 
     /**
@@ -386,6 +388,7 @@ public class AdminController {
         // Intenta crear el usuario evaluador.
         try {
             userService.createUser(user, User.Rol.EVALUADOR);
+            emailService.sendEmail(user.getEmail(), "Haz sido dado de alta como Evaluador en el CED", "¡Bienvenido a la plataforma de concursos de materiales educativos! Ya forma parte del equipo de evaluadores del CED.");
         } catch (Exception e) {
             // Si ocurre un error durante la creación, añade el mensaje de error al modelo y retorna a la vista de registro.
             result.rejectValue("email", "error.email", e.getMessage());
@@ -444,6 +447,7 @@ public class AdminController {
         // Intenta crear el usuario administrador.
         try {
             userService.createUser(user, User.Rol.ADMINISTRADOR);
+            emailService.sendEmail(user.getEmail(), "Haz sido dado de alta como Administrador en el CED", "¡Bienvenido a la plataforma de concursos de materiales educativos! Ya forma parte del equipo de administradores del CED.");
         } catch (Exception e) {
             // Si ocurre un error durante la creación, añade el mensaje de error al modelo y retorna a la vista de registro.
             result.rejectValue("email", "error.email", e.getMessage());
@@ -615,7 +619,21 @@ public class AdminController {
         try {
             // Intenta asignar el material al evaluador utilizando el servicio userService.
             userService.asignarMaterialAEvaluador(materialId, evaluadorId);
+
+            // Obtiene la dirección de correo electrónico del evaluador.
+            String email = userService.findById(evaluadorId).getEmail();
+            String nombre = userService.findById(evaluadorId).getNombre() + " " +
+                    userService.findById(evaluadorId).getApellido();
+
+            // Envía un correo electrónico al evaluador para notificarle la asignación del material.
+            emailService.sendEmail(email, "Asignación de material", "Estimado/a " + nombre + ",\n\n" +
+                    "Se le ha asignado un material para su evaluación. Por favor, inicie sesión en la plataforma del CED " +
+                    "para revisar el material y realizar su evaluación.\n\n" +
+                    "Atentamente,\n" +
+                    "El equipo de Concurso de Materiales Educativos - CED");
+
         } catch (Exception e) {
+            e.printStackTrace();
             // Si ocurre un error durante la asignación, devuelve una respuesta ResponseEntity con un mensaje de error.
             return ResponseEntity.badRequest().body(e.getMessage());
         }
@@ -707,5 +725,5 @@ public class AdminController {
         materialService.removeMaterialGanador(materialId);
         // Después de quitar el material como ganador, se redirige al usuario a la página de materiales participantes de esa edición del concurso.
         return "redirect:/administrador/materiales/" + edicion + "/participantes";
-    }  
+    }
 }

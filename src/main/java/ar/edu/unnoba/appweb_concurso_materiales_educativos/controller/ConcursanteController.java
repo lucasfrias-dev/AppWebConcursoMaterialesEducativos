@@ -5,6 +5,8 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.ConcursoService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.email.EmailService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.file.FileService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.validation.ValidationService;
 import jakarta.servlet.ServletContext;
@@ -25,13 +27,8 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Controller
 @RequestMapping("/concursante")
@@ -42,13 +39,17 @@ public class ConcursanteController {
     private final ConcursoService concursoService;
     private final ValidationService validationService;
     private final FileService fileService;
+    private final EmailService emailService;
+    private final UserService userService;
 
     @Autowired
-    public ConcursanteController(MaterialService materialService, ConcursoService concursoService, ServletContext context, ValidationService validationService, FileService fileService) {
+    public ConcursanteController(MaterialService materialService, ConcursoService concursoService, ServletContext context, ValidationService validationService, FileService fileService, EmailService emailService, UserService userService) {
         this.materialService = materialService;
         this.concursoService = concursoService;
         this.validationService = validationService;
         this.fileService = fileService;
+        this.emailService = emailService;
+        this.userService = userService;
     }
 
     /**
@@ -161,6 +162,13 @@ public class ConcursanteController {
 
         // Crea y postula el material utilizando el servicio.
         materialService.createMaterial(material, sessionUser, concurso);
+
+        // Envia un correo al los administradores para notificar la postulación del material.
+        List<User> administradores = userService.getAllAdministradores();
+
+        for (User admin : administradores) {
+            emailService.sendEmail(admin.getEmail(), "Nuevo material postulado", "Se ha postulado un nuevo material educativo al concurso.");
+        }
 
         // Agrega un mensaje de éxito para mostrar en la página de materiales del concursante.
         redirectAttributes.addFlashAttribute("successMessage", "Material postulado exitosamente.");
