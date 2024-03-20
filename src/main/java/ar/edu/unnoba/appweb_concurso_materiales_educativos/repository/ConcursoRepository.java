@@ -1,7 +1,6 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.repository;
 
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
-import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
