@@ -13,7 +13,6 @@ import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -23,7 +22,6 @@ import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.FileInputStream;
@@ -139,7 +137,7 @@ public class HomeController {
      * @return El nombre de la vista que representa la lista de materiales participantes.
      */
     @GetMapping("/materiales-participantes/{edicion}")
-    public String showMaterialesParticipantes(Model model, @PathVariable String edicion,RedirectAttributes redirectAttrs, HttpServletRequest request) {
+    public String showMaterialesParticipantes(Model model, @PathVariable String edicion,RedirectAttributes redirectAttrs) {
         // Verifica si la edición no es nula.
         if (!"null".equals(edicion)) {
             // Reemplaza los guiones con espacios en la edición.
@@ -150,7 +148,9 @@ public class HomeController {
             List<Material> materialesParticipantes = materialService.getMaterialesParticipantesByConcurso(concurso);
             // Agrega la lista de materiales participantes al modelo para que esté disponible en la vista.
             model.addAttribute("materialesParticipantes", materialesParticipantes);
+            // Obtiene la lista de materiales ganadores del concurso actual desde el servicio materialService.
             List<Material> materialesGanadores = materialService.getMaterialesGanadores(concurso);
+            // Agrega la lista de materiales ganadores al modelo para que esté disponible en la vista.
             model.addAttribute("materialesGanadores", materialesGanadores);
             // Agrega la edición al modelo para que esté disponible en la vista.
             model.addAttribute("edicion", edicion);
@@ -299,5 +299,4 @@ public class HomeController {
         // Si la creación del usuario fue exitosa, redirige a la ruta "/login".
         return "redirect:/login";
     }
-
 }

@@ -16,6 +16,47 @@
             });
         });
     </script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        let materialesPendientes = /*[[${materialesPendientes}]]*/ [];
+
+        window.onload = function() {
+            if (materialesPendientes.length > 0) {
+                let mensaje = "Tienes los siguientes materiales pendientes de evaluar:\n\n";
+                for (let i = 0; i < materialesPendientes.length; i++) {
+                    mensaje += "- " + materialesPendientes[i].titulo + "\n";
+                }
+                document.getElementById("popupMessage").innerText = mensaje;
+                abrirPopup();
+            }
+        }
+
+        // Función para abrir la ventana emergente
+        function abrirPopup() {
+            document.getElementById("miPopup").style.display = "block";
+        }
+
+        // Función para cerrar la ventana emergente
+        function cerrarPopup() {
+            document.getElementById("miPopup").style.display = "none";
+        }
+        /*]]>*/
+    </script>
+    <style>
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+            z-index: 9999;
+        }
+    </style>
 </head>
 <body>
 <div class="header">
@@ -34,5 +75,9 @@
         <li><a th:href="@{/evaluador/logout}" target="_self">Cerrar Sesión</a></li>
     </ul>
 </nav>
+<div id="miPopup" class="popup">
+    <p id="popupMessage"></p>
+    <button onclick="cerrarPopup()">Cerrar</button>
+</div>
 </body>
 </html>

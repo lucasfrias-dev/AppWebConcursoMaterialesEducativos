@@ -1,5 +1,6 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.Data;
@@ -47,17 +48,10 @@ public class User implements UserDetails {
     @Column(name = "active")
     private boolean active = true;
 
-    /*@EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "concursante", fetch = FetchType.LAZY)
-    private Set<Material> materialesPostulados = new HashSet<>();*/
-
     @EqualsAndHashCode.Exclude
     @ManyToMany(mappedBy = "evaluadores", fetch = FetchType.LAZY)
+    @JsonBackReference
     private Set<Material> materialesAEvaluar = new HashSet<>();
-
-    /*@EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "evaluador", fetch = FetchType.LAZY)
-    private Set<Evaluacion> evaluacionesRealizadas = new HashSet<>();*/
 
     // Métodos de la interfaz UserDetails
     @Override

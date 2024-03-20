@@ -43,6 +43,7 @@ public interface MaterialService {
 
     // Recupera un conjunto de materiales asignados a un usuario específico.
     Set<Material> getMaterialesAsignados(User user);
+    List<Material> getMaterialesAsignadosPendientes(Long userId);
 
     // Actualiza el estado de evaluación de un material educativo.
     void updateEvaluado(Long materialId);

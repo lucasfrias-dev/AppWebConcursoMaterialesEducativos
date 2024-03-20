@@ -1,7 +1,8 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -16,6 +17,7 @@ import java.util.Set;
 @Data
 @Entity
 @Table(name="materiales")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Material implements Serializable {
 
     @Id
@@ -75,6 +77,7 @@ public class Material implements Serializable {
         name = "evaluador_material",
         joinColumns = @JoinColumn(name = "material_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id"))
+    @JsonManagedReference
     private Set<User> evaluadores = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)

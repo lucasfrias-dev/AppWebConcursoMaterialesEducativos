@@ -71,4 +71,19 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
     @Query("SELECT m FROM Material m WHERE m.ganador = TRUE AND m.concurso = :concurso")
     List<Material> findMaterialesGanadoresByConcurso(Concurso concurso);
 
+
+    /**
+     * Consulta para obtener los materiales pendientes de evaluación para un evaluador específico.
+     *
+     * @param userId El identificador del evaluador.
+     * @return Una lista de materiales pendientes de evaluación para el evaluador.
+     */
+    @Query("SELECT m FROM Material m" +  // Selecciona los materiales
+            " JOIN FETCH m.evaluadores e" +  // Realiza una unión para cargar anticipadamente los evaluadores asociados a los materiales
+            " JOIN FETCH m.concurso" +  // Realiza una unión para cargar anticipadamente los concursos asociados a los materiales
+            " WHERE e.id = :userId" +  // Filtra los materiales por el ID del evaluador
+            " AND m.id NOT IN (" +  // Excluye los materiales que ya han sido evaluados por el evaluador
+            "    SELECT ev.material.id FROM Evaluacion ev WHERE ev.evaluador.id = :userId" +  // Subconsulta para obtener los materiales ya evaluados por el evaluador
+            " )")
+    List<Material> findMaterialesPendientesEvaluadorById(@Param("userId") Long userId);
 }

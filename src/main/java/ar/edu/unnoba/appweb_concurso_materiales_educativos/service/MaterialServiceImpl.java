@@ -202,6 +202,8 @@ public class MaterialServiceImpl implements MaterialService {
     }
 
 
+
+
     /**
      * Recupera un material específico por su identificación.
      *
@@ -226,6 +228,11 @@ public class MaterialServiceImpl implements MaterialService {
         // Devuelve el conjunto de materiales asignados al usuario
         // accediendo a la propiedad materialesAEvaluar del usuario.
         return user.getMaterialesAEvaluar();
+    }
+
+    @Override
+    public List<Material> getMaterialesAsignadosPendientes(Long userId) {
+        return materialRepository.findMaterialesPendientesEvaluadorById(userId);
     }
 
     /**

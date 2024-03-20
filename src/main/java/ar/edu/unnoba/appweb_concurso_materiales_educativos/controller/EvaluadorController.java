@@ -56,6 +56,12 @@ public class EvaluadorController {
         // Agrega al evaluador al modelo para que esté disponible en la vista.
         model.addAttribute("usuario", usuario);
 
+        // Obtiene la lista de materiales asignados que aún no han sido evaluados por el evaluador.
+        List<Material> materialesPendientes = materialService.getMaterialesAsignadosPendientes(usuario.getId());
+
+        // Agrega la lista de materiales pendientes al modelo para que esté disponible en la vista.
+        model.addAttribute("materialesPendientes", materialesPendientes);
+
         // Devuelve el nombre de la vista que mostrará el panel del evaluador.
         return "evaluador/panel-evaluador";
     }

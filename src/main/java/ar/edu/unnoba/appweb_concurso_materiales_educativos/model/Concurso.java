@@ -1,19 +1,17 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
 
 @Data
 @Entity
 @Table(name = "concursos")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Concurso {
 
     @Id

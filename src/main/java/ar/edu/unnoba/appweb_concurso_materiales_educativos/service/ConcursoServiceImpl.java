@@ -1,7 +1,6 @@
 package ar.edu.unnoba.appweb_concurso_materiales_educativos.service;
 
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
-import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.repository.ConcursoRepository;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.utils.RomanNumerals;
 import org.springframework.beans.factory.annotation.Autowired;
