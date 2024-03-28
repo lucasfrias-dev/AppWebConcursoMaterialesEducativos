@@ -33,7 +33,7 @@
             <ul>
                 <li>
                     <a th:href="@{/concursante/postular-material}"
-                       th:onclick="${edicionActual == 'null'} ? 'alert(\'No puedes postular ningún material porque no hay un concurso vigente.\'); return false;' : ''"
+                       th:onclick="${!puedePostular} ? 'alert(\'No puedes postular ningún material porque no se encuentra en la fecha de postulaciones.\'); return false;' : ''"
                        target="_self">Postular</a>
                 </li>
                 <li><a th:href="@{/materiales-participantes/{edicion}(edicion=${edicionActual})}" target="_self">Participantes</a></li>

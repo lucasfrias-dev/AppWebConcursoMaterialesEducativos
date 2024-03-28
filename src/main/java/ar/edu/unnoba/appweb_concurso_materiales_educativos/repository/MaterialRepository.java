@@ -3,6 +3,9 @@ package ar.edu.unnoba.appweb_concurso_materiales_educativos.repository;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Concurso;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.Material;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -50,7 +53,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
      * @param user El concursante cuyos materiales se desean recuperar.
      * @return Una lista de materiales asociados al concursante especificado.
      */
-    @Query("SELECT m FROM Material m WHERE m.concursante = :user")
+    @Query("SELECT m FROM Material m JOIN FETCH m.concurso WHERE m.concursante = :user")
     List<Material> findAllByConcursante(User user);
 
     /**
@@ -86,4 +89,7 @@ public interface MaterialRepository extends JpaRepository<Material, Long> {
             "    SELECT ev.material.id FROM Evaluacion ev WHERE ev.evaluador.id = :userId" +  // Subconsulta para obtener los materiales ya evaluados por el evaluador
             " )")
     List<Material> findMaterialesPendientesEvaluadorById(@Param("userId") Long userId);
+
+    Page<Material> findAllByConcursante(User user, Pageable pageable);
+    Page<Material> findAll(Specification<Material> spec, Pageable pageable);
 }

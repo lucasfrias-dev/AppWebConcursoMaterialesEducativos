@@ -3,77 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <title>Mis Materiales Postulados</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/materiales.css}">
 </head>
 <body>
 <h1>Mis Materiales Postulados</h1>
 
-<h2>Materiales del concurso actual</h2>
-<table th:if="${materialesEdicionActual?.size() > 0}">
-    <thead>
-    <tr>
-        <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Tipo de Material</th>
-        <th>Disciplina</th>
-        <th>Autores</th>
-        <th>Edicion participante</th>
-        <th>Estado de Aprobación</th>
-        <th>Descargar</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="material : ${materialesEdicionActual}">
-        <td th:text="${material.titulo}"></td>
-        <td th:text="${material.descripcion}"></td>
-        <td th:text="${material.tipoMaterial}"></td>
-        <td th:text="${material.disciplina}"></td>
-        <td th:text="${material.autores}"></td>
-        <td th:if="${material.concurso != null}" th:text="${material.concurso.edicion} + '.Año: ' + ${material.concurso.fechaFin.year}"></td>
-        <td th:if="${material.concurso == null}">No disponible</td>
-        <td>
-            <span th:if="${material.aprobado == null}">Pendiente</span>
-            <span th:if="${material.aprobado == true}">Aprobado</span>
-            <span th:if="${material.aprobado == false}">Rechazado</span>
-        </td>
-        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
-    </tr>
-    </tbody>
-</table>
-<p th:unless="${materialesEdicionActual?.size() > 0}">No tienes materiales postulados en el concurso actual.</p>
+<!-- Formulario para filtrar los materiales -->
+<!--<form th:action="@{/mis-materiales}" method="get">
+    <label for="aprobado">Aprobado:</label>
+    <select id="aprobado" name="aprobado">
+        <option value="">Todos</option>
+        <option value="true">Aprobado</option>
+        <option value="false">No Aprobado</option>
+    </select>
+    <label for="edicion">Edición:</label>
+    <select id="edicion" name="edicion">
+        <option value="">Todas</option>
+        <option th:each="edicion : ${edicionesDisponibles}" th:value="${edicion}" th:text="${edicion}"></option>
+    </select>
+    <button type="submit">Filtrar</button>
+</form>-->
 
-<h2>Materiales de concursos anteriores</h2>
-<table th:if="${materialesEdicionesAnteriores?.size() > 0}">
-    <thead>
-    <tr>
-        <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Tipo de Material</th>
-        <th>Disciplina</th>
-        <th>Autores</th>
-        <th>Edicion participante</th>
-        <th>Estado de Aprobación</th>
-        <th>Video presentacion</th>
-        <th>Archivo material</th>
-    </tr>
-    </thead>
-    <tbody>
-    <tr th:each="material : ${materialesEdicionesAnteriores}">
-        <td th:text="${material.titulo}"></td>
-        <td th:text="${material.descripcion}"></td>
-        <td th:text="${material.tipoMaterial}"></td>
-        <td th:text="${material.disciplina}"></td>
-        <td th:text="${material.autores}"></td>
-        <td th:if="${material.concurso != null}" th:text="${material.concurso.edicion} + '.Año: ' + ${material.concurso.fechaFin.year}"></td>
-        <td th:if="${material.concurso == null}">No disponible</td>
-        <td>
+<div th:if="${materiales?.size() > 0}" class="materials-container">
+    <div th:each="material : ${materiales}" class="material-card">
+        <h3 th:text="${material.titulo}"></h3>
+        <img th:src="@{'/materiales-participantes/' + ${material.id} + '/preview'}" alt="Preview">
+        <p th:text="${material.descripcion}"></p>
+        <p><strong>Tipo de Material:</strong> <span th:text="${material.tipoMaterial}"></span></p>
+        <p><strong>Disciplina:</strong> <span th:text="${material.disciplina}"></span></p>
+        <p><strong>Autores:</strong> <span th:text="${material.autores}"></span></p>
+        <p><strong>Edicion participante:</strong> <span th:text="${material.concurso.edicion} + ' .Año: ' + ${material.concurso.fechaFin.year}"></span></p>
+        <p><strong>Estado de Aprobación:</strong>
             <span th:if="${material.aprobado == null}">Pendiente</span>
             <span th:if="${material.aprobado == true}">Aprobado</span>
             <span th:if="${material.aprobado == false}">Rechazado</span>
-        </td>
-        <td><a th:href="${material.urlVideoPresentacion}">Ver</a></td>
-        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
-    </tr>
-    </tbody>
-</table>
-<p th:unless="${materialesEdicionesAnteriores?.size() > 0}">No tienes materiales postulados en concursos anteriores.</p>
+        </p>
+        <div class="card-footer">
+            <a th:href="${material.urlVideoPresentacion}">Ver Video</a>
+            <a th:href="@{'/view/' + ${material.id}}">Ver PDF</a>
+        </div>
+    </div>
+</div>
+
+<p th:unless="${materiales?.size() > 0}">No tienes materiales postulados.</p>
+
+<!-- Paginación -->
+<!--<div th:if="${materialesPage.totalPages > 1}">
+    <ul>
+        <li th:each="pageNumber : ${#numbers.sequence(0, materialesPage.totalPages - 1)}">
+            <a th:href="@{/mis-materiales?page=${pageNumber}}">Página ${pageNumber + 1}</a>
+        </li>
+    </ul>
+</div>-->
+
+</body>
+</html>

@@ -30,6 +30,11 @@ public class ConcursoServiceImpl implements ConcursoService{
         return concursoRepository.findCurrentConcurso(LocalDateTime.now());
     }
 
+    @Override
+    public Concurso getUltimoConcurso() {
+        return concursoRepository.findLastConcurso();
+    }
+
     /**
      * Retorna el concurso asociado a la edición especificada.
      *
@@ -48,7 +53,7 @@ public class ConcursoServiceImpl implements ConcursoService{
      */
     @Override
     public List<Concurso> getConcursosAnteriores() {
-        return concursoRepository.findAllConcursosFinalizados(LocalDateTime.now());
+        return concursoRepository.findAllConcursosFinalizadosExceptLast(LocalDateTime.now());
     }
 
     /**
@@ -146,18 +151,4 @@ public class ConcursoServiceImpl implements ConcursoService{
         // Guarda los cambios en el concurso en la base de datos
         concursoRepository.save(concurso);
     }
-
-    /*/**
-     * Agrega un material a la lista de materiales ganadores de un concurso y guarda los cambios en la base de datos.
-     *
-     * @param concurso El concurso al que se agregarán los materiales ganadores.
-     * @param material El material que se agregará a la lista de ganadores del concurso.
-    @Override
-    @Transactional
-    public void addMaterialGanador(Concurso concurso, Material material){
-        // Agrega el material a la lista de materiales ganadores del concurso.
-        concurso.getMaterialesGanadores().add(material);
-        // Guarda el concurso actualizado en la base de datos
-        concursoRepository.save(concurso);
-    }*/
 }

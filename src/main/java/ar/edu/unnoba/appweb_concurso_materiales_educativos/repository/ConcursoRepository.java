@@ -42,6 +42,9 @@ public interface ConcursoRepository extends JpaRepository<Concurso, Long> {
      * @param currentDate La fecha actual para verificar qué concursos han finalizado.
      * @return Una lista de concursos que ya han finalizado en la fecha proporcionada.
      */
-    @Query("SELECT c FROM Concurso c WHERE :currentDate NOT BETWEEN c.fechaInicio AND c.fechaFin")
-    List<Concurso> findAllConcursosFinalizados(@Param("currentDate") LocalDateTime currentDate);
+    @Query("SELECT c FROM Concurso c WHERE :currentDate NOT BETWEEN c.fechaInicio AND c.fechaFin AND c.fechaFin != (SELECT MAX(c2.fechaFin) FROM Concurso c2)")
+    List<Concurso> findAllConcursosFinalizadosExceptLast(@Param("currentDate") LocalDateTime currentDate);
+
+    @Query("SELECT c.edicion FROM Concurso c")
+    List<String> findAllEdiciones();
 }

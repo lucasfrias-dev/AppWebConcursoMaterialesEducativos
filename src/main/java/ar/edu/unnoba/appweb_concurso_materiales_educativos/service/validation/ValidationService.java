@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
+import java.util.Objects;
+
 @Service
 public class ValidationService {
 
@@ -35,10 +38,20 @@ public class ValidationService {
             return "El archivo excede el tamaño máximo permitido (15MB).";
         }
 
-        // Verifica si hay un concurso vigente.
-        Concurso concurso = concursoService.getConcursoActual();
-        if (concurso == null) {
-            return "No puedes postular ningún material porque no hay un concurso vigente.";
+        // Verifica que el archivo es un PDF
+        if (!Objects.requireNonNull(file.getContentType()).equalsIgnoreCase("application/pdf")) {
+            return "El archivo debe ser un PDF";
+        }
+
+        // No se puede postular si no se encuentra en fechas de postulacion
+        Concurso concursoActual = concursoService.getConcursoActual();
+        if (concursoActual == null) {
+            return "No hay concurso en curso.";
+        }
+        LocalDateTime fechaActual = LocalDateTime.now();
+        boolean postulacionAbierta = fechaActual.isAfter(concursoActual.getFechaInicio()) && fechaActual.isBefore(concursoActual.getFechaFinPostulaciones());
+        if (!postulacionAbierta) {
+            return "No se puede postular en este momento debido a que no se encuentra en fechas de postulación. Consulte las fechas del concurso actual.";
         }
 
         // Si no hay errores, devuelve null

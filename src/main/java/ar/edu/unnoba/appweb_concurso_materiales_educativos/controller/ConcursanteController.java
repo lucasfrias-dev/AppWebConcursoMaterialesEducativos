@@ -27,7 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Controller
@@ -72,6 +72,14 @@ public class ConcursanteController {
         String edicionActual = (concurso != null) ? concurso.getEdicion() : "null";
         model.addAttribute("edicionActual", edicionActual);
 
+        // Agrega un booleano al modelo para indicar si el concursante puede postular materiales.
+        boolean puedePostular = false;
+        if (concurso != null) {
+            LocalDateTime fechaActual = LocalDateTime.now();
+            puedePostular = fechaActual.isAfter(concurso.getFechaInicio()) && fechaActual.isBefore(concurso.getFechaFinPostulaciones());
+        }
+        model.addAttribute("puedePostular", puedePostular);
+
         // Devuelve el nombre de la vista que mostrará el panel del concursante.
         return "concursante/panel-concursante";
     }
@@ -107,16 +115,8 @@ public class ConcursanteController {
      */
     @GetMapping("/postular-material")
     public String showPostularMaterial(Model model) {
-        // Obtiene el concurso actual.
-        Concurso concursoActual = concursoService.getConcursoActual();
-
         // Agrega un objeto material vacío al modelo.
         model.addAttribute("material", new Material());
-
-        // Si no hay un concurso vigente, muestra un mensaje de error en la vista de postulación de material.
-        if (concursoActual == null) {
-            model.addAttribute("error", "No puedes postular ningún material porque no hay un concurso vigente.");
-        }
 
         // Devuelve el nombre de la vista que mostrará la página de postulación de material.
         return "concursante/postular-material";
@@ -155,10 +155,9 @@ public class ConcursanteController {
         // Obtiene el concurso actual.
         Concurso concurso = concursoService.getConcursoActual();
 
-
         // Guarda el archivo en el sistema de archivos y obtiene su ruta relativa para almacenarla en la base de datos.
         String relativeFilePath = fileService.saveFile(file);
-        material.setArchivo(relativeFilePath);
+        material.setArchivoPdf(relativeFilePath);
 
         // Crea y postula el material utilizando el servicio.
         materialService.createMaterial(material, sessionUser, concurso);
@@ -196,37 +195,12 @@ public class ConcursanteController {
         // Obtiene todos los materiales postulados por el concursante.
         List<Material> materialesConcursante = materialService.getMaterialesByConcursante(sessionUser);
 
-        // Obtiene la edición del concurso actual, si existe.
-        Concurso concursoActual = concursoService.getConcursoActual();
-        String edicionActual = (concursoActual != null) ? concursoActual.getEdicion() : null;
-
-        // Filtra los materiales del concursante según la edición del concurso.
-        List<Material> materialesEdicionActual = new ArrayList<>();
-        List<Material> materialesEdicionesAnteriores;
-        if (edicionActual != null) {
-            // Filtra los materiales postulados por el concursante para la edición actual del concurso.
-            materialesEdicionActual = materialesConcursante.stream()
-                    .filter(material -> material.getConcurso() != null && material.getConcurso().getEdicion().equals(edicionActual))
-                    .toList();
-
-            // Filtra los materiales postulados por el concursante para ediciones anteriores del concurso.
-            materialesEdicionesAnteriores = materialesConcursante.stream()
-                    .filter(material -> material.getConcurso() != null && !material.getConcurso().getEdicion().equals(edicionActual))
-                    .toList();
-        } else {
-            // Si no hay una edición actual del concurso, todos los materiales son considerados como ediciones anteriores.
-            materialesEdicionesAnteriores = materialesConcursante;
-        }
-
-        // Agrega las listas de materiales al modelo para que estén disponibles en la vista.
-        modelAndView.addObject("materialesEdicionActual", materialesEdicionActual);
-        modelAndView.addObject("materialesEdicionesAnteriores", materialesEdicionesAnteriores);
+        // Agrega la lista de materiales al modelo para que esté disponible en la vista.
+        modelAndView.addObject("materiales", materialesConcursante);
 
         // Retorna el objeto ModelAndView que representa la vista de los materiales del concursante.
         return modelAndView;
     }
-
-
 
     /**
      * Controlador para mostrar la página de perfil del concursante autenticado.

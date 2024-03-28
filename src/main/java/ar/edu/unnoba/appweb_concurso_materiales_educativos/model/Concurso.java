@@ -27,10 +27,18 @@ public class Concurso {
     private LocalDateTime fechaInicio;
 
     @NotNull
+    @Column(name = "fecha_fin_postulaciones")
+    private LocalDateTime fechaFinPostulaciones;
+
+    @NotNull
+    @Column(name = "fecha_inicio_votacion")
+    private LocalDateTime fechaInicioVotacion;
+
+    @NotNull
+    @Column(name = "fecha_fin_votacion")
+    private LocalDateTime fechaFinVotacion;
+
+    @NotNull
     @Column(name = "fecha_fin")
     private LocalDateTime fechaFin;
-
-    /*@EqualsAndHashCode.Exclude
-    @OneToMany(mappedBy = "concurso", fetch = FetchType.LAZY)
-    private Set<Material> materialesGanadores;*/
 }
