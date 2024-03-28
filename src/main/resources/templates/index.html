@@ -4,18 +4,6 @@
     <meta charset="utf-8">
     <title>Página sin título</title>
     <link rel="stylesheet" th:href="@{/css/panel.css}">
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let menuItems = document.querySelectorAll('.with-submenu');
-
-            menuItems.forEach(function(item) {
-                item.addEventListener('click', function() {
-                    let submenu = this.querySelector('ul');
-                    submenu.classList.toggle('show-submenu');
-                });
-            });
-        });
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Descripcion Del Concurso De Materiales Educativos</title>
@@ -37,33 +25,64 @@
 </head>
 <body>
 <div class="header">
-    <span th:if="${edicion != null}" th:text="'Bienvenido al Concurso De Materiales Educativos! ' + ${edicion} + ' año: ' + ${anio}"></span>
-    <span th:if="${edicion == null}">Bienvenido al Concurso De Materiales Educativos! No hay una edición actual.</span>
+    <span th:if="${ultimaEdicion != null}" th:text="'Bienvenido al Concurso De Materiales Educativos! ' + ${ultimaEdicion} + ' año: ' + ${anio}"></span>
+    <span th:if="${ultimaEdicion == null}">Bienvenido al Concurso De Materiales Educativos!</span>
 </div>
 
 <nav class="menu">
     <ul>
-        <li><a href="#" id="abrirPopup">Acerca del CED</a></li>
+        <li>
+            <a href="#">Acerca del CED</a>
+            <ul>
+                <li class="with-submenu">
+                    <a href="#" id="abrirPopup">¿Qué es el CED?</a>
+                </li>
+                <li class="with-submenu">
+                    <a href="#">Ediciones anteriores</a>
+                    <ul>
+                        <li th:if="${ultimaEdicion != null && concursosAnteriores?.size() > 0}">
+                            <a href="#" target="_self">Ediciones anteriores</a>
+                            <ul th:each="concurso : ${concursosAnteriores}">
+                                <li>
+                                    <a href="#" th:text="${concurso.edicion}"></a>
+                                    <ul>
+                                        <li><a th:href="@{'/materiales-participantes/' + ${#strings.replace(concurso.edicion, ' ', '-')}}" target="_self">Materiales que participaron</a></li>
+                                        <li><a th:href="@{'/materiales-ganadores/' + ${#strings.replace(concurso.edicion, ' ', '-')}}" target="_self">Materiales ganadores</a></li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                        <li><a href="https://wite.unnoba.edu.ar/concurso-ced/">II Edición</a></li>
+                        <li><a href="https://educaciondigital.unnoba.edu.ar/concurso-de-diseno-de-materiales-educativos-digitales-2021/">I Edición</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </li>
 
-        <div id="miPopup" class="popup">
-            <p>Concurso de Diseño
-                de materiales educativos</p>
-            <p><span>OBJETIVO</span>
-                Reconocer y estimular a docentes innovadores para impulsar espacios educativos creativos y promover el aprendizaje colaborativo entre pares.</p>
-            <p><span>TEMÁTICA</span>
-                Los participantes pueden presentar uno o varios materiales digitales originales que cumplan las condiciones del concurso.</p>
-            <p><span>DESTINATARIOS</span>
-                Docentes de todas las carreras y niveles, presentando materiales individualmente o en equipos de hasta cinco personas, siendo de la misma asignatura o curso.</p>
-            <button onclick="cerrarPopup()">Cerrar</button>
-        </div>
-        <li><a th:href="@{'/materiales-participantes/' + ${#strings.replace(edicion, ' ', '-')}}" target="_self" title="Materiales">Ver materiales participantes</a></li>
-        <ul th:if="${concursosAnteriores?.size() > 0}"><a target="_self">Ediciones anteriores</a>
-            <li th:each="concurso : ${concursosAnteriores}" th:text="${concurso.edicion}"><a th:href="@{/materiales-participantes/${concurso.edicion}}"></a></li>
-        </ul>
+        <!-- Sección de materiales participantes -->
+        <li th:if="${ultimaEdicion != null}">
+            <a th:href="@{'/materiales-participantes/' + ${#strings.replace(ultimaEdicion, ' ', '-')}}" target="_self" title="Materiales">Ver materiales participantes</a>
+        </li>
+        <li th:unless="${ultimaEdicion != null}">
+            <a href="#">Ver materiales participantes</a>
+        </li>
+
         <li><a th:href="@{/participar}" target="_self">Participar</a></li>
         <li><a th:href="@{/login}" target="_self">Iniciar sesión</a></li>
     </ul>
 </nav>
+<div id="miPopup" class="popup">
+    <p>Concurso de Diseño
+        de materiales educativos</p>
+    <p><span>OBJETIVO</span>
+        Reconocer y estimular a docentes innovadores para impulsar espacios educativos creativos y promover el aprendizaje colaborativo entre pares.</p>
+    <p><span>TEMÁTICA</span>
+        Los participantes pueden presentar uno o varios materiales digitales originales que cumplan las condiciones del concurso.</p>
+    <p><span>DESTINATARIOS</span>
+        Docentes de todas las carreras y niveles, presentando materiales individualmente o en equipos de hasta cinco personas, siendo de la misma asignatura o curso.</p>
+    <button onclick="cerrarPopup()">Cerrar</button>
+</div>
+</body>
 <script>
     // Función para abrir la ventana emergente
     function abrirPopup() {
@@ -80,7 +99,17 @@
         event.preventDefault(); // Evita que el enlace redireccione
         abrirPopup();
     });
-</script>
 
-</body>
+    // Manejo del despliegue de submenús
+    document.addEventListener('DOMContentLoaded', function() {
+        let menuItems = document.querySelectorAll('.with-submenu');
+
+        menuItems.forEach(function(item) {
+            item.addEventListener('click', function() {
+                let submenu = this.querySelector('ul');
+                submenu.classList.toggle('show-submenu');
+            });
+        });
+    });
+</script>
 </html>

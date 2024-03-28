@@ -6,45 +6,51 @@ import ar.edu.unnoba.appweb_concurso_materiales_educativos.model.User;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.ConcursoService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.MaterialService;
 import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.UserService;
+import ar.edu.unnoba.appweb_concurso_materiales_educativos.service.pdf.PdfService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.util.*;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Controller
 @RequestMapping("/")
 public class HomeController {
 
     private final MaterialService materialService;
-
     private final UserService userService;
-
     private final ConcursoService concursoService;
+    private final PdfService pdfService;
 
     @Autowired
-    public HomeController(MaterialService materialService, UserService userService, ConcursoService concursoService) {
+    public HomeController(MaterialService materialService, UserService userService, ConcursoService concursoService, PdfService pdfService) {
         this.materialService = materialService;
         this.userService = userService;
         this.concursoService = concursoService;
+        this.pdfService = pdfService;
     }
 
     /**
@@ -55,18 +61,19 @@ public class HomeController {
      */
     @GetMapping("/")
     public String home(Model model) {
-        // Obtiene el concurso actual desde el servicio concursoService.
-        Concurso concurso = concursoService.getConcursoActual();
+        // Obtiene el ultimo concurso desde el servicio concursoService.
+        Concurso concurso = concursoService.getUltimoConcurso();
 
         if (concurso != null) {
-            // Agrega el nombre de la edición del concurso actual al modelo para que esté disponible en la vista.
-            model.addAttribute("edicion", concurso.getEdicion());
+            // Agrega el nombre de la edición del ultimo concurso al modelo para que esté disponible en la vista.
+            model.addAttribute("ultimaEdicion", concurso.getEdicion());
 
-            // Agrega el año de finalización del concurso actual al modelo para que esté disponible en la vista.
+            // Agrega el año de finalización del ultimo concurso al modelo para que esté disponible en la vista.
             model.addAttribute("anio", concurso.getFechaFin().getYear());
         }
 
         // Agrega la lista de concursos anteriores al modelo para que esté disponible en la vista.
+        // No incluye el ultimo concurso.
         model.addAttribute("concursosAnteriores", concursoService.getConcursosAnteriores());
 
         // Devuelve el nombre de la vista que representa la página principal del sistema.
@@ -136,28 +143,27 @@ public class HomeController {
      * @param redirectAttrs Los atributos de redirección que se utilizarán para enviar mensajes al cliente.
      * @return El nombre de la vista que representa la lista de materiales participantes.
      */
+    @Transactional
     @GetMapping("/materiales-participantes/{edicion}")
-    public String showMaterialesParticipantes(Model model, @PathVariable String edicion,RedirectAttributes redirectAttrs) {
-        // Verifica si la edición no es nula.
-        if (!"null".equals(edicion)) {
-            // Reemplaza los guiones con espacios en la edición.
-            edicion = edicion.replace("-", " ");
-            // Obtiene el concurso asociado a la edición desde el servicio concursoService.
-            Concurso concurso = concursoService.getConcursoByEdicion(edicion);
-            // Obtiene la lista de materiales participantes del concurso actual desde el servicio materialService.
-            List<Material> materialesParticipantes = materialService.getMaterialesParticipantesByConcurso(concurso);
-            // Agrega la lista de materiales participantes al modelo para que esté disponible en la vista.
-            model.addAttribute("materialesParticipantes", materialesParticipantes);
-            // Obtiene la lista de materiales ganadores del concurso actual desde el servicio materialService.
-            List<Material> materialesGanadores = materialService.getMaterialesGanadores(concurso);
-            // Agrega la lista de materiales ganadores al modelo para que esté disponible en la vista.
-            model.addAttribute("materialesGanadores", materialesGanadores);
-            // Agrega la edición al modelo para que esté disponible en la vista.
-            model.addAttribute("edicion", edicion);
-        } else {
-            // Si la edición es nula, agrega null al modelo para indicarlo.
-            model.addAttribute("edicion", null);
-        }
+    public String showMaterialesParticipantes(Model model, @PathVariable String edicion, RedirectAttributes redirectAttrs) {
+
+        // Reemplaza los guiones con espacios en la edición.
+        edicion = edicion.replace("-", " ");
+        // Agrega la edición al modelo para que esté disponible en la vista.
+        model.addAttribute("edicion", edicion);
+
+        // Obtiene el concurso asociado a la edición desde el servicio concursoService.
+        Concurso concurso = concursoService.getConcursoByEdicion(edicion);
+
+        // Obtiene la lista de materiales participantes del concurso actual desde el servicio materialService.
+        List<Material> materialesParticipantes = materialService.getMaterialesParticipantesByConcurso(concurso);
+        // Agrega la lista de materiales participantes al modelo para que esté disponible en la vista.
+        model.addAttribute("materialesParticipantes", materialesParticipantes);
+
+        // Obtiene la lista de materiales ganadores del concurso actual desde el servicio materialService.
+        List<Material> materialesGanadores = materialService.getMaterialesGanadores(concurso);
+        // Agrega la lista de materiales ganadores al modelo para que esté disponible en la vista.
+        model.addAttribute("materialesGanadores", materialesGanadores);
 
         //Agrega el mensaje del redirect
         if (redirectAttrs.getFlashAttributes().containsKey("message")) {
@@ -166,6 +172,79 @@ public class HomeController {
 
         // Devuelve el nombre de la vista que representa la lista de materiales participantes.
         return "materiales-participantes";
+    }
+
+    /**
+     * Maneja las solicitudes GET para obtener una vista previa de la primera página del PDF asociado con un material.
+     *
+     * @param materialId El ID del material del cual se desea obtener la vista previa.
+     * @return ResponseEntity con el contenido de la vista previa de la primera página del PDF en formato de imagen PNG.
+     * @throws IOException Si ocurre un error durante la obtención o procesamiento del material.
+     */
+    @GetMapping(value = "/materiales-participantes/{materialId}/preview")
+    public ResponseEntity<InputStreamResource> getMaterialPreview(@PathVariable Long materialId) throws IOException {
+        // Obtiene la ruta del archivo PDF asociado con el materialId
+        String pdfFilePath = materialService.getMaterial(materialId).getArchivoPdf();
+
+        // Convierte el archivo PDF en una imagen
+        File imageFile = pdfService.convertPdfToImage(pdfFilePath);
+
+        // Crea un FileInputStream para leer el contenido del archivo de imagen
+        FileInputStream fis = new FileInputStream(imageFile);
+
+        // Devuelve una ResponseEntity con el contenido de la imagen generada
+        return ResponseEntity.ok().contentType(MediaType.IMAGE_PNG).body(new InputStreamResource(fis));
+    }
+
+
+    //Controlador para ver un material participante
+    @Transactional
+    @GetMapping("/materiales-participantes/{edicion}/{materialId}")
+    public String showMaterialParticipante(Model model, @PathVariable String edicion, @PathVariable Long materialId) {
+        // Reemplaza los guiones con espacios en la edición.
+        edicion = edicion.replace("-", " ");
+        // Agrega la edición al modelo para que esté disponible en la vista.
+        model.addAttribute("edicion", edicion);
+
+        // Obtiene el material con el id especificado desde el servicio materialService.
+        Material material = materialService.getMaterial(materialId);
+        // Agrega el material al modelo para que esté disponible en la vista.
+        model.addAttribute("material", material);
+
+        // Verifica si la votación está abierta.
+        Concurso concurso = material.getConcurso();
+        LocalDateTime fechaActual = LocalDateTime.now();
+        boolean votacionAbierta = fechaActual.isAfter(concurso.getFechaInicioVotacion()) && fechaActual.isBefore(concurso.getFechaFinVotacion());
+        model.addAttribute("votacionAbierta", votacionAbierta);
+
+        // Devuelve el nombre de la vista que representa la página de un material participante.
+        return "detalle-material";
+    }
+
+    /**
+     * Controlador para mostrar la lista de materiales ganadores de una edición específica del concurso.
+     *
+     * @param model   El modelo que se utilizará para pasar datos a la vista.
+     * @param edicion La edición del concurso de la cual se mostrarán los materiales ganadores.
+     * @return El nombre de la vista que representa la lista de materiales ganadores.
+     */
+    @GetMapping("/materiales-ganadores/{edicion}")
+    public String showMaterialesGanadores(Model model, @PathVariable String edicion) {
+
+        // Reemplaza los guiones con espacios en la edición.
+        edicion = edicion.replace("-", " ");
+
+        // Obtiene el concurso asociado a la edición desde el servicio concursoService.
+        Concurso concurso = concursoService.getConcursoByEdicion(edicion);
+        // Obtiene la lista de materiales ganadores del concurso actual desde el servicio materialService.
+        List<Material> materialesGanadores = materialService.getMaterialesGanadores(concurso);
+        // Agrega la lista de materiales ganadores al modelo para que esté disponible en la vista.
+        model.addAttribute("materialesGanadores", materialesGanadores);
+        // Agrega la edición al modelo para que esté disponible en la vista.
+        model.addAttribute("edicion", edicion);
+
+        // Devuelve el nombre de la vista que representa la lista de materiales ganadores.
+        return "materiales-ganadores";
     }
 
 
@@ -221,17 +300,17 @@ public class HomeController {
      * @return La respuesta HTTP que contiene el archivo para descargar.
      * @throws IOException Si ocurre un error al leer el archivo.
      */
-    @GetMapping("/download/{id}")
+    /*@GetMapping("/download/{id}")
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable Long id) throws IOException {
         // Obtiene el material con el id especificado desde el servicio materialService.
         Material material = materialService.getMaterial(id);
         // Verifica si el material o su archivo son nulos.
-        if (material == null || material.getArchivo() == null) {
+        if (material == null || material.getArchivoPdf() == null) {
             throw new FileNotFoundException("No se encontró el archivo para descargar.");
         }
 
         // Obtiene el archivo del material.
-        String filePath = material.getArchivo();
+        String filePath = material.getArchivoPdf();
         File file = new File(filePath);
 
         // Verifica si el archivo existe.
@@ -247,6 +326,29 @@ public class HomeController {
                 .contentType(MediaType.APPLICATION_OCTET_STREAM)
                 .contentLength(file.length())
                 .body(resource);
+    }*/
+
+    @GetMapping("/view/{materialId}")
+    public ResponseEntity<Resource> viewPdf(@PathVariable Long materialId) {
+        // Obtén el Material por id y luego la ruta del archivo
+        Material material = materialService.getMaterial(materialId);
+        String filePath = material.getArchivoPdf();
+
+        try {
+            Path path = Paths.get(filePath);
+            Resource resource = new UrlResource(path.toUri());
+
+            if (resource.exists() || resource.isReadable()) {
+                return ResponseEntity.ok()
+                        .contentType(MediaType.parseMediaType("application/pdf"))
+                        .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                        .body(resource);
+            } else {
+                throw new RuntimeException("No se pudo leer el archivo!");
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
     }
 
 

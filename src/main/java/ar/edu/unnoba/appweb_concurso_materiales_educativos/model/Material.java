@@ -54,7 +54,7 @@ public class Material implements Serializable {
     private Boolean evaluado = false;
 
     @Column(name = "archivo")
-    private String archivo;
+    private String archivoPdf;
 
     @NotBlank(message = "El link del video de presentación es obligatorio")
     @Column(name = "url_video_presentacion")

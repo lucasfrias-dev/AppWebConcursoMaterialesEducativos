@@ -3,72 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <title>Materiales participantes</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/materiales.css}">
 </head>
 <body>
 <h1>Materiales participantes</h1>
-<h2 th:if="${edicion != null}" th:text="'Edición: ' + ${edicion}">Edición: </h2>
-<h2 th:if="${edicion == null}">No hay ningún concurso vigente</h2>
+<h2 th:text="${edicion}"></h2>
 <p th:if="${message != null}" th:text="${message}"></p>
-<table th:if="${edicion != null and materialesParticipantes?.size() > 0}">
-    <tr>
-        <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Tipo de Material</th>
-        <th>Disciplina a la que pertenece</th>
-        <th>Autores</th>
-        <th>Descargar</th>
-        <th>Likes</th>
-        <th></th>
-    </tr>
-    <tr th:each="material : ${materialesParticipantes}">
-        <td th:text="${material.titulo}"></td>
-        <td th:text="${material.descripcion}"></td>
-        <td th:text="${material.tipoMaterial}"></td>
-        <td th:text="${material.disciplina}"></td>
-        <td th:text="${material.autores}"></td>
-        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
-        <td th:text="${material.likes}"></td>
-        <td>
-            <form th:action="@{/materiales-participantes/{idmaterial}/like(idmaterial=${material.id})}" method="post">
-                <button type="submit">Like</button>
-            </form>
-        </td>
-    </tr>
-</table>
-<p th:if="${edicion != null}" th:unless="${materialesParticipantes?.size() > 0}">Todavia no participa ningun material</p>
 
-<!--
-<h2 t>Materiales Participantes Ganadores</h2>
+<div th:if="${materialesParticipantes?.size() > 0}" class="materials-container">
+    <div th:each="material : ${materialesParticipantes}" class="material-card">
+        <h3 th:text="${material.titulo}"></h3>
+        <p th:text="${material.descripcion}"></p>
+        <img th:src="@{'/materiales-participantes/' + ${material.id} + '/preview'}" alt="Preview">
+        <div class="card-footer">
+            <a th:href="@{'/materiales-participantes/' + ${#strings.replace(edicion, ' ', '-')} + '/' + ${material.id}}">Ver Material</a>
+            <p><strong>Likes:</strong> <span th:text="${material.likes}"></span></p>
+        </div>
+    </div>
+</div>
 
-<table th:if="${edicion != null and materialesGanadores?.size() > 0}">
-    <tr>
-        <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Tipo de Material</th>
-        <th>Disciplina a la que pertenece</th>
-        <th>Autores</th>
-        <th>Descargar</th>
-        <th>Likes</th>
-        <th>Ganadores</th>
-    </tr>
-    <tr th:each="material : ${materialesGanadores}">
-        <td th:text="${material.titulo}"></td>
-        <td th:text="${material.descripcion}"></td>
-        <td th:text="${material.tipoMaterial}"></td>
-        <td th:text="${material.disciplina}"></td>
-        <td th:text="${material.autores}"></td>
-        <td><a th:href="@{'/download/' + ${material.id}}">Descargar</a></td>
-        <td th:text="${material.likes}"></td>
-        <td>
-            <a>Ganador</a>
-        </td>
-    </tr>
-</table>
-
-<p th:if="${edicion != null}" th:unless="${materialesGanadores?.size() > 0}">Todavia no se a seleccionado ningun material ganador</p>
--->
-
+<p th:unless="${materialesParticipantes?.size() > 0}">Todavía no participa ningún material</p>
 
 </body>
 </html>
