@@ -11,10 +11,13 @@
     <h1>Detalles del Material:</h1>
 
     <p><strong>Nombre:</strong> <span th:text="${material.titulo}"></span></p>
+    <img th:src="@{'/materiales-participantes/' + ${material.id} + '/preview'}" alt="Preview">
     <p><strong>Descripción:</strong> <span th:text="${material.descripcion}"></span></p>
     <p><strong>Tipo de Material:</strong> <span th:text="${material.tipoMaterial}"></span></p>
     <p><strong>Disciplina:</strong> <span th:text="${material.disciplina}"></span></p>
     <p><strong>Autores:</strong> <span th:text="${material.autores}"></span></p>
+    <p><strong>Video presentación:</strong> <a th:href="${material.urlVideoPresentacion}">Ver video</a></p>
+    <p><strong>Material:</strong> <a th:href="@{'/view/' + ${material.id}}" target="_blank">Ver PDF</a></p>
 
     <h2>Evaluación:</h2>
 

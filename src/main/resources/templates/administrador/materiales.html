@@ -64,5 +64,7 @@
 </table>
 
 <p th:if="${#lists.isEmpty(materiales)}">No hay materiales para mostrar</p>
+
+<a th:href="@{'/materiales-ganadores/' + ${#strings.replace(edicion, ' ', '-')}}" target="_self">Ver materiales ganadores</a>
 </body>
 </html>

@@ -10,6 +10,9 @@ public interface ConcursoService {
     //Recupera el concurso actual.
     Concurso getConcursoActual();
 
+    //Recupera el concurso más reciente.
+    Concurso getUltimoConcurso();
+
     //Recupera el concurso asociado a una edición.
     Concurso getConcursoByEdicion(String edicion);
 
@@ -24,6 +27,4 @@ public interface ConcursoService {
 
     //Reabre un concurso.
     void reabrirConcurso(String edicion, LocalDateTime fechaFin);
-
-    /*void addMaterialGanador(Concurso concurso, Material material);*/
 }

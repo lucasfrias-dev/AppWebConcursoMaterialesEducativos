@@ -48,6 +48,27 @@
             </div>
         </div>
         <div class="mb-3">
+            <label for="fechaFinPostulaciones" class="form-label">Fecha de fin de postulaciones</label>
+            <input type="datetime-local" th:field="*{fechaFinPostulaciones}" class="form-control" id="fechaFinPostulaciones" required>
+            <div class="invalid-feedback">
+                Por favor, ingrese una fecha de fin de postulaciones.
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="fechaInicioVotacion" class="form-label">Fecha de inicio de votación</label>
+            <input type="datetime-local" th:field="*{fechaInicioVotacion}" class="form-control" id="fechaInicioVotacion" required>
+            <div class="invalid-feedback">
+                Por favor, ingrese una fecha de inicio de votación.
+            </div>
+        </div>
+        <div class="mb-3">
+            <label for="fechaFinVotacion" class="form-label">Fecha de fin de votación</label>
+            <input type="datetime-local" th:field="*{fechaFinVotacion}" class="form-control" id="fechaFinVotacion" required>
+            <div class="invalid-feedback">
+                Por favor, ingrese una fecha de fin de votación.
+            </div>
+        </div>
+        <div class="mb-3">
             <label for="fechaFin" class="form-label">Fecha de fin</label>
             <input type="datetime-local" th:field="*{fechaFin}" class="form-control" id="fechaFin" required>
             <div class="invalid-feedback">

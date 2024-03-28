@@ -3,29 +3,21 @@
 <head>
     <meta charset="UTF-8">
     <title>Materiales asignados a evaluar</title>
-    <link rel="stylesheet" th:href="@{/css/styles.css}">
+    <link rel="stylesheet" th:href="@{/css/materiales.css}">
 </head>
 <body>
 <h1>Materiales asignados a evaluar</h1>
-<table th:if="${materiales?.size() > 0}">
-    <tr>
-        <th>Nombre</th>
-        <th>Descripción</th>
-        <th>Tipo de Material</th>
-        <th>Disciplina a la que pertenece</th>
-        <th>Autores</th>
-        <th>Evaluado por mi</th>
-    </tr>
-    <tr th:each="material, iterStat : ${materiales}">
-        <td th:text="${material.titulo}"></td>
-        <td th:text="${material.descripcion}"></td>
-        <td th:text="${material.tipoMaterial}"></td>
-        <td th:text="${material.disciplina}"></td>
-        <td th:text="${material.autores}"></td>
-        <td th:text="${hasUserEvaluated[iterStat.index] ? 'Sí' : 'No'}"></td>
-        <td><a th:href="@{/evaluador/materiales/asignados/{id}(id=${material.id})}">Ver Material</a></td>
-    </tr>
-</table>
+<div th:if="${materiales?.size() > 0}" class="materials-container">
+    <div th:each="material, iterStat : ${materiales}" class="material-card">
+        <h3 th:text="${material.titulo}"></h3>
+        <p th:text="${material.descripcion}"></p>
+        <img th:src="@{'/materiales-participantes/' + ${material.id} + '/preview'}" alt="Preview">
+        <div class="card-footer">
+            <a th:href="@{/evaluador/materiales/asignados/{id}(id=${material.id})}">Ver Material</a>
+            <p><strong>Evaluado por mi:</strong> <span th:text="${hasUserEvaluated[iterStat.index] ? 'Sí' : 'No'}"></span></p>
+        </div>
+    </div>
+</div>
 <p th:unless="${materiales?.size() > 0}">No tienes materiales asignados.</p>
 </body>
 </html>
